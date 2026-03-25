@@ -1,10 +1,13 @@
 CXX=g++
-CXXFLAGS=-std=c++17 -O2 -Iinclude -Isrc
+CXXFLAGS=-std=c++2a -O2 -Iinclude -Isrc
 LDFLAGS=
 
 ifeq ($(OS),Windows_NT)
 CXXFLAGS += -DWINVER=0x0A00 -D_WIN32_WINNT=0x0A00
 LDFLAGS += -lws2_32
+else
+CXXFLAGS += -pthread
+LDFLAGS += -pthread
 endif
 
 SOURCES=$(wildcard src/*.cpp)

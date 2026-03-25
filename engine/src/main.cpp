@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
+#include <utility>
 #include <vector>
 
 #include "algorithms.hpp"
@@ -11,10 +13,31 @@
 #include "json.hpp"
 
 int main() {
-  PropertyGraph graph;
+  PropertyGraph graph_builder;
+  std::unordered_set<std::string> village_ids;
 
-  std::unordered_map<std::string, nlohmann::json> experience_lookup;
+  std::unordered_map<std::string, nlohmann::json> experience_lookup_builder;
   try {
+    std::ifstream village_file("data/villages.json");
+    if (!village_file.is_open()) {
+      village_file.open("engine/data/villages.json");
+    }
+    if (village_file.is_open()) {
+      nlohmann::json villages = nlohmann::json::parse(village_file);
+      if (villages.is_array()) {
+        for (const auto& v : villages) {
+          if (!v.is_object() || !v.contains("id") || !v["id"].is_string()) {
+            continue;
+          }
+
+          const std::string village_id = v["id"].get<std::string>();
+          village_ids.insert(village_id);
+          graph_builder.add_node(village_id);
+          graph_builder.set_node_prop(village_id, "is_experience", 0.0);
+        }
+      }
+    }
+
     std::ifstream exp_file("data/experiences.json");
     if (!exp_file.is_open()) {
       exp_file.open("engine/data/experiences.json");
@@ -33,25 +56,29 @@ int main() {
                   ? exp["village_id"].get<std::string>()
                   : "";
 
-          graph.add_node(id);
-          graph.set_node_prop(id, "is_experience", 1.0);
+          graph_builder.add_node(id);
+          graph_builder.set_node_prop(id, "is_experience", 1.0);
 
           if (exp.contains("personality_weights") && exp["personality_weights"].is_array()) {
             const auto& pw = exp["personality_weights"];
             for (std::size_t i = 0; i < pw.size(); ++i) {
               if (pw[i].is_number()) {
-                graph.set_node_prop(id, "personality_weight_" + std::to_string(i), pw[i].get<double>());
+                graph_builder.set_node_prop(id, "personality_weight_" + std::to_string(i), pw[i].get<double>());
               }
             }
           }
 
           if (!village_id.empty()) {
-            graph.add_node(village_id);
-            graph.set_node_prop(village_id, "is_experience", 0.0);
-            graph.add_edge(village_id, id, 1.0);
+            if (village_ids.find(village_id) == village_ids.end()) {
+              graph_builder.add_node(village_id);
+              graph_builder.set_node_prop(village_id, "is_experience", 0.0);
+            }
+            // Bidirectional village<->experience links preserve graph signal.
+            graph_builder.add_edge(village_id, id, 1.0);
+            graph_builder.add_edge(id, village_id, 1.0);
           }
 
-          experience_lookup[id] = exp;
+          experience_lookup_builder[id] = exp;
         }
       }
     }
@@ -59,8 +86,17 @@ int main() {
     // Keep server boot resilient; /graph/match can still return an empty list.
   }
 
+  const PropertyGraph graph = std::move(graph_builder);
+  const std::unordered_map<std::string, nlohmann::json> experience_lookup =
+      std::move(experience_lookup_builder);
+
   auto ranks = pagerank(graph);
-  auto dist = dijkstra(graph, "village_a");
+  const std::string source_for_dist =
+      village_ids.empty() ? (graph.nodes().empty() ? "" : graph.nodes().begin()->first)
+                          : *village_ids.begin();
+  auto dist = source_for_dist.empty()
+                  ? std::unordered_map<std::string, double>{}
+                  : dijkstra(graph, source_for_dist);
   auto labels = label_propagation(graph);
 
   std::vector<ImpactRecord> records = {

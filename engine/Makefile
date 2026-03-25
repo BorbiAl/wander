@@ -1,8 +1,9 @@
 CXX := g++
 CXXFLAGS := -std=c++17 -O2 -Iinclude
 ifeq ($(OS),Windows_NT)
-# This MinGW toolchain does not provide pthread libraries by default.
-LDFLAGS :=
+# cpp-httplib on Windows requires Windows 10 APIs and Winsock symbols.
+CXXFLAGS += -DWINVER=0x0A00 -D_WIN32_WINNT=0x0A00
+LDFLAGS := -lws2_32
 else
 LDFLAGS := -lpthread
 endif

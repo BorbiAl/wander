@@ -12,6 +12,11 @@ void PropertyGraph::add_edge(const std::string& from, const std::string& to, dou
   edges_.push_back(Edge{from, to, weight});
 }
 
+void PropertyGraph::set_node_prop(const std::string& id, const std::string& key, double value) {
+  add_node(id);
+  nodes_[id].props[key] = value;
+}
+
 const std::unordered_map<std::string, Node>& PropertyGraph::nodes() const {
   return nodes_;
 }

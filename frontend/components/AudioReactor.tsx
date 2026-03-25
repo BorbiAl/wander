@@ -79,6 +79,7 @@ export default function AudioReactor() {
         {CLIPS.map((c, i) => (
           <button
             key={i}
+            type="button"
             onClick={() => selectClip(i)}
             className={`w-full text-left rounded-xl px-4 py-3 transition-colors ${
               i === activeIndex
@@ -109,6 +110,7 @@ export default function AudioReactor() {
           value={currentTime}
           onChange={handleSlider}
           className="w-full accent-emerald-500"
+          aria-label="Playback position"
         />
         <div className="flex justify-between text-xs text-gray-400">
           <span>{fmt(currentTime)}</span>

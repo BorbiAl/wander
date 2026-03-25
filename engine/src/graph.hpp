@@ -19,6 +19,7 @@ class PropertyGraph {
  public:
   void add_node(const std::string& id);
   void add_edge(const std::string& from, const std::string& to, double weight = 1.0);
+  void set_node_prop(const std::string& id, const std::string& key, double value);
   const std::unordered_map<std::string, Node>& nodes() const;
   const std::vector<Edge>& edges() const;
   std::vector<std::string> neighbors(const std::string& id) const;

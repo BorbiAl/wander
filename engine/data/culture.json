@@ -1,10 +1,56 @@
 [
   {
-    "village_id": "village_a",
-    "score": 0.9
+    "id": "cult_rhodope_music",
+    "name": "Rhodope Music Tradition",
+    "region": "Rhodopes",
+    "village_ids": ["shiroka_laka", "kovachevitsa", "leshten"],
+    "description": "The Rhodope mountains have their own musical tradition entirely distinct from the rest of Bulgaria. Characterized by dissonant two-voice singing, gaida, and kaval flute. The sound is ancient, modal, and unlike anything in Europe.",
+    "related_tradition_ids": ["trad_gaida", "trad_horo"],
+    "cultural_weight": 0.9
   },
   {
-    "village_id": "village_b",
-    "score": 0.85
+    "id": "cult_strandzha_fire",
+    "name": "Strandzha Fire Culture",
+    "region": "Strandzha",
+    "village_ids": ["stoilovo"],
+    "description": "The Strandzha region preserves pre-Christian fire rituals that survived Ottoman rule and Communist suppression. Nestinarstvo is the most dramatic expression of a deeper spiritual relationship with fire, ancestors, and the sacred.",
+    "related_tradition_ids": ["trad_nestinarstvo"],
+    "cultural_weight": 1.0
+  },
+  {
+    "id": "cult_balkan_crafts",
+    "name": "National Revival Crafts",
+    "region": "Central Balkans",
+    "village_ids": ["tryavna", "bozhentsi", "koprivshtitsa", "zheravna"],
+    "description": "The Bulgarian National Revival (18th-19th century) produced an extraordinary flowering of craftsmanship — woodcarving, icon painting, textile weaving, and architecture — centered on the Balkan foothills towns.",
+    "related_tradition_ids": ["trad_woodcarving", "trad_icon_painting", "trad_lazaruvane"],
+    "cultural_weight": 0.8
+  },
+  {
+    "id": "cult_thracian_wine",
+    "name": "Thracian Wine Heritage",
+    "region": "Southwest",
+    "village_ids": ["melnik"],
+    "description": "The Thracians were making wine in this valley 3000 years ago. The unique Melnik 55 grape variety grows only on these sandstone slopes and produces the thickest, most age-worthy wine in Bulgaria.",
+    "related_tradition_ids": [],
+    "cultural_weight": 0.7
+  },
+  {
+    "id": "cult_uprising_memory",
+    "name": "Liberation Memory Culture",
+    "region": "Central Balkans",
+    "village_ids": ["koprivshtitsa"],
+    "description": "Bulgaria's path to independence is embodied in Koprivshtitsa. The town is both a physical monument and a living community that actively maintains revolutionary memory through reenactment, oral history, and house-museums.",
+    "related_tradition_ids": ["trad_april_uprising"],
+    "cultural_weight": 0.85
+  },
+  {
+    "id": "cult_yogurt_science",
+    "name": "Bulgarian Yogurt Science",
+    "region": "Balkan Foothills",
+    "village_ids": ["teteven"],
+    "description": "The discovery that L. bulgaricus was responsible for Bulgarian longevity sparked the first wave of probiotic science in 1905. The yogurt culture from Teteven's dairy farms is arguably the most scientifically significant food culture in Europe.",
+    "related_tradition_ids": ["trad_yogurt"],
+    "cultural_weight": 0.6
   }
 ]

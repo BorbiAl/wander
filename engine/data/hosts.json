@@ -1,10 +1,162 @@
 [
   {
-    "id": "host_1",
-    "name": "Maria"
+    "id": "host_dimitar",
+    "village_id": "shiroka_laka",
+    "name": "Dimitar Karadzhov",
+    "age": 58,
+    "bio": "Third-generation bagpipe maker from Shiroka Laka. Studied at the State Folk Music School here. Has performed at folk festivals in 12 countries. His gaida are played by professional musicians across the Balkans.",
+    "languages": ["Bulgarian", "basic English"],
+    "experience_ids": ["exp_sl_bagpipe"],
+    "joined_year": 2019
   },
   {
-    "id": "host_2",
-    "name": "Ivan"
+    "id": "host_milena",
+    "village_id": "shiroka_laka",
+    "name": "Milena Stoyanova",
+    "age": 44,
+    "bio": "Herbalist and wild food guide. Grew up collecting herbs with her grandmother on the Rhodope ridges. Runs a small herbal workshop that ships dried herbs across Europe.",
+    "languages": ["Bulgarian", "German"],
+    "experience_ids": ["exp_sl_herb_walk", "exp_sl_folklore"],
+    "joined_year": 2021
+  },
+  {
+    "id": "host_georgi",
+    "village_id": "kovachevitsa",
+    "name": "Georgi Velev",
+    "age": 62,
+    "bio": "The only trained architect still living in Kovachevitsa. Spent 15 years restoring houses for the National Heritage Fund. Now guides visitors through the village he has dedicated his life to preserving.",
+    "languages": ["Bulgarian", "English", "French"],
+    "experience_ids": ["exp_kov_architecture", "exp_kov_stone_carving"],
+    "joined_year": 2020
+  },
+  {
+    "id": "host_gena",
+    "village_id": "leshten",
+    "name": "Gena Petrova",
+    "age": 78,
+    "bio": "Born in Leshten, never left. Has outlived the school, the shop, and most of her neighbours. Grows everything she eats. Her stone house has been in the family since 1780. She has no internet.",
+    "languages": ["Bulgarian"],
+    "experience_ids": ["exp_lesh_homestay", "exp_lesh_sunrise", "exp_lesh_foraging"],
+    "joined_year": 2022
+  },
+  {
+    "id": "host_elena",
+    "village_id": "bozhentsi",
+    "name": "Elena Hristova",
+    "age": 39,
+    "bio": "Orthodox iconographer trained at the Athos school in Greece. Returned to her home village to set up a workshop. Her icons have been commissioned by churches in Bulgaria, Greece, and Germany.",
+    "languages": ["Bulgarian", "Greek", "English"],
+    "experience_ids": ["exp_bozh_icon", "exp_bozh_beekeeping"],
+    "joined_year": 2020
+  },
+  {
+    "id": "host_petar",
+    "village_id": "bozhentsi",
+    "name": "Petar Rusev",
+    "age": 51,
+    "bio": "Fourth-generation rose oil distiller. His family has been growing Rosa damascena since the 1880s. Fought to keep the distillery running when rose oil prices crashed in 2012. Still here.",
+    "languages": ["Bulgarian", "English"],
+    "experience_ids": ["exp_bozh_rosewater"],
+    "joined_year": 2021
+  },
+  {
+    "id": "host_yanko",
+    "village_id": "zheravna",
+    "name": "Yanko Angelov",
+    "age": 67,
+    "bio": "Miller and bread baker. His water mill is one of three still operating in Bulgaria. Learned the craft from his father who learned from his. The mill has ground wheat since 1743.",
+    "languages": ["Bulgarian"],
+    "experience_ids": ["exp_zher_mill", "exp_zher_storytelling"],
+    "joined_year": 2019
+  },
+  {
+    "id": "host_svetla",
+    "village_id": "zheravna",
+    "name": "Svetla Yovkova",
+    "age": 48,
+    "bio": "Literature teacher and descendent of Yordan Yovkov's family. Has been reading his work aloud in the village for 20 years. Also a qualified forest guide for the chestnut reserve.",
+    "languages": ["Bulgarian", "English"],
+    "experience_ids": ["exp_zher_forest", "exp_zher_storytelling"],
+    "joined_year": 2020
+  },
+  {
+    "id": "host_hristo",
+    "village_id": "koprivshtitsa",
+    "name": "Hristo Deyanov",
+    "age": 55,
+    "bio": "Descendant of an April Uprising rebel family. Has been a living history guide for 30 years. Knows the name of every soldier in the first regiment. His great-great-grandfather fired the first shot.",
+    "languages": ["Bulgarian", "English", "Russian"],
+    "experience_ids": ["exp_kopr_uprising", "exp_kopr_weaving"],
+    "joined_year": 2018
+  },
+  {
+    "id": "host_rositsa",
+    "village_id": "koprivshtitsa",
+    "name": "Rositsa Beleva",
+    "age": 41,
+    "bio": "Documentary photographer who left Sofia to document disappearing Bulgarian villages. Has been based in Koprivshtitsa for 8 years. Her photos have appeared in National Geographic Bulgaria.",
+    "languages": ["Bulgarian", "English"],
+    "experience_ids": ["exp_kopr_photo"],
+    "joined_year": 2022
+  },
+  {
+    "id": "host_kosta",
+    "village_id": "melnik",
+    "name": "Kosta Kumankov",
+    "age": 63,
+    "bio": "Fourth-generation winemaker tending the same Melnik 55 vines his great-grandfather planted in 1902. His cellars are carved into sandstone cliffs. The wine is made the same way it was then.",
+    "languages": ["Bulgarian", "English", "German"],
+    "experience_ids": ["exp_mel_wine", "exp_mel_pyramids", "exp_mel_monastery"],
+    "joined_year": 2019
+  },
+  {
+    "id": "host_ivan",
+    "village_id": "tryavna",
+    "name": "Ivan Zahariev",
+    "age": 57,
+    "bio": "Master woodcarver, 7th generation of the Tryavna school. His work is in the Rila Monastery and three national museums. Teaches the only remaining apprenticeship program in the city.",
+    "languages": ["Bulgarian", "English"],
+    "experience_ids": ["exp_try_woodcarving", "exp_try_clock_tower", "exp_try_hiking"],
+    "joined_year": 2020
+  },
+  {
+    "id": "host_marina",
+    "village_id": "stoilovo",
+    "name": "Marina Koleva",
+    "age": 44,
+    "bio": "The last active Nestinarka in Stoilovo. Inherited the right to walk fire from her mother. Also runs a small embroidery cooperative keeping the ritual costume traditions alive. Deep inside Strandzha, rarely online.",
+    "languages": ["Bulgarian"],
+    "experience_ids": ["exp_sto_nestinarstvo", "exp_sto_embroidery"],
+    "joined_year": 2023
+  },
+  {
+    "id": "host_boyan_guide",
+    "village_id": "stoilovo",
+    "name": "Boyan Petrov",
+    "age": 36,
+    "bio": "Wilderness guide and former park ranger in Strandzha Nature Park. Knows every trail, every spring, every dangerous crossing. Trained in wilderness first aid. The only person who goes off-trail here.",
+    "languages": ["Bulgarian", "English"],
+    "experience_ids": ["exp_sto_strandzha"],
+    "joined_year": 2021
+  },
+  {
+    "id": "host_velichka",
+    "village_id": "teteven",
+    "name": "Velichka Gocheva",
+    "age": 49,
+    "bio": "Dairy farmer and yogurt maker. Her herd of 30 Rhodope cattle produce milk with the exact bacterial profile for authentic Bulgarian yogurt. Sells to three Sofia restaurants. Now also teaches.",
+    "languages": ["Bulgarian"],
+    "experience_ids": ["exp_tet_yogurt"],
+    "joined_year": 2022
+  },
+  {
+    "id": "host_stoyan",
+    "village_id": "teteven",
+    "name": "Stoyan Vasilev",
+    "age": 43,
+    "bio": "Mountain guide certified by the Bulgarian Mountaineering Federation. Has summited every peak in the Teteven Balkan 50+ times. Runs trail running camps in summer. Not afraid of weather.",
+    "languages": ["Bulgarian", "English"],
+    "experience_ids": ["exp_tet_peak", "exp_tet_bear"],
+    "joined_year": 2020
   }
 ]

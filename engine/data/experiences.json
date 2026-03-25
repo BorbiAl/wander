@@ -1,0 +1,137 @@
+[
+	{
+		"id": "exp_alpine_hike_01",
+		"village_id": "village_alpine_haven",
+		"name": "Glacier View Hike",
+		"type": "hiking",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 45,
+		"host_id": "host_lina"
+	},
+	{
+		"id": "exp_alpine_craft_01",
+		"village_id": "village_alpine_haven",
+		"name": "Woodcarving Workshop",
+		"type": "craft",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 38,
+		"host_id": "host_mateo"
+	},
+	{
+		"id": "exp_alpine_cheese_01",
+		"village_id": "village_alpine_haven",
+		"name": "Alpine Cheese Tasting",
+		"type": "food",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 27,
+		"host_id": "host_noemi"
+	},
+	{
+		"id": "exp_riverbend_kayak_01",
+		"village_id": "village_riverbend",
+		"name": "River Kayak Basics",
+		"type": "water",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 52,
+		"host_id": "host_jonas"
+	},
+	{
+		"id": "exp_riverbend_market_01",
+		"village_id": "village_riverbend",
+		"name": "Farmers Market Walk",
+		"type": "culture",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 18,
+		"host_id": "host_klara"
+	},
+	{
+		"id": "exp_riverbend_cycle_01",
+		"village_id": "village_riverbend",
+		"name": "Lakeside Cycling Loop",
+		"type": "cycling",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 33,
+		"host_id": "host_paul"
+	},
+	{
+		"id": "exp_sunmeadow_vineyard_01",
+		"village_id": "village_sunmeadow",
+		"name": "Vineyard Sunset Tour",
+		"type": "food",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 40,
+		"host_id": "host_iris"
+	},
+	{
+		"id": "exp_sunmeadow_climb_01",
+		"village_id": "village_sunmeadow",
+		"name": "Beginner Rock Climb",
+		"type": "adventure",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 64,
+		"host_id": "host_rene"
+	},
+	{
+		"id": "exp_sunmeadow_herbs_01",
+		"village_id": "village_sunmeadow",
+		"name": "Wild Herb Foraging",
+		"type": "nature",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 29,
+		"host_id": "host_ada"
+	},
+	{
+		"id": "exp_coastpine_boat_01",
+		"village_id": "village_coastpine",
+		"name": "Lake Boat Discovery",
+		"type": "water",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 55,
+		"host_id": "host_tomas"
+	},
+	{
+		"id": "exp_coastpine_chestnut_01",
+		"village_id": "village_coastpine",
+		"name": "Chestnut Forest Walk",
+		"type": "hiking",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 22,
+		"host_id": "host_mila"
+	},
+	{
+		"id": "exp_coastpine_cook_01",
+		"village_id": "village_coastpine",
+		"name": "Ticino Home Cooking",
+		"type": "food",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 47,
+		"host_id": "host_bianca"
+	},
+	{
+		"id": "exp_stonebridge_history_01",
+		"village_id": "village_stonebridge",
+		"name": "Old Bridge Story Tour",
+		"type": "culture",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 21,
+		"host_id": "host_luca"
+	},
+	{
+		"id": "exp_stonebridge_pottery_01",
+		"village_id": "village_stonebridge",
+		"name": "Village Pottery Class",
+		"type": "craft",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 36,
+		"host_id": "host_elena"
+	},
+	{
+		"id": "exp_stonebridge_night_01",
+		"village_id": "village_stonebridge",
+		"name": "Lantern Night Walk",
+		"type": "culture",
+		"personality_weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+		"price_eur": 19,
+		"host_id": "host_nico"
+	}
+]

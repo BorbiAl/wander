@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const ENGINE_BOOK_URL = process.env.ENGINE_BOOK_URL ?? 'http://localhost:8080/book'
+const ENGINE_BOOK_URL = process.env.ENGINE_BOOK_URL ?? 'http://localhost:8081/graph/book'
 
 export async function POST(req: NextRequest) {
   const body = await req.json()

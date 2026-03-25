@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"c:/Users/Velina/Documents/GitHub/wander/frontend/components/SwipeCard.tsx\":*)",
+      "Bash(\"c:/Users/Velina/Documents/GitHub/wander/frontend/app/api/onboarding/route.ts\":*)",
+      "Bash(\"c:/Users/Velina/Documents/GitHub/wander/frontend/components/PersonalityRadar.tsx\":*)"
+    ]
+  }
+}

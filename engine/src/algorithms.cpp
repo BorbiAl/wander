@@ -121,9 +121,13 @@ std::vector<std::pair<std::string, double>> personalized_pagerank(
     return ranked;
   }
 
+  std::vector<std::string> all_ids;
+  all_ids.reserve(nodes.size());
+
   std::unordered_map<std::string, std::vector<std::string>> outgoing;
   std::unordered_map<std::string, std::vector<std::string>> incoming;
   for (const auto& [id, node] : nodes) {
+    all_ids.push_back(id);
     outgoing[id] = {};
     incoming[id] = {};
   }
@@ -166,11 +170,17 @@ std::vector<std::pair<std::string, double>> personalized_pagerank(
     }
   }
 
-  std::unordered_map<std::string, double> score = seed;
+  std::unordered_map<std::string, double> score;
+  for (const auto& id : all_ids) {
+    auto it = seed.find(id);
+    score[id] = (it == seed.end()) ? 0.0 : it->second;
+  }
+
   for (int step = 0; step < iters; ++step) {
     std::unordered_map<std::string, double> next;
-    for (const auto& id : candidates) {
-      const double teleport = seed[id];
+    for (const auto& id : all_ids) {
+      const auto seed_it = seed.find(id);
+      const double teleport = (seed_it == seed.end()) ? 0.0 : seed_it->second;
       double walk = 0.0;
 
       for (const auto& src : incoming[id]) {

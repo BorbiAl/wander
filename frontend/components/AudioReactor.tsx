@@ -1,108 +1,130 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useRef, useState } from 'react'
 
-type Props = {
-  /** URL to the audio clip */
-  src: string
-  label: string
-  /** emission index for slider value 1-2 (low comfort) */
-  emissionLow: number
-  /** emission index for slider value 3 (mid comfort) */
-  emissionMid: number
-  /** emission index for slider value 4-5 (high comfort) */
-  emissionHigh: number
-  onChoice: (emission: number, value: number) => void
-}
+const CLIPS = [
+  {
+    title: 'Village Morning',
+    description: 'Ambient sounds from a quiet Bulgarian village at dawn.',
+    src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  },
+  {
+    title: 'Mountain Trail',
+    description: 'Wind and birdsong along a Rhodope mountain path.',
+    src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+  },
+  {
+    title: 'Local Market',
+    description: 'Lively chatter and folk music at a weekly market.',
+    src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+  },
+]
 
-export default function AudioReactor({
-  src,
-  label,
-  emissionLow,
-  emissionMid,
-  emissionHigh,
-  onChoice,
-}: Props) {
-  const [value, setValue] = useState(3)
-  const [submitted, setSubmitted] = useState(false)
-  const [playing, setPlaying] = useState(false)
+export default function AudioReactor() {
   const audioRef = useRef<HTMLAudioElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
 
-  const toEmission = (v: number) => {
-    if (v <= 2) return emissionLow
-    if (v === 3) return emissionMid
-    return emissionHigh
+  function selectClip(index: number) {
+    setActiveIndex(index)
+    setPlaying(false)
+    setCurrentTime(0)
+    setDuration(0)
   }
 
-  const handleSubmit = () => {
-    if (submitted) return
-    setSubmitted(true)
-    audioRef.current?.pause()
-    onChoice(toEmission(value), value)
-  }
-
-  const togglePlay = () => {
-    if (!audioRef.current) return
+  function togglePlay() {
+    const audio = audioRef.current
+    if (!audio) return
     if (playing) {
-      audioRef.current.pause()
+      audio.pause()
       setPlaying(false)
     } else {
-      audioRef.current.play()
+      audio.play()
       setPlaying(true)
     }
   }
 
-  const barWidth = `${((value - 1) / 4) * 100}%`
+  function handleTimeUpdate() {
+    const audio = audioRef.current
+    if (!audio) return
+    setCurrentTime(audio.currentTime)
+  }
+
+  function handleLoadedMetadata() {
+    const audio = audioRef.current
+    if (!audio) return
+    setDuration(audio.duration)
+  }
+
+  function handleSlider(e: React.ChangeEvent<HTMLInputElement>) {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.currentTime = Number(e.target.value)
+    setCurrentTime(Number(e.target.value))
+  }
+
+  function fmt(s: number) {
+    const m = Math.floor(s / 60)
+    const sec = Math.floor(s % 60)
+    return `${m}:${sec.toString().padStart(2, '0')}`
+  }
+
+  const clip = CLIPS[activeIndex]
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border bg-white p-5 shadow-sm w-80"
-    >
-      <audio ref={audioRef} src={src} loop onEnded={() => setPlaying(false)} />
-
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-medium">{label}</p>
-        <button
-          onClick={togglePlay}
-          className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-lg"
-        >
-          {playing ? '⏸' : '▶'}
-        </button>
+    <div className="w-full max-w-md rounded-2xl bg-white shadow-xl p-6 space-y-4">
+      <div className="space-y-2">
+        {CLIPS.map((c, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => selectClip(i)}
+            className={`w-full text-left rounded-xl px-4 py-3 transition-colors ${
+              i === activeIndex
+                ? 'bg-emerald-50 border border-emerald-400'
+                : 'bg-gray-50 border border-transparent hover:bg-gray-100'
+            }`}
+          >
+            <p className="font-semibold text-sm text-gray-900">{c.title}</p>
+            <p className="text-xs text-gray-500">{c.description}</p>
+          </button>
+        ))}
       </div>
 
-      <p className="text-xs text-slate-500 mb-2">How comfortable does this sound feel?</p>
+      <audio
+        ref={audioRef}
+        src={clip.src}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => setPlaying(false)}
+      />
 
-      <div className="relative mb-1">
-        <div className="h-2 rounded bg-slate-200">
-          <div className="h-2 rounded bg-black transition-all" style={{ width: barWidth }} />
-        </div>
+      <div className="space-y-2">
         <input
           type="range"
-          min={1}
-          max={5}
-          value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
-          disabled={submitted}
-          className="absolute inset-0 w-full opacity-0 cursor-pointer"
+          min={0}
+          max={duration || 0}
+          step={0.1}
+          value={currentTime}
+          onChange={handleSlider}
+          className="w-full accent-emerald-500"
+          aria-label="Playback position"
         />
-      </div>
-
-      <div className="flex justify-between text-xs text-slate-400 mb-4">
-        <span>Uncomfortable</span>
-        <span>{value}</span>
-        <span>Very at home</span>
+        <div className="flex justify-between text-xs text-gray-400">
+          <span>{fmt(currentTime)}</span>
+          <span>{fmt(duration)}</span>
+        </div>
       </div>
 
       <button
-        onClick={handleSubmit}
-        disabled={submitted}
-        className="w-full rounded-lg bg-black text-white py-2 text-sm disabled:opacity-40"
+        type="button"
+        onClick={togglePlay}
+        className="w-full rounded-full bg-emerald-500 py-3 text-white font-semibold hover:bg-emerald-400 transition-colors"
       >
-        {submitted ? 'Logged ✓' : 'Confirm'}
+        {playing ? 'Pause' : 'Play'}
       </button>
-    </motion.div>
+    </div>
   )
 }

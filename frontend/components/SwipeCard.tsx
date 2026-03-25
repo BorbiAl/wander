@@ -1,114 +1,46 @@
 'use client'
 
-import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import { useMotionValue, useTransform, motion } from 'framer-motion'
 
-export type SwipeChoice = 'left' | 'right' | 'skip'
-
-type Props = {
-  leftImage: string
-  rightImage: string
-  leftLabel?: string
-  rightLabel?: string
-  /** emission index emitted on left-swipe */
-  leftEmission: number
-  /** emission index emitted on right-swipe */
-  rightEmission: number
-  onChoice: (emission: number, choice: SwipeChoice) => void
+interface SwipeCardProps {
+  children: React.ReactNode
+  onChoice: (direction: 'left' | 'right') => void
 }
 
-export default function SwipeCard({
-  leftImage,
-  rightImage,
-  leftLabel,
-  rightLabel,
-  leftEmission,
-  rightEmission,
-  onChoice,
-}: Props) {
+export default function SwipeCard({ children, onChoice }: SwipeCardProps) {
   const x = useMotionValue(0)
-  const rotate = useTransform(x, [-220, 220], [-18, 18])
-  const leftOpacity = useTransform(x, [-220, 0], [1, 0.25])
-  const rightOpacity = useTransform(x, [0, 220], [0.25, 1])
-  const cardOpacity = useTransform(x, [-300, -220, 0, 220, 300], [0, 1, 1, 1, 0])
+  const rotate = useTransform(x, [-150, 150], [-15, 15])
+  const leftOpacity = useTransform(x, [-150, -50, 0], [1, 0, 0])
+  const rightOpacity = useTransform(x, [0, 50, 150], [0, 0, 1])
 
-  const [gone, setGone] = useState(false)
-
-  const handleDragEnd = (_: unknown, info: { offset: { x: number } }) => {
-    if (info.offset.x > 100) {
-      setGone(true)
-      onChoice(rightEmission, 'right')
-    } else if (info.offset.x < -100) {
-      setGone(true)
-      onChoice(leftEmission, 'left')
-    }
+  function handleDragEnd() {
+    if (x.get() > 100) onChoice('right')
+    else if (x.get() < -100) onChoice('left')
   }
 
   return (
-    <AnimatePresence>
-      {!gone && (
+    <div className="relative">
+      <motion.div
+        style={{ x, rotate }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={handleDragEnd}
+        className="relative cursor-grab active:cursor-grabbing rounded-2xl bg-white shadow-xl p-6 w-72 select-none"
+      >
         <motion.div
-          key="card"
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          style={{ x, rotate, opacity: cardOpacity }}
-          onDragEnd={handleDragEnd}
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.15 } }}
-          className="relative w-80 h-96 rounded-2xl overflow-hidden shadow-xl cursor-grab active:cursor-grabbing select-none"
+          style={{ opacity: leftOpacity }}
+          className="absolute top-4 left-4 rounded border-2 border-red-500 px-2 py-1 text-red-500 font-bold text-sm rotate-[-20deg]"
         >
-          <div className="grid grid-cols-2 h-full">
-            <motion.div
-              className="relative overflow-hidden"
-              style={{ opacity: leftOpacity }}
-            >
-              <img
-                src={leftImage}
-                alt={leftLabel ?? 'Option A'}
-                className="w-full h-full object-cover pointer-events-none"
-              />
-              {leftLabel && (
-                <span className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                  {leftLabel}
-                </span>
-              )}
-            </motion.div>
-
-            <motion.div
-              className="relative overflow-hidden"
-              style={{ opacity: rightOpacity }}
-            >
-              <img
-                src={rightImage}
-                alt={rightLabel ?? 'Option B'}
-                className="w-full h-full object-cover pointer-events-none"
-              />
-              {rightLabel && (
-                <span className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                  {rightLabel}
-                </span>
-              )}
-            </motion.div>
-          </div>
-
-          {/* drag hint arrows */}
-          <div className="absolute inset-0 flex items-center justify-between px-3 pointer-events-none">
-            <motion.span
-              className="text-white text-2xl font-bold drop-shadow"
-              style={{ opacity: useTransform(x, [-100, 0], [1, 0]) }}
-            >
-              ←
-            </motion.span>
-            <motion.span
-              className="text-white text-2xl font-bold drop-shadow"
-              style={{ opacity: useTransform(x, [0, 100], [0, 1]) }}
-            >
-              →
-            </motion.span>
-          </div>
+          NOPE
         </motion.div>
-      )}
-    </AnimatePresence>
+        <motion.div
+          style={{ opacity: rightOpacity }}
+          className="absolute top-4 right-4 rounded border-2 border-green-500 px-2 py-1 text-green-500 font-bold text-sm rotate-[20deg]"
+        >
+          YES
+        </motion.div>
+        {children}
+      </motion.div>
+    </div>
   )
 }

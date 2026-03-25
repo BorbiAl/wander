@@ -1,5 +1,6 @@
 const nextConfig = {
-  reactStrictMode: true
+  reactStrictMode: true,
+  allowedDevOrigins: ['bvsqr.eu', 'www.bvsqr.eu'],
 }
 
 module.exports = nextConfig

@@ -14,7 +14,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'HMM service error' }, { status: 502 })
     }
 
-    const { personality_vector } = await hmrRes.json()
+    const personality = await hmrRes.json()
+    const { personality_vector } = personality
 
     const graphRes = await fetch('http://localhost:8081/graph/match', {
       method: 'POST',
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Graph service error' }, { status: 502 })
     }
 
-    const { personality, matches } = await graphRes.json()
+    const matches = await graphRes.json()
 
     return NextResponse.json({ personality, matches })
   } catch (err) {

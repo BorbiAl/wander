@@ -69,13 +69,20 @@ const EMOJI_STEPS = [
 
 const AXES = ['Explorer', 'Connector', 'Restorer', 'Achiever', 'Guardian']
 
+const TOTAL = 15
+
 // ── Types ──────────────────────────────────────────────────────────────────
 
-interface Result {
-  personality: string
-  personality_vector: number[]
+interface PersonalityResult {
+  personality: {
+    personality_vector: number[]
+    dominant_type: string
+    state_path: string[]
+  }
   matches: unknown[]
 }
+
+type Phase = 'questions' | 'analysing' | 'result' | 'error'
 
 // ── Page ───────────────────────────────────────────────────────────────────
 
@@ -83,85 +90,103 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0)
   const [observations, setObservations] = useState<number[]>([])
   const [budget, setBudget] = useState(60)
-  const [result, setResult] = useState<Result | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const TOTAL = 15
-
-  function push(value: number) {
-    const next = [...observations, value]
-    setObservations(next)
-
-    if (step < TOTAL - 1) {
-      setStep(step + 1)
-    } else {
-      submit(next)
-    }
-  }
+  const [phase, setPhase] = useState<Phase>('questions')
+  const [result, setResult] = useState<PersonalityResult | null>(null)
+  const [errorMsg, setErrorMsg] = useState('')
 
   async function submit(obs: number[]) {
-    setLoading(true)
-    setError(null)
+    setPhase('analysing')
     try {
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ observations: obs }),
       })
-      if (!res.ok) throw new Error('failed')
-      setResult(await res.json())
-    } catch {
-      setError('Could not reach services. Make sure both backends are running.')
-      setLoading(false)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      // minimum 1.5s so the spinner is visible
+      await new Promise(r => setTimeout(r, 1500))
+      setResult(data)
+      setPhase('result')
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : 'Unknown error')
+      setPhase('error')
     }
   }
 
-  // ── Result screen ────────────────────────────────────────────────────────
+  function push(value: number) {
+    const next = [...observations, value]
+    setObservations(next)
+    if (next.length < TOTAL) {
+      setStep(s => s + 1)
+    } else {
+      submit(next)
+    }
+  }
 
-  if (loading) {
+  // ── Analysing screen ─────────────────────────────────────────────────────
+
+  if (phase === 'analysing') {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-emerald-950 text-white">
-        <p className="text-xl animate-pulse">Analysing your profile…</p>
+      <main className="flex min-h-screen flex-col items-center justify-center bg-emerald-950 text-white gap-6">
+        <div className="w-12 h-12 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin" />
+        <p className="text-xl font-semibold animate-pulse">Analysing your profile…</p>
+        <p className="text-sm text-emerald-600">Decoding personality via HMM · Matching experiences via graph</p>
       </main>
     )
   }
 
-  if (result) {
-    const dominantIndex = result.personality_vector.indexOf(Math.max(...result.personality_vector))
-    const dominantType = AXES[dominantIndex] ?? result.personality
+  // ── Result screen ────────────────────────────────────────────────────────
+
+  if (phase === 'result' && result) {
+    const pv = result.personality.personality_vector
+    const dominantIndex = pv.indexOf(Math.max(...pv))
+    const dominantType = AXES[dominantIndex] ?? result.personality.dominant_type
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-emerald-950 text-white gap-6 p-8">
         <h2 className="text-2xl font-bold">Your travel personality</h2>
         <div className="bg-white rounded-2xl p-6">
-          <PersonalityRadar personality_vector={result.personality_vector} />
+          <PersonalityRadar personality_vector={pv} />
         </div>
         <p className="text-xl font-semibold text-emerald-300">{dominantType}</p>
-        {error && <p className="text-red-400 text-sm">{error}</p>}
         <Link
           href="/discover"
           className="rounded-full bg-emerald-500 px-8 py-3 font-semibold hover:bg-emerald-400 transition-colors"
         >
-          Discover your matches
+          Discover your matches →
         </Link>
       </main>
     )
   }
 
-  // ── Progress bar ─────────────────────────────────────────────────────────
+  // ── Error screen ──────────────────────────────────────────────────────────
+
+  if (phase === 'error') {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-emerald-950 text-white gap-4">
+        <p className="text-red-400 text-lg">Something went wrong</p>
+        <p className="text-sm text-emerald-600">{errorMsg}</p>
+        <button
+          onClick={() => { setPhase('questions'); setStep(0); setObservations([]) }}
+          className="rounded-full border border-emerald-500 px-6 py-2 text-sm hover:bg-emerald-900"
+        >
+          Try again
+        </button>
+      </main>
+    )
+  }
+
+  // ── Questions screen ──────────────────────────────────────────────────────
 
   const progress = (step / TOTAL) * 100
 
-  // ── Step renderer ─────────────────────────────────────────────────────────
-
   function renderStep() {
-    // Steps 0–5: SwipeCard
     if (step <= 5) {
       const card = SWIPE_CARDS[step]
       return (
         <div className="flex flex-col items-center gap-4">
           <p className="text-emerald-300 text-sm">Swipe right to include, left to skip</p>
-          <SwipeCard onChoice={(dir: 'left' | 'right') => push(dir === 'right' ? 1 : 0)}>
+          <SwipeCard key={step} onChoice={(dir) => push(dir === 'right' ? 1 : 0)}>
             <h3 className="text-lg font-bold text-gray-900">{card.title}</h3>
             <p className="mt-2 text-sm text-gray-500">{card.desc}</p>
           </SwipeCard>
@@ -169,7 +194,6 @@ export default function OnboardingPage() {
       )
     }
 
-    // Steps 6–8: Audio choice
     if (step <= 8) {
       const audio = AUDIO_STEPS[step - 6]
       return (
@@ -190,7 +214,6 @@ export default function OnboardingPage() {
       )
     }
 
-    // Steps 9–11: Scroll cards
     if (step <= 11) {
       const scroll = SCROLL_STEPS[step - 9]
       return (
@@ -212,7 +235,6 @@ export default function OnboardingPage() {
       )
     }
 
-    // Steps 12–13: Emoji scenario
     if (step <= 13) {
       const scenario = EMOJI_STEPS[step - 12]
       return (
@@ -235,32 +257,26 @@ export default function OnboardingPage() {
       )
     }
 
-    // Step 14: Budget slider
     return (
       <div className="flex flex-col gap-6 w-full max-w-sm">
         <p className="text-center text-emerald-300 text-sm">What's your daily budget?</p>
         <div className="text-center text-4xl font-bold">€{budget}</div>
         <input
-          type="range"
-          min={20}
-          max={200}
-          step={5}
-          value={budget}
+          type="range" min={20} max={200} step={5} value={budget}
           onChange={(e) => setBudget(Number(e.target.value))}
           className="w-full accent-emerald-500"
           aria-label="Daily budget in euros"
           title="Daily budget"
         />
         <div className="flex justify-between text-xs text-emerald-600">
-          <span>€20</span>
-          <span>€200</span>
+          <span>€20</span><span>€200</span>
         </div>
         <button
           type="button"
           onClick={() => push(budget / 200)}
           className="rounded-full bg-emerald-500 py-3 font-semibold hover:bg-emerald-400 transition-colors"
         >
-          Finish
+          Finish →
         </button>
       </div>
     )
@@ -268,7 +284,6 @@ export default function OnboardingPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-emerald-950 text-white pt-10 px-6">
-      {/* Progress bar */}
       <div className="w-full max-w-sm mb-8">
         <div className="flex justify-between text-xs text-emerald-600 mb-1">
           <span>Step {step + 1} of {TOTAL}</span>
@@ -281,9 +296,6 @@ export default function OnboardingPage() {
           />
         </div>
       </div>
-
-      {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
-
       {renderStep()}
     </main>
   )

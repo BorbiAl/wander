@@ -8,3 +8,5 @@ coverage/
 .claude/
 .venv/
 __pycache__/
+next./.next/
+tsconfig.tsbuildinfo

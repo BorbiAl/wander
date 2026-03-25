@@ -1,13 +1,17 @@
 import Link from 'next/link'
 
-export default function LandingPage() {
+export default function Home() {
   return (
-    <main className="mx-auto max-w-4xl p-8">
-      <h1 className="text-4xl font-bold">WanderGraph</h1>
-      <p className="mt-4 text-lg">Discover meaningful travel experiences in Bulgarian villages.</p>
-      <div className="mt-6 flex gap-3">
-        <Link href="/onboarding" className="rounded bg-black px-4 py-2 text-white">Start onboarding</Link>
-        <Link href="/discover" className="rounded border px-4 py-2">Discover</Link>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-emerald-950 text-white">
+      <div className="text-center">
+        <h1 className="text-6xl font-bold tracking-tight">WanderGraph</h1>
+        <p className="mt-4 text-xl text-emerald-300">Travel with Purpose</p>
+        <Link
+          href="/onboarding"
+          className="mt-10 inline-block rounded-full bg-emerald-500 px-10 py-4 text-lg font-semibold text-white hover:bg-emerald-400 transition-colors"
+        >
+          Start
+        </Link>
       </div>
     </main>
   )

@@ -1,13 +1,91 @@
-type Props = {
-  values: number[]
+'use client'
+
+const AXES = ['Explorer', 'Connector', 'Restorer', 'Achiever', 'Guardian']
+const SIZE = 200
+const CX = SIZE / 2
+const CY = SIZE / 2
+const R = 80
+
+function angleAt(i: number) {
+  return (-Math.PI / 2) + i * (2 * Math.PI / AXES.length)
 }
 
-export default function PersonalityRadar({ values }: Props) {
-  const avg = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0
+function point(value: number, i: number) {
+  const a = angleAt(i)
+  return {
+    x: CX + value * R * Math.cos(a),
+    y: CY + value * R * Math.sin(a),
+  }
+}
+
+interface Props {
+  personality_vector: number[]
+}
+
+export default function PersonalityRadar({ personality_vector }: Props) {
+  const gridLevels = [0.25, 0.5, 0.75, 1]
+
+  const polygonPoints = personality_vector
+    .map((v, i) => point(v, i))
+    .map(p => `${p.x},${p.y}`)
+    .join(' ')
+
   return (
-    <div className="rounded-xl border bg-white p-6">
-      <h2 className="text-xl font-medium">Personality Radar</h2>
-      <p className="mt-2 text-sm">Average signal: {avg.toFixed(2)}</p>
-    </div>
+    <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+      {/* Grid rings */}
+      {gridLevels.map(level => {
+        const pts = AXES.map((_, i) => point(level, i)).map(p => `${p.x},${p.y}`).join(' ')
+        return (
+          <polygon
+            key={level}
+            points={pts}
+            fill="none"
+            stroke="#d1fae5"
+            strokeWidth={1}
+          />
+        )
+      })}
+
+      {/* Axis lines */}
+      {AXES.map((_, i) => {
+        const p = point(1, i)
+        return (
+          <line
+            key={i}
+            x1={CX} y1={CY}
+            x2={p.x} y2={p.y}
+            stroke="#d1fae5"
+            strokeWidth={1}
+          />
+        )
+      })}
+
+      {/* Data polygon */}
+      <polygon
+        points={polygonPoints}
+        fill="rgba(16,185,129,0.3)"
+        stroke="#10b981"
+        strokeWidth={2}
+      />
+
+      {/* Axis labels */}
+      {AXES.map((label, i) => {
+        const p = point(1.25, i)
+        return (
+          <text
+            key={i}
+            x={p.x}
+            y={p.y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize={10}
+            fill="#065f46"
+            fontWeight="600"
+          >
+            {label}
+          </text>
+        )
+      })}
+    </svg>
   )
 }

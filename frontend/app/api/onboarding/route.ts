@@ -1,22 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const HMM_URL = process.env.HMM_URL ?? 'http://localhost:5000/predict'
-const ENGINE_URL = process.env.ENGINE_URL ?? 'http://localhost:8080/metrics'
-
 export async function POST(req: NextRequest) {
-  const body = await req.json()
+  try {
+    const { observations } = await req.json()
 
-  const [hmmRes, engineRes] = await Promise.all([
-    fetch(HMM_URL, {
+    const hmrRes = await fetch('http://localhost:5000/hmm/decode', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(body)
-    }),
-    fetch(ENGINE_URL)
-  ])
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ observations }),
+    })
 
-  const hmm = await hmmRes.json()
-  const engine = await engineRes.json()
+    if (!hmrRes.ok) {
+      return NextResponse.json({ error: 'HMM service error' }, { status: 502 })
+    }
 
-  return NextResponse.json({ hmm, engine })
+    const { personality_vector } = await hmrRes.json()
+
+    const graphRes = await fetch('http://localhost:8081/graph/match', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ personality_vector }),
+    })
+
+    if (!graphRes.ok) {
+      return NextResponse.json({ error: 'Graph service error' }, { status: 502 })
+    }
+
+    const { personality, matches } = await graphRes.json()
+
+    return NextResponse.json({ personality, matches })
+  } catch (err) {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }

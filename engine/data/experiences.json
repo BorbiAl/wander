@@ -1,0 +1,12 @@
+[
+  {
+    "id": "exp_1",
+    "village_id": "village_a",
+    "title": "Stone House Walk"
+  },
+  {
+    "id": "exp_2",
+    "village_id": "village_b",
+    "title": "Folklore Evening"
+  }
+]

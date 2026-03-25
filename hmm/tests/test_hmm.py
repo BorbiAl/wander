@@ -90,10 +90,10 @@ def test_load_params_stochastic(wg_params):
 
 
 def test_explorer_user(wg_params):
-    """Synthetic explorer: picks wilderness, mountain, adventure, wind sounds."""
-    # Emissions: img_wilderness=0, img_mountain=4, img_adventure=8, audio_wind_high=16,
+    """Synthetic explorer: picks wilderness, solo, nature, forest sounds, deep scroll, explore emoji."""
+    # Emissions: img_wilderness=0, img_solo=3, img_nature=10, audio_forest_high=12,
     # scroll_deep=20, emoji_explore=21
-    obs = np.array([0, 4, 8, 16, 20, 21, 0, 4, 8, 16, 20, 21, 0, 4, 8])
+    obs = np.array([0, 21, 0, 21, 0, 21, 0, 21, 20, 3])
     A, B, pi = wg_params['A'], wg_params['B'], wg_params['pi']
     pv = get_personality_vector(obs, A, B, pi)
     # Explorer (index 0) should be dominant

@@ -6,3 +6,5 @@ build/
 *.log
 coverage/
 .claude/
+.venv/
+__pycache__/

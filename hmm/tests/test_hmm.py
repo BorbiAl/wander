@@ -67,7 +67,7 @@ def test_baum_welch_shapes():
     np.testing.assert_allclose(B2.sum(axis=1), [1.0, 1.0], atol=1e-6)
 
 
-# --- Full 5-state WanderGraph model tests ---
+# --- Full 5-state Wander model tests ---
 
 @pytest.fixture
 def wg_params():

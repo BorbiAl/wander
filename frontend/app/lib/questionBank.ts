@@ -1,5 +1,5 @@
 // Question bank for onboarding. Each session gets a random, non-repeating subset.
-// Content sourced from the WanderGraph Onboarding Questions design document.
+// Content sourced from the Wander Onboarding Questions design document.
 // HMM Hidden States: Explorer | Connector | Restorer | Achiever | Guardian
 
 export type SwipeQuestion = {

@@ -9,7 +9,6 @@ const DATA_PATHS = [
 
 type StoredUser = {
   email: string;
-  passwordHash: string;
   userId: string;
   state: Record<string, unknown> | null;
   createdAt: number;

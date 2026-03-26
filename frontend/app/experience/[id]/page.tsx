@@ -10,13 +10,7 @@ import { PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from '@/ap
 export default function ExperiencePage() {
   const { id } = useParams();
   const router = useRouter();
-<<<<<<< Updated upstream
   const { personality, addBooking, addPoints, addBadge, bookings, seedStatus, destination } = useApp();
-
-=======
-  const { personality, addBooking, updateBooking, addPoints, addBadge, bookings } = useApp();
-  
->>>>>>> Stashed changes
   const [showModal, setShowModal] = useState(false);
   const [bookingState, setBookingState] = useState<'date'|'confirm'|'loading'|'success'>('date');
   const [bookingResult, setBookingResult] = useState<any>(null);

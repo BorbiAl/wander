@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PersonalityResult } from './hmm';
-import { Experience, Village, Host, FriendProfile, TravelGroup, VILLAGES, EXPERIENCES, HOSTS } from './data';
+import { Experience, Village, Host, FriendProfile, VILLAGES, EXPERIENCES, HOSTS } from './data';
 
 export type Booking = {
   id: string;
@@ -18,6 +18,23 @@ export type Booking = {
 
 export type SeedStatus = 'idle' | 'loading' | 'done' | 'error';
 
+// StoredGroup is the server-side shape (members with full profiles, not just IDs)
+export type StoredMember = {
+  userId: string;
+  displayName: string;
+  vector: [number, number, number, number, number];
+  dominant: string;
+  joinedAt: number;
+};
+
+export type StoredGroup = {
+  id: string;
+  name: string;
+  members: StoredMember[];
+  destination: string;
+  createdAt: number;
+};
+
 export type AppState = {
   observations: number[];
   personality: PersonalityResult | null;
@@ -31,7 +48,6 @@ export type AppState = {
   destination: string;
   seedStatus: SeedStatus;
   friends: FriendProfile[];
-  groups: TravelGroup[];
   activeGroupId: string | null;
 }
 
@@ -46,8 +62,9 @@ type AppContextType = AppState & {
   seedLocation: (location: string) => Promise<void>;
   addFriend: (f: FriendProfile) => void;
   removeFriend: (userId: string) => void;
-  createGroup: (name: string, memberIds: string[]) => string;
-  deleteGroup: (groupId: string) => void;
+  // Group actions — all hit the backend API
+  createGroup: (name: string, destination: string) => Promise<StoredGroup | null>;
+  joinGroup: (groupId: string) => Promise<StoredGroup | null>;
   setActiveGroup: (groupId: string | null) => void;
 };
 
@@ -64,7 +81,6 @@ const defaultState: AppState = {
   destination: '',
   seedStatus: 'idle',
   friends: [],
-  groups: [],
   activeGroupId: null,
 };
 
@@ -82,10 +98,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         // Never restore a loading state — it means the previous session crashed mid-request
         if (parsed.seedStatus === 'loading' || parsed.seedStatus === 'error') parsed.seedStatus = 'idle';
         // Merge with defaultState so any new fields added to the schema get their defaults
-        setState({ ...defaultState, ...parsed });
+        // Drop old local-only `groups` field if present (now backend-managed)
+        const { groups: _groups, ...rest } = parsed;
+        void _groups; // intentionally unused
+        setState({ ...defaultState, ...rest });
         // Re-patch data arrays if a destination was previously seeded
         if (parsed.destination && parsed.seedStatus === 'done') {
-          // Re-fetch seed data silently to repopulate arrays after page refresh
           fetch(`/api/seed?location=${encodeURIComponent(parsed.destination)}`)
             .then(r => r.json())
             .then(data => patchDataArrays(data))
@@ -111,7 +129,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       VILLAGES.splice(0, VILLAGES.length, ...data.villages);
     }
     if (data.experiences?.length) {
-      // Normalise field names from Gemini response to frontend shape
       const exps = data.experiences.map((e: Record<string, unknown>) => ({
         id: e.id,
         villageId: e.village_id ?? e.villageId,
@@ -138,6 +155,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // Build a StoredMember from current user state (requires personality to be set)
+  function selfAsMember(currentState: AppState): StoredMember | null {
+    if (!currentState.personality) return null;
+    return {
+      userId: currentState.userId,
+      displayName: `Traveler #${currentState.userId.slice(-4)}`,
+      vector: currentState.personality.vector,
+      dominant: currentState.personality.dominant,
+      joinedAt: Date.now(),
+    };
+  }
+
   const setObservations = (obs: number[]) => setState(prev => ({ ...prev, observations: obs }));
   const setPersonality = (p: PersonalityResult | null) => setState(prev => ({ ...prev, personality: p }));
   const setMatches = (m: (Experience & { score: number })[]) => setState(prev => ({ ...prev, matches: m }));
@@ -152,27 +181,52 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const resetOnboarding = () => setState(prev => ({ ...prev, observations: [], personality: null, matches: [] }));
 
   const addFriend = (f: FriendProfile) => setState(prev => {
-    // Avoid duplicate — replace if userId already exists
     const filtered = prev.friends.filter(fr => fr.userId !== f.userId);
     return { ...prev, friends: [...filtered, f] };
   });
   const removeFriend = (userId: string) => setState(prev => ({
     ...prev,
     friends: prev.friends.filter(f => f.userId !== userId),
-    // Remove from any groups that only referenced this friend
-    groups: prev.groups.map(g => ({ ...g, memberIds: g.memberIds.filter(id => id !== userId) }))
-      .filter(g => g.memberIds.length > 1), // disband groups left with ≤1 member
   }));
-  const createGroup = (name: string, memberIds: string[]): string => {
-    const id = 'grp_' + Math.random().toString(36).slice(2, 8);
-    setState(prev => ({ ...prev, groups: [...prev.groups, { id, name, memberIds, createdAt: Date.now() }] }));
-    return id;
+
+  // createGroup: hits POST /api/groups, returns the created group
+  const createGroup = async (name: string, destination: string): Promise<StoredGroup | null> => {
+    const member = selfAsMember(state);
+    if (!member) return null;
+    try {
+      const res = await fetch('/api/groups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, destination, creator: member }),
+      });
+      if (!res.ok) return null;
+      const group: StoredGroup = await res.json();
+      setState(prev => ({ ...prev, activeGroupId: group.id }));
+      return group;
+    } catch {
+      return null;
+    }
   };
-  const deleteGroup = (groupId: string) => setState(prev => ({
-    ...prev,
-    groups: prev.groups.filter(g => g.id !== groupId),
-    activeGroupId: prev.activeGroupId === groupId ? null : prev.activeGroupId,
-  }));
+
+  // joinGroup: hits PATCH /api/groups/[id] to add self as member
+  const joinGroup = async (groupId: string): Promise<StoredGroup | null> => {
+    const member = selfAsMember(state);
+    if (!member) return null;
+    try {
+      const res = await fetch(`/api/groups/${groupId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ member }),
+      });
+      if (!res.ok) return null;
+      const group: StoredGroup = await res.json();
+      setState(prev => ({ ...prev, activeGroupId: group.id }));
+      return group;
+    } catch {
+      return null;
+    }
+  };
+
   const setActiveGroup = (groupId: string | null) => setState(prev => ({ ...prev, activeGroupId: groupId }));
 
   const seedLocation = async (location: string) => {
@@ -190,7 +244,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setState(prev => ({
         ...prev,
         seedStatus: 'done',
-        // Only reset booking/impact data, not personality — user may be mid-onboarding
         bookings: [],
         points: 0,
         badges: [],
@@ -199,7 +252,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }));
     } catch (err) {
       console.error('Seed error:', err);
-      // Don't persist error state — reset to idle so user can try again
       setState(prev => ({ ...prev, seedStatus: 'idle' }));
     }
   };
@@ -210,7 +262,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{
       ...state, setObservations, setPersonality, setMatches,
       addBooking, addPoints, addBadge, resetOnboarding, seedLocation,
-      addFriend, removeFriend, createGroup, deleteGroup, setActiveGroup,
+      addFriend, removeFriend, createGroup, joinGroup, setActiveGroup,
     }}>
       {children}
     </AppContext.Provider>

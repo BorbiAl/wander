@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import VillageMap from '@/components/VillageMap';
 import { useApp } from '@/app/lib/store';
+import { StoredGroup } from '@/app/lib/store';
 import { Experience, Village, EXPERIENCES, VILLAGES } from '@/app/lib/data';
 import { cwsColor, cwsLabel } from '@/app/lib/utils';
-import { matchScore } from '@/app/lib/hmm';
+import { matchScore, computeGroupVector } from '@/app/lib/hmm';
 
 const FILTERS = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore', 'sightseeing'] as const;
 
@@ -15,12 +17,14 @@ type ScoredExperience = Experience & { score: number };
 
 
 export default function DiscoverPage() {
-  const { personality, matches, setMatches, seedStatus, destination } = useApp();
+  const router = useRouter();
+  const { personality, matches, setMatches, seedStatus, destination, activeGroupId, setActiveGroup } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'match' | 'price' | 'cws'>('match');
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
   const [villages, setVillages] = useState<Village[]>(VILLAGES);
   const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
+  const [activeGroup, setActiveGroupData] = useState<StoredGroup | null>(null);
 
   useEffect(() => {
     // If user picked a destination but seeding did not succeed,
@@ -79,6 +83,21 @@ export default function DiscoverPage() {
       .sort((a, b) => b.score - a.score);
     if (scored.length > 0) setMatches(scored);
   }, [personality, experiences]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fetch active group for group-mode scoring
+  useEffect(() => {
+    if (!activeGroupId) { setActiveGroupData(null); return; }
+    fetch(`/api/groups/${activeGroupId}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(g => setActiveGroupData(g))
+      .catch(() => setActiveGroupData(null));
+  }, [activeGroupId]);
+
+  // Group vector computed from live member list
+  const groupVector = useMemo(() => {
+    if (!activeGroup || activeGroup.members.length === 0) return null;
+    return computeGroupVector(activeGroup.members.map(m => m.vector));
+  }, [activeGroup]);
 
   const villageById = useMemo(() => {
     return new Map(villages.map(v => [v.id, v]));
@@ -243,11 +262,34 @@ export default function DiscoverPage() {
           </section>
         </div>
 
+        {/* Group mode banner */}
+        {activeGroup && groupVector && (
+          <div className="mt-5 flex items-center gap-3 rounded-2xl border border-[#0B6E2A]/30 bg-[#0B6E2A]/10 px-4 py-3">
+            <span className="text-[#0B6E2A] text-lg">👥</span>
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-semibold text-[#1A2E1C]">{activeGroup.name}</span>
+              <span className="text-xs text-[#1A2E1C]/60 ml-2">
+                {activeGroup.members.length} членове · Group % score активен
+              </span>
+            </div>
+            <button onClick={() => router.push(`/group/${activeGroup.id}`)}
+              className="text-xs text-[#0B6E2A] font-semibold hover:underline shrink-0">
+              Детайли →
+            </button>
+            <button onClick={() => setActiveGroup(null)}
+              className="text-xs text-[#1A2E1C]/40 hover:text-[#1A2E1C]/70 shrink-0 ml-1">
+              ✕
+            </button>
+          </div>
+        )}
+
         <section id="discover-feed" className="mt-7 surface-card rounded-[22px] p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
             <div>
               <h3 className="font-display text-3xl text-[#1A2E1C]">Trips you can actually book</h3>
-              <p className="text-[#1A2E1C]/70 text-sm mt-1">Sorted by fit, cost, or community impact.</p>
+              <p className="text-[#1A2E1C]/70 text-sm mt-1">
+                {activeGroup ? `Scored for ${activeGroup.name} · Sorted by group fit` : 'Sorted by fit, cost, or community impact.'}
+              </p>
             </div>
             <div className="flex gap-2">
               {(['match', 'price', 'cws'] as const).map(s => (
@@ -285,6 +327,9 @@ export default function DiscoverPage() {
               const village = villageById.get(exp.villageId);
               if (!village) return null;
               const pct = Math.round(Math.min(99, exp.score * 100));
+              const groupPct = groupVector
+                ? Math.round(Math.min(99, matchScore(groupVector, exp.personalityWeights) * 100))
+                : null;
 
               return (
                 <article key={exp.id} className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[16px] p-4 flex flex-col gap-4">
@@ -294,7 +339,12 @@ export default function DiscoverPage() {
                       <h4 className="font-display text-2xl text-[#1A2E1C] leading-tight">{exp.name}</h4>
                       <p className="text-[#1A2E1C]/70 text-sm mt-1">{village.name}</p>
                     </div>
-                    <span className="bg-[#0B6E2A]/15 text-[#0B6E2A] px-3 py-1 rounded-pill text-xs font-semibold">{pct}% fit</span>
+                    <div className="flex flex-col gap-1 items-end shrink-0">
+                      <span className="bg-[#0B6E2A]/15 text-[#0B6E2A] px-3 py-1 rounded-pill text-xs font-semibold">{pct}% fit</span>
+                      {groupPct !== null && (
+                        <span className="bg-amber-400/20 text-amber-700 px-3 py-1 rounded-pill text-xs font-semibold">👥 {groupPct}%</span>
+                      )}
+                    </div>
                   </div>
 
                   <p className="text-[#1A2E1C]/70 text-sm line-clamp-3">{exp.description}</p>

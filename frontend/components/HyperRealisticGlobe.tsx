@@ -132,7 +132,7 @@ export default function HyperRealisticGlobe({ className = "" }: { className?: st
         <motion.g
           style={{ originX: center, originY: center }}
           animate={{ rotate: deg }}
-          transition={{ type: "linear", duration: 0 }}
+          transition={{ ease: "linear", duration: 0 }}
         >
           <path
             d={LAND_PATH}

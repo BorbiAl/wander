@@ -33,7 +33,7 @@ export function GroupRadarOverlay({
         <svg width={size} height={size} className="absolute inset-0">
           {/* Grid circles */}
           {[0.25, 0.5, 0.75, 1].map((scale, i) => (
-            <circle key={i} cx={cx} cy={cy} r={radius * scale} fill="none" stroke="#333" strokeWidth="1" />
+            <circle key={i} cx={cx} cy={cy} r={radius * scale} fill="none" stroke="#D6DCCD" strokeWidth="1" />
           ))}
           {/* Axes */}
           {PERSONALITIES.map((_, i) => {
@@ -44,7 +44,7 @@ export function GroupRadarOverlay({
                 x1={cx} y1={cy}
                 x2={cx + radius * Math.cos(angle)}
                 y2={cy + radius * Math.sin(angle)}
-                stroke="#333" strokeWidth="1"
+                stroke="#D6DCCD" strokeWidth="1"
               />
             );
           })}
@@ -76,7 +76,7 @@ export function GroupRadarOverlay({
               style={{ left: x, top: y }}
             >
               <span className="text-xl">{PERSONALITY_INFO[p].emoji}</span>
-              <span className="text-[10px] text-text-2 mt-1">{p}</span>
+              <span className="text-[10px] text-[#1A2E1C]/65 mt-1">{p}</span>
             </div>
           );
         })}
@@ -92,7 +92,7 @@ export function GroupRadarOverlay({
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ background: color }}
               />
-              <span className="text-xs text-text-2">{member.displayName}</span>
+              <span className="text-xs text-[#1A2E1C]/65">{member.displayName}</span>
             </div>
           );
         })}

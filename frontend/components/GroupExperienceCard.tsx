@@ -27,31 +27,31 @@ export function GroupExperienceCard({
   const groupPct = Math.round(exp.score * 100);
 
   function fitColor(score: number): string {
-    if (score >= 0.6) return '#4ade80'; // green
-    if (score >= 0.4) return '#fbbf24'; // amber
-    return '#f87171';                   // red
+    if (score >= 0.6) return '#0B6E2A';
+    if (score >= 0.4) return '#B45309';
+    return '#B91C1C';
   }
 
   return (
     <div
       onClick={() => router.push(`/experience/${exp.id}`)}
-      className="w-full bg-surface border border-[#222] rounded-card p-4 hover:border-[#333] transition-all cursor-pointer flex items-center gap-4"
+      className="w-full bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-4 hover:border-[#A8B09F] transition-all cursor-pointer flex items-center gap-4"
     >
-      <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center text-2xl shrink-0">
+      <div className="w-12 h-12 rounded-lg bg-[#0B6E2A]/10 flex items-center justify-center text-2xl shrink-0">
         {TYPE_EMOJIS[exp.type] ?? '🌍'}
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2 truncate">
-          <h4 className="font-medium text-[15px] text-white truncate">{exp.name}</h4>
-          <span className="text-text-3 text-xs truncate">{village?.name}</span>
+          <h4 className="font-medium text-[15px] text-[#1A2E1C] truncate">{exp.name}</h4>
+          <span className="text-[#1A2E1C]/40 text-xs truncate">{village?.name}</span>
         </div>
-        <div className="text-text-2 text-xs mt-0.5">
+        <div className="text-[#1A2E1C]/65 text-xs mt-0.5">
           {host?.name} · ⭐ {host?.rating}
         </div>
         <div className="flex items-center gap-2 mt-2">
-          <span className="text-text-2 text-xs">€{exp.price} · {exp.duration}</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-pill bg-surface-2 border border-[#333] text-text-2 capitalize">
+          <span className="text-[#1A2E1C]/65 text-xs">€{exp.price} · {exp.duration}</span>
+          <span className="text-[10px] px-2 py-0.5 rounded-pill bg-[#E5E9DF] border border-[#D6DCCD] text-[#1A2E1C]/65 capitalize">
             {exp.type}
           </span>
         </div>
@@ -59,15 +59,15 @@ export function GroupExperienceCard({
         {/* Member fit bar */}
         {members.length > 0 && (
           <div className="flex items-center gap-1.5 mt-2">
-            <span className="text-[10px] text-text-3 mr-1">Fits:</span>
+            <span className="text-[10px] text-[#1A2E1C]/40 mr-1">Fits:</span>
             {members.map((member, i) => {
               const score = exp.memberScores[i] ?? exp.score;
               const color = fitColor(score);
               return (
                 <div key={i} title={`${member.displayName}: ${Math.round(score * 100)}%`}>
                   <div
-                    className="w-4 h-4 rounded-sm flex items-center justify-center text-[8px]"
-                    style={{ background: `${color}33`, border: `1px solid ${color}` }}
+                    className="w-5 h-5 rounded-sm flex items-center justify-center text-[9px]"
+                    style={{ background: `${color}18`, border: `1px solid ${color}55` }}
                   >
                     <span style={{ color }}>
                       {PERSONALITY_INFO[member.dominant as keyof typeof PERSONALITY_INFO]?.emoji ?? '●'}
@@ -81,9 +81,9 @@ export function GroupExperienceCard({
       </div>
 
       <div className="flex flex-col items-end shrink-0">
-        <div className="text-xl font-bold text-amber-400">{groupPct}%</div>
-        <div className="text-[10px] text-text-3 mb-2">Group</div>
-        <button className="text-xs text-text-2 hover:text-white transition-colors">View →</button>
+        <div className="text-xl font-bold text-amber-600">{groupPct}%</div>
+        <div className="text-[10px] text-[#1A2E1C]/40 mb-2">Група</div>
+        <button className="text-xs text-[#1A2E1C]/65 hover:text-[#1A2E1C] transition-colors">Виж →</button>
       </div>
     </div>
   );

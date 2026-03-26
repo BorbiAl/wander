@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
 import MarketingGlobe, { type DestinationNode } from '../components/MarketingGlobe';
-import { MapPin, ChevronDown, Play, Dices, Globe2, X } from 'lucide-react';
+import { MapPin, ChevronDown, Play, Dices, Globe2, X, Users } from 'lucide-react';
 
 type ApiVillage = {
   id: string;
@@ -103,12 +103,13 @@ function buildCityHubNodes(villageStats?: Map<string, CountryHubStats>): Destina
 
 export default function LandingPage() {
   const router = useRouter();
-  const { seedLocation, seedStatus } = useApp();
+  const { seedLocation, seedStatus, activeGroupId, personality } = useApp();
   const [input, setInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [destinations, setDestinations] = useState<DestinationNode[]>([]);
+  const [activeGroup, setActiveGroupData] = useState<{ id: string; name: string; memberCount: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -154,6 +155,18 @@ export default function LandingPage() {
     loadDestinations();
   }, []);
 
+  // Fetch active group info for the banner
+  useEffect(() => {
+    if (!activeGroupId) { setActiveGroupData(null); return; }
+    fetch(`/api/groups/${activeGroupId}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(g => {
+        if (g) setActiveGroupData({ id: g.id, name: g.name, memberCount: g.members.length });
+        else setActiveGroupData(null);
+      })
+      .catch(() => setActiveGroupData(null));
+  }, [activeGroupId]);
+
   const filtered =
     input.length > 1
       ? destinations.filter((s) => s.name.toLowerCase().includes(input.toLowerCase()))
@@ -166,6 +179,22 @@ export default function LandingPage() {
     setShowSuggestions(false);
     await seedLocation(trimmed);
     router.push('/onboarding');
+  };
+
+  const handleGroupSubmit = async (loc: string) => {
+    if (!activeGroupId) return;
+    const trimmed = loc.trim();
+    if (!trimmed) return;
+    setInput(trimmed);
+    setShowSuggestions(false);
+    // Update destination on the group backend + seed locally
+    await fetch(`/api/groups/${activeGroupId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ destination: trimmed }),
+    });
+    await seedLocation(trimmed);
+    router.push(`/group/${activeGroupId}`);
   };
 
   const handleLucky = () => {
@@ -262,7 +291,41 @@ export default function LandingPage() {
               </AnimatePresence>
             </div>
 
+            {/* Active group banner */}
+            <AnimatePresence>
+              {activeGroup && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                  className="mb-4 flex items-center gap-3 rounded-2xl border border-[#0B6E2A]/30 bg-[#0B6E2A]/10 px-4 py-3"
+                >
+                  <Users className="h-4 w-4 text-[#0B6E2A] shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-[#1A2E1C]">{activeGroup.name}</span>
+                    <span className="text-xs text-[#1A2E1C]/60 ml-2">
+                      {activeGroup.memberCount} член{activeGroup.memberCount !== 1 ? 'а' : ''}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => router.push(`/group/${activeGroup.id}`)}
+                    className="text-xs text-[#0B6E2A] font-semibold hover:underline shrink-0"
+                  >
+                    Виж групата →
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="flex flex-wrap items-center gap-4">
+              {activeGroup && personality && (
+                <button
+                  onClick={() => void handleGroupSubmit(input || destinations[Math.floor(Math.random() * destinations.length)]?.name || '')}
+                  disabled={seedStatus === 'loading'}
+                  className="flex items-center gap-2 rounded-full bg-[#0B6E2A] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#095A22] disabled:opacity-50"
+                >
+                  <Users className="h-4 w-4" />
+                  {seedStatus === 'loading' ? 'Зарежда…' : `Планирай с ${activeGroup.name}`}
+                </button>
+              )}
               <button
                 onClick={handleLucky}
                 disabled={seedStatus === 'loading'}

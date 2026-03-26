@@ -1,0 +1,23 @@
+[
+  {
+    "id": "grp_mn7qxd5c3v8",
+    "name": "asd",
+    "destination": "",
+    "members": [
+      {
+        "userId": "user_4j9rbg",
+        "displayName": "Traveler #9rbg",
+        "vector": [
+          0.32,
+          0.04,
+          0.16,
+          0.4,
+          0.08
+        ],
+        "dominant": "Achiever",
+        "joinedAt": 1774546093776
+      }
+    ],
+    "createdAt": 1774546093776
+  }
+]

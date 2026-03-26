@@ -104,7 +104,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('wandergraph_state');
+    const saved = localStorage.getItem('Wander_state');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -136,7 +136,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('wandergraph_state', JSON.stringify(state));
+      localStorage.setItem('Wander_state', JSON.stringify(state));
     }
   }, [state, isLoaded]);
 
@@ -288,7 +288,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
       const merged = { ...defaultState, ...(rest as Partial<AppState>), email, userId };
       setState(merged);
-      localStorage.setItem('wandergraph_state', JSON.stringify(merged));
+      localStorage.setItem('Wander_state', JSON.stringify(merged));
       if (merged.destination && merged.seedStatus === 'done') {
         fetch(`/api/seed?location=${encodeURIComponent(merged.destination)}`)
           .then(r => r.json())
@@ -299,7 +299,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       // New account — keep current local state but stamp it with the account
       setState(prev => {
         const next = { ...prev, email, userId };
-        localStorage.setItem('wandergraph_state', JSON.stringify(next));
+        localStorage.setItem('Wander_state', JSON.stringify(next));
         return next;
       });
     }
@@ -308,7 +308,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     const fresh = { ...defaultState, userId: 'user_' + Math.random().toString(36).slice(2, 8) };
     setState(fresh);
-    localStorage.setItem('wandergraph_state', JSON.stringify(fresh));
+    localStorage.setItem('Wander_state', JSON.stringify(fresh));
   };
 
   const saveToAccount = async (email: string, userId: string): Promise<{ ok: boolean; error?: string }> => {

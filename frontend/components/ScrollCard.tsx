@@ -25,7 +25,9 @@ export function ScrollCard({
     <div className="w-full max-w-md mx-auto bg-surface border border-[#222] rounded-card p-6 flex flex-col">
       <div className="text-text-3 text-[11px] uppercase mb-4">Read this experience</div>
       <h3 className="font-display text-[22px] text-white mb-4">{title}</h3>
-      <p className="font-sans text-base text-text-2 leading-relaxed mb-6">{description}</p>
+      <div className="max-h-[40vh] overflow-y-auto pr-1 mb-6">
+        <p className="font-sans text-base text-text-2 leading-relaxed">{description}</p>
+      </div>
       
       <div className="w-full h-[1px] bg-[#333] mb-6" />
       

@@ -69,16 +69,15 @@ export async function GET() {
     if (Array.isArray(data) && data.length > 0) {
       const cppVillages = data.map(normalise);
       const merged = new Map<string, (typeof VILLAGES)[number]>();
-      for (const v of VILLAGES) merged.set(v.id, v);
       for (const v of seedVillages) merged.set(String(v.id), v as (typeof VILLAGES)[number]);
       for (const v of cppVillages) merged.set(String(v.id), v as (typeof VILLAGES)[number]);
       return NextResponse.json(Array.from(merged.values()));
     }
     throw new Error('empty response');
   } catch {
-    const merged = new Map<string, (typeof VILLAGES)[number]>();
-    for (const v of VILLAGES) merged.set(v.id, v);
-    for (const v of seedVillages) merged.set(String(v.id), v as (typeof VILLAGES)[number]);
-    return NextResponse.json(Array.from(merged.values()));
+    if (seedVillages.length > 0) {
+      return NextResponse.json(seedVillages);
+    }
+    return NextResponse.json(VILLAGES);
   }
 }

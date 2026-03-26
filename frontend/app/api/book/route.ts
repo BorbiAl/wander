@@ -1,5 +1,81 @@
 import { NextResponse } from 'next/server';
 import { getExperience, getVillage } from '@/app/lib/utils';
+import { access, readFile } from 'node:fs/promises';
+import path from 'node:path';
+
+type ResolvedExperience = {
+  id: string;
+  villageId: string;
+  hostId: string;
+};
+
+type ResolvedVillage = {
+  id: string;
+  name: string;
+  cws: number;
+};
+
+async function readFirstJsonArray(candidatePaths: string[]): Promise<Record<string, unknown>[]> {
+  for (const p of candidatePaths) {
+    try {
+      await access(p);
+      const raw = await readFile(p, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed as Record<string, unknown>[];
+    } catch {
+      // Try next candidate path.
+    }
+  }
+  return [];
+}
+
+async function resolveExperience(experienceId: string): Promise<ResolvedExperience | null> {
+  const local = getExperience(experienceId);
+  if (local) {
+    return { id: local.id, villageId: local.villageId, hostId: local.hostId };
+  }
+
+  const candidatePaths = [
+    path.resolve(process.cwd(), 'data', 'experiences.json'),
+    path.resolve(process.cwd(), '..', 'data', 'experiences.json'),
+    path.resolve(process.cwd(), 'engine', 'data', 'experiences.json'),
+    path.resolve(process.cwd(), '..', 'engine', 'data', 'experiences.json'),
+  ];
+
+  const experiences = await readFirstJsonArray(candidatePaths);
+  const found = experiences.find((e) => String(e.id ?? '') === experienceId);
+  if (!found) return null;
+
+  return {
+    id: String(found.id ?? ''),
+    villageId: String(found.village_id ?? found.villageId ?? ''),
+    hostId: String(found.host_id ?? found.hostId ?? ''),
+  };
+}
+
+async function resolveVillage(villageId: string): Promise<ResolvedVillage | null> {
+  const local = getVillage(villageId);
+  if (local) {
+    return { id: local.id, name: local.name, cws: Number(local.cws ?? 50) || 50 };
+  }
+
+  const candidatePaths = [
+    path.resolve(process.cwd(), 'data', 'villages.json'),
+    path.resolve(process.cwd(), '..', 'data', 'villages.json'),
+    path.resolve(process.cwd(), 'engine', 'data', 'villages.json'),
+    path.resolve(process.cwd(), '..', 'engine', 'data', 'villages.json'),
+  ];
+
+  const villages = await readFirstJsonArray(candidatePaths);
+  const found = villages.find((v) => String(v.id ?? '') === villageId);
+  if (!found) return null;
+
+  return {
+    id: String(found.id ?? ''),
+    name: String(found.name ?? ''),
+    cws: Number(found.cws ?? 50) || 50,
+  };
+}
 
 export async function POST(req: Request) {
   try {
@@ -22,8 +98,8 @@ export async function POST(req: Request) {
       const data = await res.json();
 
       // Normalise C++ response → frontend shape
-      const exp = getExperience(experienceId);
-      const village = exp ? getVillage(exp.villageId) : null;
+      const exp = await resolveExperience(experienceId);
+      const village = exp ? await resolveVillage(exp.villageId) : null;
       const cws_base = Number(village?.cws ?? 50) || 50;
       const points = 10 + Math.max(0, Math.floor((100 - cws_base) / 5));
 
@@ -37,9 +113,9 @@ export async function POST(req: Request) {
       });
     } catch {
       // Fallback: compute locally
-      const exp = getExperience(experienceId);
+      const exp = await resolveExperience(experienceId);
       if (!exp) return NextResponse.json({ error: 'Experience not found' }, { status: 404 });
-      const village = getVillage(exp.villageId);
+      const village = await resolveVillage(exp.villageId);
       if (!village) return NextResponse.json({ error: 'Village not found' }, { status: 404 });
 
       const split = {

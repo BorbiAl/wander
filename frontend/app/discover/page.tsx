@@ -166,7 +166,7 @@ export default function DiscoverPage() {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20"
     >
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 pb-32">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8 pb-32">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
           <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[32px] p-6 md:p-8 flex flex-col gap-6 transition-all hover:bg-white/80">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

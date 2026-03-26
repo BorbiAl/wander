@@ -19,15 +19,15 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [obs, setObs] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
-  const seedResolveRef = useRef<(() => void) | null>(null);
+  const pendingNavigate = useRef(false);
 
-  // When seedStatus changes to done/idle, resolve any pending navigation wait
+  // When seedStatus finishes (done/idle), navigate if we were waiting for it
   useEffect(() => {
-    if (seedStatus !== 'loading' && seedResolveRef.current) {
-      seedResolveRef.current();
-      seedResolveRef.current = null;
+    if (pendingNavigate.current && seedStatus !== 'loading') {
+      pendingNavigate.current = false;
+      router.push('/discover');
     }
-  }, [seedStatus]);
+  }, [seedStatus, router]);
 
   // Generate a random set of questions once per session
   const questions = useMemo(() => generateQuestions(), []);
@@ -63,11 +63,12 @@ export default function OnboardingPage() {
         setObservations(newObs);
         setPersonality(data.personality);
         setMatches(data.matches);
-        // Wait for destination seed to finish before navigating
+        // If seed is still running, let the useEffect navigate once it finishes
         if (seedStatus === 'loading') {
-          await new Promise<void>(resolve => { seedResolveRef.current = resolve; });
+          pendingNavigate.current = true;
+        } else {
+          router.push('/discover');
         }
-        router.push('/discover');
       } catch (e) {
         console.error(e);
         setLoading(false);

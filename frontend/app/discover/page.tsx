@@ -13,47 +13,25 @@ const FILTERS = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'vol
 
 type ScoredExperience = Experience & { score: number };
 
-function inferCountryLabel(village: Village, destination: string): string {
-  if (destination.includes(',')) {
-    const chunks = destination.split(',').map(s => s.trim()).filter(Boolean);
-    if (chunks.length > 1) return chunks[chunks.length - 1];
-  }
-  if (village.region.includes(',')) {
-    const chunks = village.region.split(',').map(s => s.trim()).filter(Boolean);
-    if (chunks.length > 1) return chunks[chunks.length - 1];
-  }
-  return village.region || 'Unknown';
-}
-
-function projectToGlobe(lat: number, lng: number, spinDeg: number) {
-  const spin = (spinDeg * Math.PI) / 180;
-  const phi = (lat * Math.PI) / 180;
-  const theta = (lng * Math.PI) / 180 + spin;
-
-  const x = Math.cos(phi) * Math.sin(theta);
-  const y = Math.sin(phi);
-  const z = Math.cos(phi) * Math.cos(theta);
-
-  return { x, y, z };
-}
 
 export default function DiscoverPage() {
-  const { personality, matches, setMatches, destination } = useApp();
+  const { personality, matches, setMatches, seedStatus } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'match' | 'price' | 'cws'>('match');
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
   const [villages, setVillages] = useState<Village[]>(VILLAGES);
   const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
-  const [spinDeg, setSpinDeg] = useState(0);
 
   useEffect(() => {
-    const ticker = setInterval(() => {
-      setSpinDeg(prev => (prev + 0.2) % 360);
-    }, 40);
-    return () => clearInterval(ticker);
-  }, []);
+    // If the store already seeded location-specific data, use those in-memory arrays directly.
+    // The /api/villages route falls back to static Bulgarian data when the C++ backend is down,
+    // which would overwrite the seeded data with the wrong country.
+    if (seedStatus === 'done') {
+      setVillages([...VILLAGES]);
+      setExperiences([...EXPERIENCES]);
+      return;
+    }
 
-  useEffect(() => {
     let mounted = true;
 
     async function loadLiveData() {
@@ -81,7 +59,7 @@ export default function DiscoverPage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [seedStatus]);
 
   useEffect(() => {
     if (!personality) return;
@@ -92,7 +70,7 @@ export default function DiscoverPage() {
       }))
       .sort((a, b) => b.score - a.score);
     if (scored.length > 0) setMatches(scored);
-  }, [personality, experiences, setMatches]);
+  }, [personality, experiences]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const villageById = useMemo(() => {
     return new Map(villages.map(v => [v.id, v]));
@@ -137,24 +115,9 @@ export default function DiscoverPage() {
     return res;
   }, [scoredMatches, filterType, sortBy, selectedVillageId, villageById]);
 
-  const luckyChoice = useMemo(() => {
-    if (filteredMatches.length === 0) return null;
-    return filteredMatches[Math.floor(Math.random() * filteredMatches.length)];
-  }, [filteredMatches]);
-
-  const globeNodes = useMemo(() => {
-    return villages.map(v => {
-      const p = projectToGlobe(v.lat, v.lng, spinDeg);
-      const scale = 0.72 + ((p.z + 1) / 2) * 0.5;
-      return {
-        village: v,
-        visible: p.z > -0.2,
-        xPct: 50 + p.x * 39,
-        yPct: 50 - p.y * 39,
-        scale,
-      };
-    });
-  }, [villages, spinDeg]);
+  const suggestedRoutes = useMemo(() => {
+    return scoredMatches.slice(0, 3);
+  }, [scoredMatches]);
 
   const avgCws = useMemo(() => {
     if (villages.length === 0) return 0;
@@ -220,59 +183,22 @@ export default function DiscoverPage() {
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[560px] aspect-square rounded-full border border-[#385047] bg-[radial-gradient(circle_at_36%_30%,#2A3A33_0%,#121A16_62%)] overflow-hidden">
-              <div
-                className="absolute inset-0 opacity-35"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(to right, rgba(200,245,90,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(200,245,90,0.1) 1px, transparent 1px)',
-                  backgroundSize: '12% 100%, 100% 12%',
-                }}
+            <div className="w-full rounded-[14px] overflow-hidden border border-[#385047]" style={{ height: 420 }}>
+              <VillageMap
+                onSelectVillage={v => setSelectedVillageId(v.id)}
+                seedStatus={seedStatus}
               />
-
-              {globeNodes.filter(n => n.visible).map(node => {
-                const isSelected = selectedVillageId === node.village.id;
-                return (
-                  <button
-                    key={node.village.id}
-                    onClick={() => setSelectedVillageId(node.village.id)}
-                    className="absolute -translate-x-1/2 -translate-y-1/2"
-                    style={{
-                      left: `${node.xPct}%`,
-                      top: `${node.yPct}%`,
-                      transform: `translate(-50%, -50%) scale(${node.scale})`,
-                    }}
-                    title={`${node.village.name} (${inferCountryLabel(node.village, destination)})`}
-                  >
-                    <span
-                      className="block rounded-full border border-black/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all"
-                      style={{
-                        width: isSelected ? 16 : 11,
-                        height: isSelected ? 16 : 11,
-                        background: cwsColor(node.village.cws),
-                        boxShadow: isSelected
-                          ? `0 0 0 5px rgba(200,245,90,0.2), 0 0 15px ${cwsColor(node.village.cws)}`
-                          : `0 0 10px ${cwsColor(node.village.cws)}`,
-                      }}
-                    />
-                  </button>
-                );
-              })}
             </div>
           </section>
 
           <section className="xl:col-span-5 bg-[#10151B] border border-[#2A3641] rounded-[22px] p-4 md:p-6 flex flex-col gap-4">
-            <div className="h-[230px] overflow-hidden rounded-[14px] border border-[#2A3946]">
-              <VillageMap onSelectVillage={v => setSelectedVillageId(v.id)} />
-            </div>
-
             <div className="bg-[#121920] border border-[#2A3946] rounded-[14px] p-4">
               {selectedVillage ? (
                 <>
                   <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Selected node</p>
                   <h2 className="font-display text-2xl text-white leading-tight">{selectedVillage.name}</h2>
                   <p className="text-text-2 text-sm mt-1">
-                    {inferCountryLabel(selectedVillage, destination)} · {selectedVillage.region}
+                    {selectedVillage.region}
                   </p>
                   <p className="text-text-2 text-sm mt-3 line-clamp-2">{selectedVillage.description}</p>
                   <div className="mt-4 flex items-center justify-between">
@@ -283,25 +209,27 @@ export default function DiscoverPage() {
                   </div>
                 </>
               ) : (
-                <p className="text-text-2 text-sm">Click a globe node to lock recommendations to one place.</p>
+                <p className="text-text-2 text-sm">Click a village on the map to lock recommendations to one place.</p>
               )}
             </div>
 
-            {luckyChoice && (
-              <div className="bg-[#0F151C] border border-[#2A3742] rounded-[14px] p-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Suggested route</p>
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h3 className="font-display text-xl text-white leading-tight">{luckyChoice.name}</h3>
-                    <p className="text-text-2 text-sm mt-1">{villageById.get(luckyChoice.villageId)?.name || 'Unknown village'}</p>
+            {suggestedRoutes.length > 0 && (
+              <div className="bg-[#0F151C] border border-[#2A3742] rounded-[14px] p-4 flex flex-col gap-3">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-text-3">Suggested routes</p>
+                {suggestedRoutes.map((route, i) => (
+                  <div key={route.id} className={`flex flex-wrap items-center justify-between gap-3 ${i > 0 ? 'border-t border-[#1E2D3A] pt-3' : ''}`}>
+                    <div>
+                      <h3 className="font-display text-lg text-white leading-tight">{route.name}</h3>
+                      <p className="text-text-2 text-sm mt-0.5">{villageById.get(route.villageId)?.name || 'Unknown village'}</p>
+                    </div>
+                    <Link
+                      href={`/experience/${route.id}`}
+                      className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
+                    >
+                      Open
+                    </Link>
                   </div>
-                  <Link
-                    href={`/experience/${luckyChoice.id}`}
-                    className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
-                  >
-                    Open
-                  </Link>
-                </div>
+                ))}
               </div>
             )}
           </section>

@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
+import type { Map as LeafletMap } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { VILLAGES } from '@/app/lib/data';
 import { cwsColor } from '@/app/lib/utils';
@@ -36,6 +37,7 @@ export default function VillageMap({
   visited?: string[];
   seedStatus?: SeedStatus;
 }) {
+  const mapRef = useRef<LeafletMap | null>(null);
   // Re-read VILLAGES from the mutable array when seed completes
   const [villages, setVillages] = useState([...VILLAGES]);
   useEffect(() => {
@@ -59,6 +61,7 @@ export default function VillageMap({
         zoom={7}
         style={{ width: '100%', height: '100%', background: '#E5E9DF' }}
         zoomControl={false}
+        ref={mapRef}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -93,14 +96,6 @@ export default function VillageMap({
                 <div className="w-full h-1.5 bg-[#D6DCCD] rounded-full mb-4 overflow-hidden">
                   <div className="h-full" style={{ width: `${village.cws}%`, backgroundColor: cwsColor(village.cws) }} />
                 </div>
-                {onSelectVillage && (
-                  <button
-                    onClick={() => onSelectVillage(village)}
-                    className="w-full text-center text-xs text-black font-medium py-2 rounded-pill bg-accent hover:bg-accent-dim transition-colors"
-                  >
-                    View experiences →
-                  </button>
-                )}
               </div>
             </Popup>
           </CircleMarker>

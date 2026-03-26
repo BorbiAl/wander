@@ -89,8 +89,8 @@ export default function FriendsPage() {
   function handleAddFriend() {
     setAddError('');
     const friend = decodeProfileLink(addInput.trim());
-    if (!friend) { setAddError('Невалиден код. Постави пълния линк или base64 кода на приятел.'); return; }
-    if (friend.userId === userId) { setAddError('Това е твоят собствен профил.'); return; }
+    if (!friend) { setAddError('Invalid code. Paste the full link or base64 code of a friend.'); return; }
+    if (friend.userId === userId) { setAddError('This is your own profile.'); return; }
     addFriend(friend);
     setAddInput('');
   }
@@ -107,11 +107,11 @@ export default function FriendsPage() {
     setJoinError('');
     const id = joinInput.trim();
     if (!id) return;
-    if (!personality) { setJoinError('Трябва да завършиш onboarding-а първо.'); return; }
+    if (!personality) { setJoinError('You need to complete onboarding first.'); return; }
     setJoining(true);
     const group = await joinGroup(id);
     setJoining(false);
-    if (!group) { setJoinError('Групата не е намерена. Провери ID-то.'); return; }
+    if (!group) { setJoinError('Group not found. Check the ID.'); return; }
     setJoinInput('');
     await refreshGroups();
     setActiveGroup(group.id);
@@ -138,9 +138,9 @@ export default function FriendsPage() {
   if (!personality) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#E5E9DF] text-[#1A2E1C] font-sans px-4 text-center">
-        <p className="text-muted mb-4">Завърши своя профил първо, за да споделяш и създаваш групи.</p>
+        <p className="text-muted mb-4">Complete your profile first to share and create groups.</p>
         <button onClick={() => router.push('/onboarding')} className="rounded-full bg-[#0B6E2A] text-white px-6 py-2 shadow-md">
-          Започни Onboarding
+          Start Onboarding
         </button>
       </div>
     );
@@ -155,19 +155,19 @@ export default function FriendsPage() {
     >
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 pb-24 flex flex-col gap-12">
 
-        {/* ── Section 1: Твоят профил ── */}
+        {/* ── Section 1: Your profile ── */}
         <section>
-          <h1 className="text-3xl font-bold tracking-tighter leading-tight mb-1" style={{ color: dominantColor }}>Твоят профил</h1>
-          <p className="text-[#1A2E1C]/65 text-sm mb-6">Сподели своя код, за да те добавят като спътник.</p>
+          <h1 className="text-3xl font-bold tracking-tighter leading-tight mb-1" style={{ color: dominantColor }}>Your profile</h1>
+          <p className="text-[#1A2E1C]/65 text-sm mb-6">Share your link so others can add you as a companion.</p>
 
           <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-6 flex flex-col gap-4">
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <div className="text-xs text-[#1A2E1C]/40 mb-1">Твоят ID</div>
+                <div className="text-xs text-[#1A2E1C]/40 mb-1">Your ID</div>
                 <div className="font-mono text-sm text-[#1A2E1C]">{userId}</div>
               </div>
               <div className="text-right">
-                <div className="text-xs text-[#1A2E1C]/40 mb-1">Тип</div>
+                <div className="text-xs text-[#1A2E1C]/40 mb-1">Type</div>
                 <div className="text-sm font-medium" style={{ color: dominantColor }}>
                   {PERSONALITY_INFO[personality.dominant as keyof typeof PERSONALITY_INFO].emoji} {personality.dominant}
                 </div>
@@ -176,10 +176,10 @@ export default function FriendsPage() {
             <div className="flex gap-3 flex-wrap">
               <button onClick={handleCopyProfile}
                 className="flex-1 min-w-[140px] bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-full hover:bg-[#095A22] transition-colors">
-                {profileCopied ? 'Копирано!' : 'Копирай профил линк'}
+                {profileCopied ? 'Copied!' : 'Copy profile link'}
               </button>
               <button onClick={() => setShowProfileQR(v => !v)} className={`flex-1 min-w-[120px] ${secondaryBtnCls}`}>
-                {showProfileQR ? 'Скрий QR' : 'Покажи QR'}
+                {showProfileQR ? 'Hide QR' : 'Show QR'}
               </button>
             </div>
             <AnimatePresence>
@@ -188,7 +188,7 @@ export default function FriendsPage() {
                   exit={{ opacity: 0, height: 0 }} className="flex flex-col items-center gap-2 overflow-hidden">
                   <ProfileQR url={shareUrl} size={180} />
                   <p className="text-xs text-[#1A2E1C]/40 text-center max-w-[200px]">
-                    Скенирай с приятел за да те добави
+                    Scan with a friend to add you as a companion
                   </p>
                 </motion.div>
               )}
@@ -196,27 +196,27 @@ export default function FriendsPage() {
           </div>
         </section>
 
-        {/* ── Section 2: Спътници ── */}
+        {/* ── Section 2: Companions ── */}
         <section>
-          <h2 className="text-xl mb-4">Спътници</h2>
+          <h2 className="text-xl mb-4">Companions</h2>
           <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 mb-4 flex flex-col gap-3">
-            <p className="text-xs text-[#1A2E1C]/65">Постави профил линк или base64 код на приятел:</p>
+            <p className="text-xs text-[#1A2E1C]/65">Paste a profile link or base64 code of a friend:</p>
             <div className="flex gap-2">
               <input type="text" value={addInput}
                 onChange={e => { setAddInput(e.target.value); setAddError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleAddFriend()}
-                placeholder="https://… или base64 код"
+                placeholder="https://… or base64 code"
                 className={inputCls} />
               <button onClick={handleAddFriend}
                 className="bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#095A22] transition-colors whitespace-nowrap">
-                Добави
+                Add
               </button>
             </div>
             {addError && <p className="text-xs text-red-600">{addError}</p>}
           </div>
 
           {friends.length === 0 ? (
-            <p className="text-[#1A2E1C]/40 text-sm">Нямаш спътници все още.</p>
+            <p className="text-[#1A2E1C]/40 text-sm">No companions yet.</p>
           ) : (
             <AnimatePresence>
               {friends.map(friend => {
@@ -244,18 +244,18 @@ export default function FriendsPage() {
           )}
         </section>
 
-        {/* ── Section 3: Групи ── */}
+        {/* ── Section 3: Travel groups ── */}
         <section>
-          <h2 className="text-xl mb-4">Групи за пътуване</h2>
+          <h2 className="text-xl mb-4">Travel groups</h2>
 
           {/* Join group */}
           <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 mb-4 flex flex-col gap-3">
-            <p className="text-xs text-[#1A2E1C]/65 font-medium">Присъедини се към съществуваща група:</p>
+            <p className="text-xs text-[#1A2E1C]/65 font-medium">Join an existing group:</p>
             <div className="flex gap-2">
               <input type="text" value={joinInput}
                 onChange={e => { setJoinInput(e.target.value); setJoinError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleJoinById()}
-                placeholder="Group ID или линк"
+                placeholder="Group ID or link"
                 className={inputCls} />
               <button onClick={handleJoinById} disabled={joining} className={primaryBtnCls}>
                 {joining ? '…' : 'Join'}
@@ -266,19 +266,19 @@ export default function FriendsPage() {
 
           {/* Create group */}
           <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 mb-6 flex flex-col gap-3">
-            <p className="text-xs text-[#1A2E1C]/65 font-medium">Създай нова група:</p>
+            <p className="text-xs text-[#1A2E1C]/65 font-medium">Create a new group:</p>
             <div className="flex gap-2">
               <input type="text" value={newGroupName}
                 onChange={e => setNewGroupName(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleCreateGroup()}
-                placeholder="Име на групата (напр. Алпи 2025)"
+                placeholder="Group name (e.g. Alps 2025)"
                 className={inputCls} />
               <button onClick={handleCreateGroup} disabled={creating || !newGroupName.trim()} className={primaryBtnCls}>
-                {creating ? '…' : 'Създай'}
+                {creating ? '…' : 'Create'}
               </button>
             </div>
             <p className="text-[11px] text-[#1A2E1C]/40">
-              След като създадеш група, сподели линка с приятели — те join-ват директно.
+              Once created, share the invite link with friends — they join directly.
             </p>
           </div>
 
@@ -286,7 +286,7 @@ export default function FriendsPage() {
           {groupsLoading ? (
             <div className="h-20 bg-[#D6DCCD] rounded-[24px] animate-pulse" />
           ) : myGroups.length === 0 ? (
-            <p className="text-[#1A2E1C]/40 text-sm">Не си в никоя група все още.</p>
+            <p className="text-[#1A2E1C]/40 text-sm">You're not in any group yet.</p>
           ) : (
             <div className="flex flex-col gap-4">
               {myGroups.map(group => (
@@ -295,7 +295,7 @@ export default function FriendsPage() {
                     <div className="min-w-0">
                       <h3 className="font-medium text-[#1A2E1C]">{group.name}</h3>
                       <p className="text-xs text-[#1A2E1C]/40 mt-0.5">
-                        {group.members.length} член{group.members.length !== 1 ? 'а' : ''} ·{' '}
+                        {group.members.length} member{group.members.length !== 1 ? 's' : ''} ·{' '}
                         {group.members.map(m => m.displayName).join(', ')}
                       </p>
                       {group.destination && (
@@ -304,7 +304,7 @@ export default function FriendsPage() {
                     </div>
                     <button onClick={() => handleDeleteGroup(group.id)}
                       className="text-[#1A2E1C]/30 hover:text-red-600 transition-colors text-xs shrink-0">
-                      Разпусни
+                      Disband
                     </button>
                   </div>
 
@@ -326,11 +326,11 @@ export default function FriendsPage() {
 
                   <div className="flex gap-2">
                     <button onClick={() => handleCopyGroupLink(group.id)} className={`flex-1 ${secondaryBtnCls}`}>
-                      {copiedGroupId === group.id ? 'Копирано!' : 'Копирай invite линк'}
+                      {copiedGroupId === group.id ? 'Copied!' : 'Copy invite link'}
                     </button>
                     <button onClick={() => handlePlanTrip(group)}
                       className="flex-1 bg-[#0B6E2A] text-white text-sm px-3 py-2 rounded-full hover:bg-[#095A22] transition-colors">
-                      Планирай заедно →
+                      Plan together →
                     </button>
                   </div>
                 </div>

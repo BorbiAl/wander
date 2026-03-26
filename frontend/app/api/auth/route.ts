@@ -115,5 +115,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  if (action === 'autosave') {
+    const { userId } = body as { userId?: string };
+    if (!userId) return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+    const user = users.find(u => u.email === emailLower && u.userId === String(userId));
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    user.state = state ?? null;
+    user.updatedAt = Date.now();
+    await writeUsers(users);
+    return NextResponse.json({ ok: true });
+  }
+
   return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
 }

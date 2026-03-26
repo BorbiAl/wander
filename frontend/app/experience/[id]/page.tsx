@@ -5,13 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '@/app/lib/store';
 import { getExperience, getHost, getVillage, percentageMatch, cwsColor } from '@/app/lib/utils';
-import { PERSONALITIES, PERSONALITY_INFO, VILLAGES } from '@/app/lib/data';
+import { PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from '@/app/lib/data';
 
 export default function ExperiencePage() {
   const { id } = useParams();
   const router = useRouter();
-  const { personality, addBooking, addPoints, addBadge, bookings } = useApp();
-  
+  const { personality, addBooking, addPoints, addBadge, bookings, seedStatus, destination } = useApp();
+
   const [showModal, setShowModal] = useState(false);
   const [bookingState, setBookingState] = useState<'idle'|'loading'|'success'>('idle');
   const [bookingResult, setBookingResult] = useState<any>(null);
@@ -21,16 +21,49 @@ export default function ExperiencePage() {
   const [reflectionQ1, setReflectionQ1] = useState('');
   const [reflectionQ2, setReflectionQ2] = useState<'yes' | 'maybe' | 'no'>('maybe');
   const [reflectionQ3, setReflectionQ3] = useState('');
+  const [seeded, setSeeded] = useState(false);
+
+  // If data arrays are empty but we have a destination, re-seed before rendering
+  useEffect(() => {
+    if (getExperience(id as string)) { setSeeded(true); return; }
+    if (destination && seedStatus === 'done') {
+      fetch(`/api/seed?location=${encodeURIComponent(destination)}`)
+        .then(r => r.json())
+        .then(data => {
+          patchDataArrays(data);
+          setSeeded(true);
+        })
+        .catch(() => setSeeded(true));
+    } else {
+      setSeeded(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const exp = getExperience(id as string);
   const host = exp ? getHost(exp.hostId) : null;
   const village = exp ? getVillage(exp.villageId) : null;
 
-  if (!exp || !host || !village || !personality) {
-    return <div className="p-8 text-center text-[#1A2E1C]/60">Loading or not found...</div>;
+  if (!seeded || seedStatus === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#D6DCCD] border-t-[#0B6E2A] rounded-full animate-spin" />
+      </div>
+    );
   }
 
-  const matchPct = percentageMatch(personality.vector, exp.personalityWeights);
+  if (!exp || !host || !village) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center gap-4">
+        <p className="text-[#1A2E1C]/60 font-medium">Experience not found.</p>
+        <button onClick={() => router.back()} className="text-[13px] font-bold uppercase tracking-widest text-[#0B6E2A] hover:underline">
+          ← Go back
+        </button>
+      </div>
+    );
+  }
+
+  const matchPct = personality ? percentageMatch(personality.vector, exp.personalityWeights) : 0;
 
   const toLocalInputValue = (d: Date) => {
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -272,6 +305,7 @@ export default function ExperiencePage() {
       </div>
 
       {/* Personality Match */}
+      {personality && (
       <div className="mb-12">
         <div className="text-text-3 uppercase text-[11px] mb-6">Why this matches you</div>
         <div className="flex flex-col gap-4">
@@ -279,7 +313,7 @@ export default function ExperiencePage() {
             const expWeight = exp.personalityWeights[i];
             const userWeight = personality.vector[i];
             const color = PERSONALITY_INFO[p].color;
-            
+
             return (
               <div key={p} className="flex items-center gap-4">
                 <div className="w-24 text-xs text-[#1A2E1C]/60 flex items-center gap-2">
@@ -300,6 +334,7 @@ export default function ExperiencePage() {
           {personality.dominant} travelers rate this {matchPct}% compatible
         </p>
       </div>
+      )}
 
       {/* Village Context */}
       <div className="bg-white/90 backdrop-blur-xl border border-[#D6DCCD]/30 rounded-[24px] p-5 mb-10">

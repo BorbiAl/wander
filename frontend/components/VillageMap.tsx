@@ -57,7 +57,7 @@ export default function VillageMap({
       <MapContainer
         center={[initLat, initLng]}
         zoom={7}
-        style={{ width: '100%', height: '100%', background: '#E5E9DF' }}
+        style={{ width: '100%', height: '100%', background: '#E5E9DF', borderRadius: '1.5rem' }}
         zoomControl={false}
       >
         <TileLayer

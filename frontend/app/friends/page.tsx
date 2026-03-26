@@ -208,7 +208,7 @@ export default function FriendsPage() {
                 placeholder="https://… или base64 код"
                 className={inputCls} />
               <button onClick={handleAddFriend}
-                className="bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#095A22] transition-colors whitespace-nowrap">
+                className="bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-full hover:bg-[#095A22] transition-colors whitespace-nowrap">
                 Добави
               </button>
             </div>

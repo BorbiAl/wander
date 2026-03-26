@@ -305,12 +305,6 @@ export default function LandingPage() {
                       {activeGroup.memberCount} член{activeGroup.memberCount !== 1 ? 'а' : ''}
                     </span>
                   </div>
-                  <button
-                    onClick={() => router.push(`/group/${activeGroup.id}`)}
-                    className="text-xs text-[#0B6E2A] font-semibold hover:underline shrink-0"
-                  >
-                    Виж групата →
-                  </button>
                 </motion.div>
               )}
             </AnimatePresence>

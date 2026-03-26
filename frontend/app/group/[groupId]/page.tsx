@@ -5,16 +5,19 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { useApp } from '@/app/lib/store';
 import { StoredGroup } from '@/app/lib/store';
-import { GroupScoredExperience, PERSONALITY_INFO } from '@/app/lib/data';
+import { PERSONALITY_INFO } from '@/app/lib/data';
 import { computeGroupVector } from '@/app/lib/hmm';
 import { GroupRadarOverlay } from '@/components/GroupRadarOverlay';
-import { GroupExperienceCard } from '@/components/GroupExperienceCard';
-
-type SortMode = 'group' | 'allSatisfied';
 
 function compatibilityPct(a: number[], b: number[]): number {
   const dot = a.reduce((s, v, i) => s + v * b[i], 0);
-  return Math.round(Math.min(1, dot * 4) * 100);
+  const magA = Math.sqrt(a.reduce((s, v) => s + v * v, 0));
+  const magB = Math.sqrt(b.reduce((s, v) => s + v * v, 0));
+  if (magA === 0 || magB === 0) return 0;
+  const cosine = dot / (magA * magB); // 0..1 for non-negative vectors
+  // Cosine of 1.0 = identical profiles, ~0.2 = orthogonal (completely different types)
+  // Rescale [0.2, 1.0] → [0, 100] so orthogonal personalities show 0%, not 20%
+  return Math.round(Math.max(0, (cosine - 0.2) / 0.8) * 100);
 }
 
 export default function GroupDiscoverPage() {
@@ -24,9 +27,6 @@ export default function GroupDiscoverPage() {
 
   const [group, setGroup] = useState<StoredGroup | null>(null);
   const [loadingGroup, setLoadingGroup] = useState(true);
-  const [results, setResults] = useState<GroupScoredExperience[]>([]);
-  const [loadingResults, setLoadingResults] = useState(false);
-  const [sortMode, setSortMode] = useState<SortMode>('group');
   const [destInput, setDestInput] = useState('');
   const [settingDest, setSettingDest] = useState(false);
   const [copiedInvite, setCopiedInvite] = useState(false);
@@ -42,10 +42,7 @@ export default function GroupDiscoverPage() {
       const data: StoredGroup = await res.json();
       setGroup(data);
       setLoadingGroup(false);
-      if (data.members.length !== prevMemberCount.current && data.members.length >= 1) {
-        prevMemberCount.current = data.members.length;
-        fetchResults(data);
-      }
+      prevMemberCount.current = data.members.length;
     } catch { setLoadingGroup(false); }
   }, [groupId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -60,24 +57,6 @@ export default function GroupDiscoverPage() {
     return computeGroupVector(group.members.map(m => m.vector));
   }, [group]);
 
-  async function fetchResults(g: StoredGroup) {
-    if (g.members.length === 0) return;
-    const gv = computeGroupVector(g.members.map(m => m.vector));
-    setLoadingResults(true);
-    try {
-      const res = await fetch('/api/group-match', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ personality_vector: gv, member_vectors: g.members.map(m => m.vector) }),
-      });
-      if (res.ok) setResults(await res.json());
-    } catch { /* keep previous */ } finally { setLoadingResults(false); }
-  }
-
-  useEffect(() => {
-    if (group && groupVector) fetchResults(group);
-  }, [groupVector]); // eslint-disable-line react-hooks/exhaustive-deps
-
   async function handleSetDestination() {
     const dest = destInput.trim() || group?.destination;
     if (!dest || !group) return;
@@ -91,7 +70,6 @@ export default function GroupDiscoverPage() {
     setSettingDest(false);
     setDestInput('');
     await fetchGroup();
-    if (group) fetchResults({ ...group, destination: dest });
   }
 
   function handleCopyInvite() {
@@ -102,12 +80,6 @@ export default function GroupDiscoverPage() {
   }
 
   function handleBack() { setActiveGroup(null); router.push('/discover'); }
-
-  const sorted = useMemo(() => {
-    return [...results].sort((a, b) =>
-      sortMode === 'allSatisfied' ? b.minMemberScore - a.minMemberScore : b.score - a.score
-    );
-  }, [results, sortMode]);
 
   const compatMatrix = useMemo(() => {
     if (!group) return [];
@@ -131,11 +103,6 @@ export default function GroupDiscoverPage() {
       </div>
     );
   }
-
-  const avgGroupFit = results.length > 0
-    ? Math.round(results.reduce((s, r) => s + r.score, 0) / results.length * 100) : 0;
-  const worstFit = results.length > 0
-    ? Math.round(Math.min(...results.map(r => r.minMemberScore)) * 100) : 0;
 
   const radarMembers = group.members.map(m => ({
     displayName: m.userId === userId ? 'Ти' : m.displayName,
@@ -165,22 +132,6 @@ export default function GroupDiscoverPage() {
               className="text-xs border border-[#D6DCCD] text-[#1A2E1C]/65 px-3 py-1.5 rounded-pill hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors mb-6">
               {copiedInvite ? 'Линкът е копиран!' : '🔗 Копирай invite линк'}
             </button>
-
-            {/* Stats */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              <div className="surface-card rounded-card px-4 py-3 text-center">
-                <div className="text-2xl font-bold text-amber-600">{avgGroupFit}%</div>
-                <div className="text-[10px] text-[#1A2E1C]/40">Средна група</div>
-              </div>
-              <div className="surface-card rounded-card px-4 py-3 text-center">
-                <div className="text-2xl font-bold text-[#0B6E2A]">{worstFit}%</div>
-                <div className="text-[10px] text-[#1A2E1C]/40">Минимален fit</div>
-              </div>
-              <div className="surface-card rounded-card px-4 py-3 text-center">
-                <div className="text-2xl font-bold text-[#1A2E1C]">{group.members.length}</div>
-                <div className="text-[10px] text-[#1A2E1C]/40">Членове</div>
-              </div>
-            </div>
 
             {/* Destination setter */}
             <div className="surface-card rounded-card p-4 flex flex-col gap-2 mb-2">
@@ -269,44 +220,6 @@ export default function GroupDiscoverPage() {
           </div>
         )}
 
-        {/* Sort toggle */}
-        {results.length > 0 && (
-          <div className="flex gap-2 mb-6">
-            <button onClick={() => setSortMode('group')}
-              className={`text-xs px-4 py-1.5 rounded-pill border transition-colors ${
-                sortMode === 'group'
-                  ? 'bg-amber-500 border-amber-500 text-white font-medium'
-                  : 'border-[#D6DCCD] text-[#1A2E1C]/65 hover:border-[#A8B09F]'
-              }`}>
-              Най-добро за групата
-            </button>
-            <button onClick={() => setSortMode('allSatisfied')}
-              className={`text-xs px-4 py-1.5 rounded-pill border transition-colors ${
-                sortMode === 'allSatisfied'
-                  ? 'bg-[#0B6E2A] border-[#0B6E2A] text-white font-medium'
-                  : 'border-[#D6DCCD] text-[#1A2E1C]/65 hover:border-[#A8B09F]'
-              }`}>
-              Всички доволни
-            </button>
-          </div>
-        )}
-
-        {/* Results */}
-        {loadingResults ? (
-          <div className="flex flex-col gap-3">
-            {[0, 1, 2, 3].map(i => (
-              <div key={i} className="h-24 bg-[#D6DCCD] rounded-card animate-pulse" />
-            ))}
-          </div>
-        ) : sorted.length === 0 && group.destination ? (
-          <p className="text-[#1A2E1C]/40 text-sm">Няма намерени преживявания. Опитай с различна дестинация.</p>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {sorted.map(exp => (
-              <GroupExperienceCard key={exp.id} exp={exp} members={radarMembers} />
-            ))}
-          </div>
-        )}
 
       </div>
     </motion.div>

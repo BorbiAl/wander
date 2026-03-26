@@ -39,7 +39,7 @@
 }
 
 * { box-sizing: border-box; }
-body { background: #080808; color: #F0F0F0; font-family: var(--font-sans), sans-serif; }
+body { background: var(--page-bg-light); color: var(--page-text-primary); font-family: var(--font-sans), sans-serif; }
 ::selection { background: #C8F55A; color: #000; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }

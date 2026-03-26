@@ -53,13 +53,13 @@ export default function MapPage() {
         <div className="flex w-full flex-wrap items-center gap-2 sm:gap-3 md:w-auto md:justify-end">
           <button
             onClick={() => setShowVisited(v => !v)}
-            className={`rounded-full border bg-white px-3 py-1.5 text-xs text-black transition-colors ${showVisited ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#A8B09F]'}`}
+            className={`rounded-full border bg-white px-4 py-2 text-sm text-black transition-colors ${showVisited ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#A8B09F]'}`}
           >
             {showVisited ? 'Showing visited' : 'Show visited only'}
           </button>
           <Link
             href="/discover"
-            className="rounded-full bg-[#0B6E2A] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#095A22]"
+            className="rounded-full bg-[#0B6E2A] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#095A22]"
           >
             Browse experiences →
           </Link>
@@ -154,7 +154,7 @@ export default function MapPage() {
 
               <Link
                 href={`/discover`}
-                className="w-full rounded-full bg-[#0B6E2A] px-4 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-[#095A22]"
+                className="w-full rounded-full bg-[#0B6E2A] px-5 py-3 text-center text-base font-semibold text-white transition-colors hover:bg-[#095A22]"
               >
                 Find matching experiences
               </Link>

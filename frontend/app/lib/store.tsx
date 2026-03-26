@@ -14,6 +14,9 @@ export type Booking = {
   split: { host: number; community: number; culture: number; platform: number };
   timestamp: number;
   cwsDelta: number;
+  scheduledAt?: string;
+  eventsBefore: string[];
+  eventsAfter: string[];
 }
 
 export type SeedStatus = 'idle' | 'loading' | 'done' | 'error';
@@ -33,6 +36,8 @@ export type StoredGroup = {
   members: StoredMember[];
   destination: string;
   createdAt: number;
+  eventsBefore: string[];
+  eventsAfter: string[];
 };
 
 export type AppState = {
@@ -58,6 +63,7 @@ type AppContextType = AppState & {
   setPersonality: (p: PersonalityResult | null) => void;
   setMatches: (m: (Experience & { score: number })[]) => void;
   addBooking: (b: Booking) => void;
+  updateBooking: (id: string, updates: Partial<Booking>) => void;
   addPoints: (p: number) => void;
   addBadge: (b: string) => void;
   resetOnboarding: () => void;
@@ -108,6 +114,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         // Drop old local-only `groups` field if present (now backend-managed)
         const { groups: _groups, ...rest } = parsed;
         void _groups; // intentionally unused
+        if (Array.isArray(rest.bookings)) {
+          rest.bookings = rest.bookings.map(classifyBookingDate);
+        }
         setState({ ...defaultState, ...rest });
         // Re-patch data arrays if a destination was previously seeded
         if (parsed.destination && parsed.seedStatus === 'done') {
@@ -194,12 +203,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   });
   const setMatches = (m: (Experience & { score: number })[]) => setState(prev => ({ ...prev, matches: m }));
+  function classifyBookingDate(b: Booking): Booking {
+    if (!b.scheduledAt) return { ...b, eventsBefore: b.eventsBefore ?? [], eventsAfter: b.eventsAfter ?? [] };
+    const isPast = new Date(b.scheduledAt).getTime() < Date.now();
+    return {
+      ...b,
+      eventsBefore: isPast ? [b.scheduledAt] : [],
+      eventsAfter: isPast ? [] : [b.scheduledAt],
+    };
+  }
+
   const addBooking = (b: Booking) => setState(prev => {
-    const newBookings = [b, ...prev.bookings];
+    const classified = classifyBookingDate({ eventsBefore: [], eventsAfter: [], ...b });
     const newImpact = prev.totalImpact + b.amount;
     const newVillages = Array.from(new Set([...prev.villagesVisited, b.villageName]));
-    return { ...prev, bookings: newBookings, totalImpact: newImpact, villagesVisited: newVillages };
+    return { ...prev, bookings: [classified, ...prev.bookings], totalImpact: newImpact, villagesVisited: newVillages };
   });
+
+  const updateBooking = (id: string, updates: Partial<Booking>) => setState(prev => ({
+    ...prev,
+    bookings: prev.bookings.map(b => b.id === id ? classifyBookingDate({ ...b, ...updates }) : b),
+  }));
   const addPoints = (p: number) => setState(prev => ({ ...prev, points: prev.points + p }));
   const addBadge = (b: string) => setState(prev => ({ ...prev, badges: Array.from(new Set([...prev.badges, b])) }));
   const resetOnboarding = () => setState(prev => ({ ...prev, observations: [], personality: null, matches: [] })); // full reset (clears history)
@@ -259,6 +283,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const { groups: _groups, ...rest } = savedState as Record<string, unknown> & { groups?: unknown };
       void _groups;
       if ((rest.seedStatus as string) === 'loading' || (rest.seedStatus as string) === 'error') rest.seedStatus = 'idle';
+      if (Array.isArray(rest.bookings)) {
+        rest.bookings = (rest.bookings as Booking[]).map(classifyBookingDate);
+      }
       const merged = { ...defaultState, ...(rest as Partial<AppState>), email, userId };
       setState(merged);
       localStorage.setItem('wandergraph_state', JSON.stringify(merged));
@@ -354,7 +381,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <AppContext.Provider value={{
       ...state, setObservations, setPersonality, setMatches,
-      addBooking, addPoints, addBadge, resetOnboarding, seedLocation,
+      addBooking, updateBooking, addPoints, addBadge, resetOnboarding, seedLocation,
       addFriend, removeFriend, createGroup, joinGroup, setActiveGroup,
       loginWithEmail, logout, saveToAccount,
     }}>

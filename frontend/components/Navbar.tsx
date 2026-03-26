@@ -79,7 +79,7 @@ export function Navbar() {
             ) : (
               <button
                 onClick={() => setShowAuth(true)}
-                className="flex items-center gap-1.5 bg-[#1A2E1C] text-[#E5E9DF] text-[12px] font-semibold px-3.5 py-1.5 rounded-full hover:bg-[#0B6E2A] transition-colors shadow-sm"
+                className="flex items-center gap-1.5 bg-[#0B6E2A] text-white text-[12px] font-semibold px-3.5 py-1.5 rounded-full hover:bg-[#095A22] transition-colors shadow-sm"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span className="hidden sm:block">Save account</span>

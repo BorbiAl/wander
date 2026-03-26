@@ -22,6 +22,8 @@ type StoredGroup = {
   members: StoredMember[];
   destination: string;
   createdAt: number;
+  eventsBefore: string[];
+  eventsAfter: string[];
 };
 
 async function getGroupsPath(): Promise<string> {
@@ -70,6 +72,8 @@ export async function POST(req: Request) {
       destination: body.destination ?? '',
       members: [{ ...body.creator, joinedAt: Date.now() }],
       createdAt: Date.now(),
+      eventsBefore: [],
+      eventsAfter: [],
     };
     groups.push(newGroup);
     await writeGroups(groups);

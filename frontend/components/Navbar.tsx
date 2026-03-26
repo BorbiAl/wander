@@ -23,7 +23,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-[#E5E9DF]/80 backdrop-blur-xl border-b border-[#D6DCCD]/60 z-50 flex items-center justify-center px-6 md:px-12 font-sans shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-300">
+      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-[#F4E3D7]/80 backdrop-blur-xl border-b border-[#D6DCCD]/60 z-50 flex items-center justify-center px-6 md:px-12 font-sans shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-300">
         <div className="w-full max-w-7xl flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#1A2E1C] text-[#E5E9DF] group-hover:scale-105 transition-transform duration-300 shadow-md">
@@ -102,7 +102,7 @@ export function Navbar() {
       )}
 
       {/* Mobile nav bottom */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-2xl border-t border-[#D6DCCD]/60 z-50 flex items-center justify-around px-2 [padding-bottom:env(safe-area-inset-bottom)] font-sans shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#F4E3D7]/80 backdrop-blur-2xl border-t border-[#D6DCCD]/60 z-50 flex items-center justify-around px-2 [padding-bottom:env(safe-area-inset-bottom)] font-sans shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
         <Link href="/" className={`flex flex-col items-center gap-1.5 transition-all ${pathname === '/' ? 'text-[#0B6E2A] scale-105' : 'text-[#1A2E1C]/40 hover:text-[#1A2E1C]'}`}>
           <Home size={22} strokeWidth={pathname === '/' ? 2.5 : 2} />
           <span className={`text-[10px] tracking-tight ${pathname === '/' ? 'font-semibold' : 'font-medium'}`}>Home</span>

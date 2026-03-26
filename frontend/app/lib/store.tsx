@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PersonalityResult } from './hmm';
-import { Experience, Village, Host, VILLAGES, EXPERIENCES, HOSTS } from './data';
+import { Experience, Village, Host, FriendProfile, TravelGroup, VILLAGES, EXPERIENCES, HOSTS } from './data';
 
 export type Booking = {
   id: string;
@@ -30,6 +30,9 @@ export type AppState = {
   villagesVisited: string[];
   destination: string;
   seedStatus: SeedStatus;
+  friends: FriendProfile[];
+  groups: TravelGroup[];
+  activeGroupId: string | null;
 }
 
 type AppContextType = AppState & {
@@ -41,6 +44,11 @@ type AppContextType = AppState & {
   addBadge: (b: string) => void;
   resetOnboarding: () => void;
   seedLocation: (location: string) => Promise<void>;
+  addFriend: (f: FriendProfile) => void;
+  removeFriend: (userId: string) => void;
+  createGroup: (name: string, memberIds: string[]) => string;
+  deleteGroup: (groupId: string) => void;
+  setActiveGroup: (groupId: string | null) => void;
 };
 
 const defaultState: AppState = {
@@ -55,6 +63,9 @@ const defaultState: AppState = {
   villagesVisited: [],
   destination: '',
   seedStatus: 'idle',
+  friends: [],
+  groups: [],
+  activeGroupId: null,
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -70,7 +81,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const parsed = JSON.parse(saved);
         // Never restore a loading state — it means the previous session crashed mid-request
         if (parsed.seedStatus === 'loading' || parsed.seedStatus === 'error') parsed.seedStatus = 'idle';
-        setState(parsed);
+        // Merge with defaultState so any new fields added to the schema get their defaults
+        setState({ ...defaultState, ...parsed });
         // Re-patch data arrays if a destination was previously seeded
         if (parsed.destination && parsed.seedStatus === 'done') {
           // Re-fetch seed data silently to repopulate arrays after page refresh
@@ -139,6 +151,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const addBadge = (b: string) => setState(prev => ({ ...prev, badges: Array.from(new Set([...prev.badges, b])) }));
   const resetOnboarding = () => setState(prev => ({ ...prev, observations: [], personality: null, matches: [] }));
 
+  const addFriend = (f: FriendProfile) => setState(prev => {
+    // Avoid duplicate — replace if userId already exists
+    const filtered = prev.friends.filter(fr => fr.userId !== f.userId);
+    return { ...prev, friends: [...filtered, f] };
+  });
+  const removeFriend = (userId: string) => setState(prev => ({
+    ...prev,
+    friends: prev.friends.filter(f => f.userId !== userId),
+    // Remove from any groups that only referenced this friend
+    groups: prev.groups.map(g => ({ ...g, memberIds: g.memberIds.filter(id => id !== userId) }))
+      .filter(g => g.memberIds.length > 1), // disband groups left with ≤1 member
+  }));
+  const createGroup = (name: string, memberIds: string[]): string => {
+    const id = 'grp_' + Math.random().toString(36).slice(2, 8);
+    setState(prev => ({ ...prev, groups: [...prev.groups, { id, name, memberIds, createdAt: Date.now() }] }));
+    return id;
+  };
+  const deleteGroup = (groupId: string) => setState(prev => ({
+    ...prev,
+    groups: prev.groups.filter(g => g.id !== groupId),
+    activeGroupId: prev.activeGroupId === groupId ? null : prev.activeGroupId,
+  }));
+  const setActiveGroup = (groupId: string | null) => setState(prev => ({ ...prev, activeGroupId: groupId }));
+
   const seedLocation = async (location: string) => {
     setState(prev => ({ ...prev, destination: location, seedStatus: 'loading' }));
     try {
@@ -169,6 +205,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{
       ...state, setObservations, setPersonality, setMatches,
       addBooking, addPoints, addBadge, resetOnboarding, seedLocation,
+      addFriend, removeFriend, createGroup, deleteGroup, setActiveGroup,
     }}>
       {children}
     </AppContext.Provider>

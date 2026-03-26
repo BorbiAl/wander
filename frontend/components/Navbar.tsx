@@ -3,17 +3,18 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useApp } from '@/app/lib/store';
-import { Map, Zap, User, Home, GitFork, Globe } from 'lucide-react';
+import { Map, Zap, User, Home, GitFork, Globe, Users } from 'lucide-react';
 
 export function Navbar() {
   const pathname = usePathname();
-  const { personality, bookings } = useApp();
+  const { personality, bookings, friends } = useApp();
 
   const navItems = [
     { label: 'Discover', href: '/discover', icon: Map },
     { label: 'Map', href: '/map', icon: Globe },
     { label: 'Impact', href: '/impact', icon: Zap, badge: bookings.length },
     { label: 'Graph', href: '/graph', icon: GitFork },
+    { label: 'Friends', href: '/friends', icon: Users, badge: friends.length },
     { label: 'Profile', href: '/profile', icon: User },
   ];
 

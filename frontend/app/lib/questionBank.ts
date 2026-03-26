@@ -8,6 +8,8 @@ export type SwipeQuestion = {
   leftDescription: string;
   rightLabel: string;
   rightDescription: string;
+  leftImageSrc?: string;
+  rightImageSrc?: string;
   leftColor: string;
   rightColor: string;
   leftState: string;
@@ -19,9 +21,23 @@ export type AudioQuestion = {
   id: string;
   clipTitle: string;
   clipDescription: string;
+  clipSrc?: string;
   primaryState: string;
   sliderLabels: [string, string, string]; // Low (1-2), Mid (3), High (4-5)
 };
+
+const IP_IMAGE_FILES = [
+  'IP-01.webp', 'IP-02.webp', 'IP-03.jpg', 'IP-04.jpg', 'IP-05.jpg', 'IP-06.jpg',
+  'IP-07.jpg', 'IP-08.webp', 'IP-09.webp', 'IP-10.jpg', 'IP-11.jpg', 'IP-12.webp',
+  'IP-13.jpg', 'IP-14.jpg', 'IP-15.webp', 'IP-16.jpg', 'IP-17.jpg', 'IP-18.jpg',
+  'IP-19.jpg', 'IP-20.jpg', 'IP-21.jpg', 'IP-22.jpg', 'IP-23.jpg', 'IP-24.jpg',
+  'IP-25.jpg', 'IP-26.jpg', 'IP-27.webp', 'IP-28.jpg', 'IP-29.webp', 'IP-30.webp',
+];
+
+function getSwipeImagePath(oneBasedIndex: number): string {
+  const fileName = IP_IMAGE_FILES[oneBasedIndex - 1];
+  return fileName ? `/assets/${fileName}` : '/assets/IP-01.webp';
+}
 
 export type ScrollCardQuestion = {
   id: string;
@@ -233,7 +249,16 @@ export const SWIPE_QUESTIONS: SwipeQuestion[] = [
     rightState: 'Connector',
     signalAxis: 'Stillness vs Social',
   },
-];
+].map((question, index) => {
+  const leftImageIndex = index * 2 + 1;
+  const rightImageIndex = index * 2 + 2;
+
+  return {
+    ...question,
+    leftImageSrc: getSwipeImagePath(leftImageIndex),
+    rightImageSrc: getSwipeImagePath(rightImageIndex),
+  };
+});
 
 export const AUDIO_QUESTIONS: AudioQuestion[] = [
   {
@@ -306,7 +331,11 @@ export const AUDIO_QUESTIONS: AudioQuestion[] = [
     primaryState: 'Connector',
     sliderLabels: ['Startled', 'Fascinated', 'Inspired'],
   },
-];
+].map((question): AudioQuestion => ({
+  ...question,
+  sliderLabels: question.sliderLabels as [string, string, string],
+  clipSrc: `/assets/${question.id}.mp3`,
+}));
 
 export const SCROLL_CARD_QUESTIONS: ScrollCardQuestion[] = [
   {

@@ -1,3 +1,24 @@
+export type FriendProfile = {
+  userId: string;
+  displayName: string;
+  vector: [number, number, number, number, number];
+  dominant: string;
+  addedAt: number;
+};
+
+export type TravelGroup = {
+  id: string;
+  name: string;
+  memberIds: string[]; // includes the local user's userId
+  createdAt: number;
+};
+
+export type GroupScoredExperience = Experience & {
+  score: number;            // dot(groupVector, personalityWeights)
+  memberScores: number[];   // per-member dot products, same order as group.memberIds
+  minMemberScore: number;   // worst-satisfied member's score
+};
+
 export type Village = {
   id: string; name: string; lat: number; lng: number;
   region: string; cws: number; population: number;

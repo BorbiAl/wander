@@ -1,7 +1,7 @@
 export type Village = {
   id: string; name: string; lat: number; lng: number;
   region: string; cws: number; population: number;
-  description: string; nearby: string[];
+  description: string; nearby: string[]; country?: string;
 }
 
 export type Experience = {

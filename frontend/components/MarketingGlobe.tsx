@@ -2,32 +2,35 @@
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
-import { useApp } from '../app/lib/store';
 
 // Dynamically import Globe as it uses browser APIs and can't be SSR'd
 const Globe = dynamic(() => import('react-globe.gl'), { ssr: false });
 
-export const DESTINATIONS = [
-  { name: 'Rural Tuscany, Italy', lat: 43.1122, lng: 11.1198 },
-  { name: 'Oaxaca highlands, Mexico', lat: 17.0732, lng: -96.7266 },
-  { name: 'Cappadocia, Turkey', lat: 38.6431, lng: 34.8289 },
-  { name: 'Transylvania, Romania', lat: 46.7712, lng: 23.6236 },
-  { name: 'Rhodope Mountains, Bulgaria', lat: 41.7725, lng: 24.3217 },
-  { name: 'Kerala backwaters, India', lat: 9.9312, lng: 76.2673 },
-  { name: 'Faroe Islands', lat: 61.8926, lng: -6.9118 },
-  { name: 'Atlas Mountains, Morocco', lat: 31.2589, lng: -7.9897 },
-  { name: 'Patagonia, Argentina', lat: -50.2185, lng: -72.771 },
-  { name: 'Yunnan province, China', lat: 25.0453, lng: 102.7100 },
-  { name: 'Kyoto, Japan', lat: 35.0116, lng: 135.7681 }
+export type DestinationNode = {
+  name: string;
+  country: string;
+  lat: number;
+  lng: number;
+  villages: number;
+};
+
+export const DEFAULT_DESTINATIONS: DestinationNode[] = [
+  { name: 'Bulgaria', country: 'Bulgaria', lat: 42.7339, lng: 25.4858, villages: 1 },
 ];
 
-export default function MarketingGlobe() {
-  const router = useRouter();
+type MarketingGlobeProps = {
+  destinations: DestinationNode[];
+  onSelect: (location: string) => void;
+};
+
+export default function MarketingGlobe({ destinations, onSelect }: MarketingGlobeProps) {
   const globeRef = useRef<any>(null);
-  const { seedLocation } = useApp();
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [globeReady, setGlobeReady] = useState(false);
+  const points = useMemo(
+    () => (destinations.length > 0 ? destinations : DEFAULT_DESTINATIONS),
+    [destinations]
+  );
 
   useEffect(() => {
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -48,8 +51,7 @@ export default function MarketingGlobe() {
   }, [globeReady]);
 
   const handlePointClick = (point: any) => {
-    seedLocation(point.name);
-    router.push('/onboarding');
+    onSelect(point.name);
   };
 
   if (windowSize.width === 0) return null;
@@ -66,13 +68,13 @@ export default function MarketingGlobe() {
           atmosphereColor="#0B6E2A"
           atmosphereAltitude={0.15}
           
-          ringsData={DESTINATIONS}
+          ringsData={points}
           ringColor={() => '#0B6E2A'}
           ringMaxRadius={2}
           ringPropagationSpeed={2}
           ringRepeatPeriod={1500}
 
-          pointsData={DESTINATIONS}
+          pointsData={points}
           pointLat="lat"
           pointLng="lng"
           pointColor={() => "#0B6E2A"}
@@ -81,13 +83,13 @@ export default function MarketingGlobe() {
           pointsMerge={false}
           onPointClick={handlePointClick}
           
-          htmlElementsData={DESTINATIONS}
+          htmlElementsData={points}
           htmlElement={(d: any) => {
             const el = document.createElement('div');
             el.innerHTML = `<div class="cursor-pointer hover:scale-105 transition-all bg-white rounded-2xl px-4 py-3 border border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col -translate-x-1/2 -translate-y-[120%] select-none pointer-events-auto min-w-max">
               <span class="text-[10px] font-bold tracking-wider text-black/40 uppercase mb-1">Impact Node</span>
-              <span class="text-[#1A2E1C] text-sm font-display font-semibold mb-0.5 leading-none">${d.name.split(',')[0]}</span>
-              <span class="text-[#1A2E1C]/60 text-xs font-medium">${d.name.split(',')[1] || d.name}</span>
+              <span class="text-[#1A2E1C] text-sm font-display font-semibold mb-0.5 leading-none">${d.country}</span>
+              <span class="text-[#1A2E1C]/60 text-xs font-medium">${d.villages} village${d.villages === 1 ? '' : 's'} in DB</span>
             </div>`;
             el.style.pointerEvents = 'none';
             // Also enable click on the label themselves!

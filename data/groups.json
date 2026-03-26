@@ -31,6 +31,8 @@
         "joinedAt": 1774553363364
       }
     ],
-    "createdAt": 1774546093776
+    "createdAt": 1774546093776,
+    "eventsBefore": [],
+    "eventsAfter": []
   }
 ]

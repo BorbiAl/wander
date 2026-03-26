@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
 import MarketingGlobe, { DEFAULT_DESTINATIONS, type DestinationNode } from '../components/MarketingGlobe';
-import { MapPin, ChevronDown, Play, Dices, Globe2 } from 'lucide-react';
+import { MapPin, ChevronDown, Play, Dices, Globe2, X } from 'lucide-react';
 import Link from 'next/link';
 
 type ApiVillage = {

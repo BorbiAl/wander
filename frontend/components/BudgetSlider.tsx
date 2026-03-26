@@ -1,24 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import type { BudgetQuestion } from '@/app/lib/questionBank';
 
 export function BudgetSlider({ 
+  question,
   onChoice 
 }: { 
+  question: BudgetQuestion,
   onChoice: (index: 0|1|2) => void 
 }) {
   const [choice, setChoice] = useState<0|1|2>(1);
 
   const options = [
-    { label: '< €30 / day', desc: 'Volunteer stays, community hosting', color: '#34D399' },
-    { label: '€30–80 / day', desc: 'Workshops, guided experiences', color: '#C8F55A' },
-    { label: '> €80 / day', desc: 'Premium immersions, private guides', color: '#F5A623' },
+    { label: question.low, desc: 'Low', color: '#34D399' },
+    { label: question.mid, desc: 'Mid', color: '#C8F55A' },
+    { label: question.high, desc: 'High', color: '#F5A623' },
   ];
 
   return (
     <div className="w-full max-w-sm mx-auto bg-surface border border-[#222] rounded-card p-6 flex flex-col items-center">
-      <h2 className="font-display text-2xl text-white mb-2">Your daily travel budget</h2>
-      <p className="font-sans text-sm text-text-2 mb-8">This shapes which experiences we show you</p>
+      <h2 className="font-display text-2xl text-white mb-2">{question.question}</h2>
+      <p className="font-sans text-sm text-text-2 mb-2">This shapes which experiences we show you</p>
+      <p className="font-sans text-xs text-text-3 mb-8 text-center">{question.signal}</p>
       
       <div className="flex flex-col gap-4 w-full mb-8">
         {options.map((opt, i) => (

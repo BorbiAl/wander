@@ -21,13 +21,14 @@ export function Leaderboard() {
       .catch(() => {});
   }, []);
 
-  // Build display list: real leaderboard or synthetic with current user
+  // Merge live leaderboard with current user's real data (upsert by user_id)
   const safePoints = Number(points) || 0;
-  const display: LeaderboardEntry[] = entries.length > 0 ? entries : [
-    { user_id: userId, score: safePoints, bookings: bookings.length, villages_count: villagesVisited.length },
-    { user_id: 'traveler_x9k', score: Math.max(0, safePoints - 40), bookings: Math.max(0, bookings.length - 1), villages_count: Math.max(0, villagesVisited.length - 1) },
-    { user_id: 'wanderer_m2p', score: Math.max(0, safePoints - 90), bookings: Math.max(0, bookings.length - 2), villages_count: 0 },
-  ].slice(0, 5);
+  const meEntry: LeaderboardEntry = { user_id: userId, score: safePoints, bookings: bookings.length, villages_count: villagesVisited.length };
+  const base = entries.length > 0 ? entries : (safePoints > 0 || bookings.length > 0 ? [meEntry] : []);
+  const withMe = base.some(e => e.user_id === userId)
+    ? base.map(e => e.user_id === userId ? meEntry : e)
+    : safePoints > 0 || bookings.length > 0 ? [...base, meEntry] : base;
+  const display = [...withMe].sort((a, b) => b.score - a.score).slice(0, 5);
 
   const medals = ['🥇', '🥈', '🥉'];
 

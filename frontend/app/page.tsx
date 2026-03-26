@@ -117,7 +117,7 @@ export default function LandingPage() {
 
     async function loadDestinations() {
       try {
-        const res = await fetch(`/api/villages?ts=${Date.now()}`, { cache: 'no-store' });
+        const res = await fetch('/api/villages');
         if (!res.ok) {
           setDestinations([]);
           return;

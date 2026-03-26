@@ -79,6 +79,10 @@ async function loadSeedVillages() {
   return [];
 }
 
+const CACHE_HEADERS = {
+  'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+};
+
 export async function GET() {
   const seedVillages = await loadSeedVillages();
 
@@ -97,13 +101,13 @@ export async function GET() {
         const seedVillage = merged.get(id);
         merged.set(id, mergeVillagePreferSeed(seedVillage, v as (typeof VILLAGES)[number]));
       }
-      return NextResponse.json(Array.from(merged.values()));
+      return NextResponse.json(Array.from(merged.values()), { headers: CACHE_HEADERS });
     }
     throw new Error('empty response');
   } catch {
     if (seedVillages.length > 0) {
-      return NextResponse.json(seedVillages);
+      return NextResponse.json(seedVillages, { headers: CACHE_HEADERS });
     }
-    return NextResponse.json(VILLAGES);
+    return NextResponse.json(VILLAGES, { headers: CACHE_HEADERS });
   }
 }

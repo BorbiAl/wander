@@ -29,7 +29,7 @@ export function Navbar() {
             <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#1A2E1C] text-[#E5E9DF] group-hover:scale-105 transition-transform duration-300 shadow-md">
               <span className="font-display text-[15px] font-bold tracking-widest mt-0.5">WG</span>
             </div>
-            <span className="text-[#1A2E1C] font-semibold tracking-tight hidden sm:block text-lg">WanderGraph</span>
+            <span className="text-[#1A2E1C] font-semibold tracking-tight hidden sm:block text-lg">Wander</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-1.5 bg-white/50 p-1.5 rounded-full border border-white/60 shadow-[0_2px_12px_rgba(0,0,0,0.02)] backdrop-blur-md">

@@ -9,7 +9,7 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-displa
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'WanderGraph',
+  title: 'Wander',
   description: 'Travel with purpose.',
 };
 

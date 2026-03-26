@@ -203,7 +203,7 @@ async function geocodeHub(city: string, country?: string): Promise<HubCoords | n
   const url = `${NOMINATIM_SEARCH_URL}?format=jsonv2&addressdetails=1&limit=1&q=${q}`;
   const res = await fetch(url, {
     headers: {
-      'User-Agent': 'WanderGraph/1.0',
+      'User-Agent': 'Wander/1.0',
       'Accept-Language': 'en',
     },
     signal: AbortSignal.timeout(8000),

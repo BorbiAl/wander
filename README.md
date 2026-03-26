@@ -1,6 +1,6 @@
 <div align="center">
 
-# WanderGraph
+# Wander
 
 **Discover authentic village experiences, matched to your personality.**
 
@@ -17,11 +17,11 @@
 
 ---
 
-## What is WanderGraph?
+## What is Wander?
 
-WanderGraph is a full-stack travel recommendation platform that connects travelers with authentic village experiences tailored to their personality. Instead of generic tourism feeds, WanderGraph runs each user through a 15-step Hidden Markov Model personality assessment — then surfaces experiences, hosts, and communities that genuinely match who they are.
+Wander is a full-stack travel recommendation platform that connects travelers with authentic village experiences tailored to their personality. Instead of generic tourism feeds, Wander runs each user through a 15-step Hidden Markov Model personality assessment — then surfaces experiences, hosts, and communities that genuinely match who they are.
 
-Every booking contributes to a village's **Community Web Score (CWS)**, a readiness metric that tracks how well a community benefits from tourism. WanderGraph turns travel into a regenerative act.
+Every booking contributes to a village's **Community Web Score (CWS)**, a readiness metric that tracks how well a community benefits from tourism. Wander turns travel into a regenerative act.
 
 ---
 
@@ -36,7 +36,7 @@ Every booking contributes to a village's **Community Web Score (CWS)**, a readin
 ### Personalized Discovery
 - Browse experiences filtered by type, price, or best match
 - 3D interactive globe (Three.js) for destination selection
-- Dynamic data seeding: enter any location and WanderGraph geocodes it, loads matching villages, and generates missing experiences on the fly with **Gemini 2.5 Flash**
+- Dynamic data seeding: enter any location and Wander geocodes it, loads matching villages, and generates missing experiences on the fly with **Gemini 2.5 Flash**
 
 ### Community Impact (CWS)
 - Every village has a **Community Web Score** (0–100) indicating tourism readiness

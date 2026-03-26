@@ -227,7 +227,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="mb-10 max-w-lg text-lg leading-relaxed text-[#1A2E1C]/70">
-              WanderGraph uses behavioral AI to match your travel personality with hidden villages and authentic local hosts.
+              Wander uses behavioral AI to match your travel personality with hidden villages and authentic local hosts.
             </p>
 
             <div className="relative mb-6">

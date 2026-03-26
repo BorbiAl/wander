@@ -100,7 +100,7 @@ export default function ExperiencePage() {
 
     const end = new Date(start.getTime() + parseDurationMinutes(exp.duration) * 60 * 1000);
 
-    const title = `${exp.name} - WanderGraph`;
+    const title = `${exp.name} - Wander`;
     const location = `${village.name}, ${village.region}`;
     const details = `${exp.description}\n\nHost: ${host.name}`;
 
@@ -136,9 +136,9 @@ export default function ExperiencePage() {
       const ics = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//WanderGraph//Booking//EN',
+        'PRODID:-//Wander//Booking//EN',
         'BEGIN:VEVENT',
-        `UID:${Date.now()}@wandergraph`,
+        `UID:${Date.now()}@Wander`,
         `DTSTAMP:${startStamp}`,
         `DTSTART:${startStamp}`,
         `DTEND:${endStamp}`,

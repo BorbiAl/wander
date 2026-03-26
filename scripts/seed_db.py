@@ -28,7 +28,7 @@ REDDIT_SEARCH_URL = "https://www.reddit.com/search.json"
 GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
 
 HTTP_HEADERS = {
-    "User-Agent": "WanderGraph/1.0 hacktues12",
+    "User-Agent": "Wander/1.0 hacktues12",
     "Accept": "application/json",
 }
 
@@ -1173,7 +1173,7 @@ def main() -> None:
     avg_cws = sum(v.get("cws", 0) for v in villages) / max(1, len(villages))
 
     print("\n════════════════════════════════")
-    print("WanderGraph Seed Complete")
+    print("Wander Seed Complete")
     print(f"Villages:    {len(villages)}")
     print(f"Experiences: {len(experiences)}")
     print(f"Countries:   {len(countries)}")

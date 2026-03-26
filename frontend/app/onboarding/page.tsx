@@ -82,7 +82,7 @@ export default function OnboardingPage() {
           {step > 0 && (
             <button onClick={() => setStep(s => s - 1)} className="text-[#1A2E1C]/70 hover:text-[#1A2E1C]">←</button>
           )}
-          <span className="text-sm font-medium text-[#1A2E1C]">WanderGraph</span>
+          <span className="text-sm font-medium text-[#1A2E1C]">Wander</span>
           {destination && (
             <span className="text-[#1A2E1C]/65 text-xs">· {destination}</span>
           )}

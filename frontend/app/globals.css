@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+:root {
+  --page-bg-light: #E5E9DF;
+  --page-surface-light: #F4EDE2;
+  --page-border-light: #D6DCCD;
+  --page-text-primary: #1A2E1C;
+  --page-text-muted: rgba(26, 46, 28, 0.66);
+  --page-accent: #0B6E2A;
+}
+
 @theme {
   --color-bg: #080808;
   --color-surface: #111111;
@@ -34,3 +43,38 @@ body { background: #080808; color: #F0F0F0; font-family: var(--font-sans), sans-
 ::selection { background: #C8F55A; color: #000; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }
+
+.page-standard {
+  background: var(--page-bg-light);
+  color: var(--page-text-primary);
+  font-family: var(--font-sans), sans-serif;
+}
+
+.page-standard h1,
+.page-standard h2,
+.page-standard h3 {
+  font-family: var(--font-display), serif;
+  color: var(--page-text-primary);
+}
+
+.page-standard .surface-card {
+  background: var(--page-surface-light);
+  border: 1px solid var(--page-border-light);
+}
+
+.page-standard .text-muted {
+  color: var(--page-text-muted);
+}
+
+.page-shell {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .page-shell {
+    padding: 2rem 3rem;
+  }
+}

@@ -15,6 +15,12 @@ export default function ExperiencePage() {
   const [showModal, setShowModal] = useState(false);
   const [bookingState, setBookingState] = useState<'idle'|'loading'|'success'>('idle');
   const [bookingResult, setBookingResult] = useState<any>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showReflection, setShowReflection] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState('');
+  const [reflectionQ1, setReflectionQ1] = useState('');
+  const [reflectionQ2, setReflectionQ2] = useState<'yes' | 'maybe' | 'no'>('maybe');
+  const [reflectionQ3, setReflectionQ3] = useState('');
 
   const exp = getExperience(id as string);
   const host = exp ? getHost(exp.hostId) : null;
@@ -25,6 +31,11 @@ export default function ExperiencePage() {
   }
 
   const matchPct = percentageMatch(personality.vector, exp.personalityWeights);
+
+  const toLocalInputValue = (d: Date) => {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
 
   const getCalendarLabel = () => {
     const ua = navigator.userAgent.toLowerCase();
@@ -43,16 +54,13 @@ export default function ExperiencePage() {
     return 120;
   };
 
-  const addCalendarEvent = () => {
+  const openCalendarEventForDate = (start: Date) => {
     const ua = navigator.userAgent.toLowerCase();
     const isAndroid = /android/.test(ua);
     const isIOS = /iphone|ipad|ipod/.test(ua);
     const isMac = /macintosh|mac os x/.test(ua) && !isIOS;
     const isWindows = /windows/.test(ua);
 
-    const start = new Date();
-    start.setDate(start.getDate() + 1);
-    start.setHours(10, 0, 0, 0);
     const end = new Date(start.getTime() + parseDurationMinutes(exp.duration) * 60 * 1000);
 
     const title = `${exp.name} - WanderGraph`;
@@ -123,6 +131,42 @@ export default function ExperiencePage() {
     googleUrl.searchParams.set('details', details);
     googleUrl.searchParams.set('location', location);
     window.open(googleUrl.toString(), '_blank', 'noopener,noreferrer');
+  };
+
+  const openDatePicker = () => {
+    const defaultStart = new Date();
+    defaultStart.setDate(defaultStart.getDate() + 1);
+    defaultStart.setHours(10, 0, 0, 0);
+    setScheduledAt(toLocalInputValue(defaultStart));
+    setShowDatePicker(true);
+  };
+
+  const confirmCalendarDate = () => {
+    if (!scheduledAt) return;
+    const selected = new Date(scheduledAt);
+    if (Number.isNaN(selected.getTime())) return;
+
+    if (selected.getTime() < Date.now()) {
+      setShowDatePicker(false);
+      setShowReflection(true);
+      return;
+    }
+
+    openCalendarEventForDate(selected);
+    setShowDatePicker(false);
+  };
+
+  const submitReflection = () => {
+    // Local capture for now; can be sent to backend in a follow-up.
+    console.log('experience_reflection', {
+      experienceId: exp.id,
+      villageId: village.id,
+      when: scheduledAt,
+      q1: reflectionQ1,
+      q2: reflectionQ2,
+      q3: reflectionQ3,
+    });
+    setShowReflection(false);
   };
 
   const handleBook = async () => {
@@ -342,7 +386,7 @@ export default function ExperiencePage() {
                   <div className="w-full rounded-lg border border-[#333] bg-surface-2 p-4 mb-4 text-left">
                     <p className="text-sm text-white font-medium mb-3">Add this booking to your calendar?</p>
                     <button
-                      onClick={addCalendarEvent}
+                      onClick={openDatePicker}
                       className="w-full rounded-pill bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
                     >
                       {getCalendarLabel()}
@@ -353,6 +397,108 @@ export default function ExperiencePage() {
                   </button>
                 </div>
               )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showDatePicker && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 12 }}
+              className="bg-surface border border-[#333] rounded-card p-6 w-full max-w-sm"
+            >
+              <h3 className="font-display text-2xl text-white mb-2">Choose experience date</h3>
+              <p className="text-sm text-text-2 mb-4">Pick when you plan to do this experience.</p>
+              <input
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+                aria-label="Experience date and time"
+                title="Experience date and time"
+                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white"
+              />
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => setShowDatePicker(false)}
+                  className="flex-1 rounded-pill border border-[#3A3A3A] px-4 py-2 text-sm text-text-2 hover:text-white transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmCalendarDate}
+                  className="flex-1 rounded-pill bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
+                >
+                  Continue
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showReflection && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 12 }}
+              className="bg-surface border border-[#333] rounded-card p-6 w-full max-w-md"
+            >
+              <h3 className="font-display text-2xl text-white mb-2">Quick reflection</h3>
+              <p className="text-sm text-text-2 mb-4">That date is in the past. Answer these quick questions instead.</p>
+
+              <label className="block text-xs text-text-3 uppercase mb-2">How did it go?</label>
+              <textarea
+                value={reflectionQ1}
+                onChange={(e) => setReflectionQ1(e.target.value)}
+                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white mb-3"
+                rows={3}
+                placeholder="Share your experience"
+              />
+
+              <label className="block text-xs text-text-3 uppercase mb-2">Would you recommend it?</label>
+              <select
+                value={reflectionQ2}
+                onChange={(e) => setReflectionQ2(e.target.value as 'yes' | 'maybe' | 'no')}
+                aria-label="Would you recommend this experience"
+                title="Would you recommend this experience"
+                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white mb-3"
+              >
+                <option value="yes">Yes</option>
+                <option value="maybe">Maybe</option>
+                <option value="no">No</option>
+              </select>
+
+              <label className="block text-xs text-text-3 uppercase mb-2">One tip for future travelers</label>
+              <textarea
+                value={reflectionQ3}
+                onChange={(e) => setReflectionQ3(e.target.value)}
+                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white"
+                rows={2}
+                placeholder="What should they know?"
+              />
+
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => setShowReflection(false)}
+                  className="flex-1 rounded-pill border border-[#3A3A3A] px-4 py-2 text-sm text-text-2 hover:text-white transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={submitReflection}
+                  className="flex-1 rounded-pill bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
+                >
+                  Submit
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

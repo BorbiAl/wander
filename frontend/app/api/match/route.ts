@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { EXPERIENCES } from '@/app/lib/data';
 import { matchScore } from '@/app/lib/hmm';
+import { readFile, access } from 'node:fs/promises';
+import path from 'node:path';
 
 // Normalise C++ match result → frontend Experience + score shape
 function normalise(e: Record<string, unknown>) {
@@ -18,6 +20,30 @@ function normalise(e: Record<string, unknown>) {
     personalityWeights: pw.slice(0, 5) as [number, number, number, number, number],
     score: (e.score ?? 0) as number,
   };
+}
+
+async function loadSeedExperiencesForFallback() {
+  const candidatePaths = [
+    path.resolve(process.cwd(), 'data', 'experiences.json'),
+    path.resolve(process.cwd(), '..', 'data', 'experiences.json'),
+    path.resolve(process.cwd(), 'engine', 'data', 'experiences.json'),
+    path.resolve(process.cwd(), '..', 'engine', 'data', 'experiences.json'),
+  ];
+
+  for (const seedPath of candidatePaths) {
+    try {
+      await access(seedPath);
+      const raw = await readFile(seedPath, 'utf-8');
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data)) continue;
+      const mapped = data.map((e) => normalise(e as Record<string, unknown>));
+      if (mapped.length > 0) return mapped;
+    } catch {
+      // Try next candidate path.
+    }
+  }
+
+  return [];
 }
 
 export async function POST(req: Request) {
@@ -39,8 +65,10 @@ export async function POST(req: Request) {
       }
       throw new Error('empty');
     } catch {
-      // Fallback: score local static data
-      const matches = EXPERIENCES.map(exp => ({
+      // Fallback: score file-backed experiences first, static data last.
+      const fileBacked = await loadSeedExperiencesForFallback();
+      const source = fileBacked.length > 0 ? fileBacked : EXPERIENCES;
+      const matches = source.map(exp => ({
         ...exp,
         score: matchScore(personality_vector, exp.personalityWeights),
       })).sort((a, b) => b.score - a.score).slice(0, 10);

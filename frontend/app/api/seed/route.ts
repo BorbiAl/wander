@@ -420,6 +420,7 @@ function collectTraditions(villages: SourceVillage[]): string[] {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const location = searchParams.get('location');
+  const allowGenerate = searchParams.get('allowGenerate') === '1';
 
   if (!location?.trim()) {
     return NextResponse.json({ error: 'location param required' }, { status: 400 });
@@ -444,7 +445,7 @@ export async function GET(req: Request) {
     let selectedExperiences = pickExperiences(experiencesData, selectedVillages);
     let decision = 'Loaded villages and experiences from local JSON datasets.';
 
-    if (selectedExperiences.length === 0) {
+    if (selectedExperiences.length === 0 && allowGenerate) {
       const generated = await generateExperiencesWithGemini(selectedVillages, city, effectiveCountry);
       if (generated.length > 0) {
         selectedExperiences = generated;
@@ -453,6 +454,10 @@ export async function GET(req: Request) {
           ? `Loaded villages from local JSON datasets, generated missing experiences with gemini-2.5-flash, and persisted ${persistedCount} experiences to JSON.`
           : 'Loaded villages from local JSON datasets and generated missing experiences with gemini-2.5-flash.';
       }
+    }
+
+    if (selectedExperiences.length === 0 && !allowGenerate) {
+      decision = 'Loaded villages from local JSON datasets, but no matching experiences were found in JSON for the selected region.';
     }
 
     const hosts = buildHosts(selectedExperiences, selectedVillages);

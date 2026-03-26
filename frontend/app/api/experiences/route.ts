@@ -28,11 +28,11 @@ function normaliseSeedExperience(e: Record<string, unknown>) {
   while (pw.length < 5) pw.push(0.2);
   return {
     id: String(e.id ?? ''),
-    villageId: String(e.villageId ?? ''),
-    name: (e.name ?? 'Village Experience') as string,
+    villageId: String(e.villageId ?? e.village_id ?? ''),
+    name: String(e.title ?? e.name ?? ''),
     type: (e.type ?? 'craft') as string,
     price: (e.price_eur ?? e.price ?? 0) as number,
-    duration: String(e.duration ?? ''),
+    duration: e.duration_h ? `${e.duration_h}h` : String(e.duration ?? ''),
     hostId: (e.hostId ?? e.host_id ?? '') as string,
     description: (e.description ?? '') as string,
     personalityWeights: pw.slice(0, 5) as [number, number, number, number, number],

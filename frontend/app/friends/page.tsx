@@ -9,6 +9,7 @@ import { PERSONALITY_INFO } from '@/app/lib/data';
 import { buildShareUrl, decodeProfileLink } from '@/app/lib/friendUtils';
 import { ProfileQR } from '@/components/ProfileQR';
 import { PersonalityRadar } from '@/components/PersonalityRadar';
+import { EventBeforeAfter } from '@/components/EventBeforeAfter';
 
 export default function FriendsPage() {
   const router = useRouter();
@@ -285,6 +286,13 @@ export default function FriendsPage() {
                       })}
                     </div>
                   )}
+
+                  <EventBeforeAfter
+                    title="Group events: before vs after"
+                    before={group.eventsBefore ?? []}
+                    after={group.eventsAfter ?? []}
+                    compact
+                  />
 
                   <div className="flex gap-3">
                     <button onClick={() => handleCopyGroupLink(group.id)} className="flex-1 bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[14px] font-semibold tracking-wide py-2.5 rounded-full hover:bg-white transition-all shadow-sm active:scale-95">

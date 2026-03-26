@@ -42,6 +42,19 @@
         ],
         "dominant": "Achiever",
         "joinedAt": 1774565114015
+      },
+      {
+        "userId": "user_ygj7l4",
+        "displayName": "Traveler #j7l4",
+        "vector": [
+          0.32,
+          0.04,
+          0.16,
+          0.4000000000000001,
+          0.08
+        ],
+        "dominant": "Achiever",
+        "joinedAt": 1774566232398
       }
     ],
     "createdAt": 1774546093776,

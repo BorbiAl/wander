@@ -11,11 +11,12 @@ export function BudgetSlider({
   onChoice: (index: 0|1|2) => void 
 }) {
   const [choice, setChoice] = useState<0|1|2>(1);
+  const [hoveredOption, setHoveredOption] = useState<number | null>(null);
 
   const options = [
-    { label: question.low, desc: 'Low', color: '#34D399' },
-    { label: question.mid, desc: 'Mid', color: '#C8F55A' },
-    { label: question.high, desc: 'High', color: '#F5A623' },
+    { label: question.low, desc: 'Low', textColor: '#16A34A' },
+    { label: question.mid, desc: 'Medium', textColor: '#C56A14' },
+    { label: question.high, desc: 'High', textColor: '#EF4444' },
   ];
 
   return (
@@ -25,19 +26,24 @@ export function BudgetSlider({
       <p className="font-sans text-xs text-[#1A2E1C]/65 mb-8 text-center">{question.signal}</p>
       
       <div className="flex flex-col gap-4 w-full mb-8">
-        {options.map((opt, i) => (
-          <div 
-            key={i}
-            onClick={() => setChoice(i as 0|1|2)}
-            className={`w-full border rounded-card p-4 cursor-pointer transition-all relative overflow-hidden ${choice === i ? 'border-[#0B6E2A] bg-[#E2E7DA]' : 'border-[#D6DCCD] hover:border-[#A8B09F]'}`}
-          >
-            {choice === i && (
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#0B6E2A]" />
-            )}
-            <div className="font-medium text-[#1A2E1C] mb-1">{opt.label}</div>
-            <div className="text-xs text-[#1A2E1C]/70">{opt.desc}</div>
-          </div>
-        ))}
+        {options.map((opt, i) => {
+          const isColored = hoveredOption === i || choice === i;
+          return (
+            <div
+              key={i}
+              onClick={() => setChoice(i as 0|1|2)}
+              onMouseEnter={() => setHoveredOption(i)}
+              onMouseLeave={() => setHoveredOption(null)}
+              className={`w-full border rounded-card p-4 cursor-pointer transition-all relative overflow-hidden ${choice === i ? 'border-[#0B6E2A] bg-[#E2E7DA]' : 'border-[#D6DCCD] hover:border-[#A8B09F]'}`}
+            >
+              {choice === i && (
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#0B6E2A]" />
+              )}
+              <div className="font-medium mb-1" style={{ color: isColored ? opt.textColor : '#1A2E1C' }}>{opt.label}</div>
+              <div className="text-xs" style={{ color: isColored ? opt.textColor : '#1A2E1C' }}>{opt.desc}</div>
+            </div>
+          );
+        })}
       </div>
 
       <button 

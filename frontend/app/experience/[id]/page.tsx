@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '@/app/lib/store';
 import { getExperience, getHost, getVillage, percentageMatch, cwsColor } from '@/app/lib/utils';
-import { PERSONALITIES, PERSONALITY_INFO } from '@/app/lib/data';
+import { PERSONALITIES, PERSONALITY_INFO, VILLAGES } from '@/app/lib/data';
 
 export default function ExperiencePage() {
   const { id } = useParams();
@@ -59,9 +59,16 @@ export default function ExperiencePage() {
       if (village.cws < 45) addBadge('Pioneer');
       if (exp.type === 'volunteer') addBadge('Guardian');
       if (exp.type === 'hike') addBadge('Achiever');
-      
+
       const socialCount = bookings.filter(b => b.experienceName.includes('Ceremony') || b.experienceName.includes('Cooking')).length;
       if (socialCount >= 1 && (exp.type === 'ceremony' || exp.type === 'cooking')) addBadge('Connector');
+
+      // Trailblazer: visited 3+ different regions (including this booking)
+      const visitedVillageNames = new Set([...bookings.map(b => b.villageName), village.name]);
+      const visitedRegions = new Set(
+        VILLAGES.filter(v => visitedVillageNames.has(v.name)).map(v => v.region)
+      );
+      if (visitedRegions.size >= 3) addBadge('Trailblazer');
 
     } catch (e) {
       console.error(e);

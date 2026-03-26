@@ -26,8 +26,9 @@ export function useImpactStream() {
 
     function connect() {
       if (cancelled) return;
+      const wsUrl = process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:8081/ws';
       try {
-        const ws = new WebSocket('ws://bvsqr.eu/ws');
+        const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 
         ws.onopen = () => {

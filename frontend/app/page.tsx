@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
 import MarketingGlobe, { DESTINATIONS } from '../components/MarketingGlobe';
-import { Search, MapPin, ChevronDown, Play, Dices, Globe2 } from 'lucide-react';
+import { MapPin, ChevronDown, Play, Dices, Globe2, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LandingPage() {
@@ -13,6 +13,7 @@ export default function LandingPage() {
   const { seedLocation, seedStatus, destination } = useApp();
   const [input, setInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -156,7 +157,10 @@ export default function LandingPage() {
               <Dices className="w-4 h-4" />
               I'm Feeling Lucky
             </button>
-            <button className="text-black/60 font-medium text-sm px-6 py-3 rounded-full hover:bg-black/5 transition-colors flex items-center gap-3">
+            <button
+              onClick={() => setShowHowItWorks(true)}
+              className="text-black/60 font-medium text-sm px-6 py-3 rounded-full hover:bg-black/5 transition-colors flex items-center gap-3"
+            >
               <div className="w-8 h-8 rounded-full bg-[#E5E9DF] flex items-center justify-center text-[#0B6E2A]">
                 <Play className="w-3.5 h-3.5 ml-0.5" fill="currentColor" />
               </div>
@@ -182,6 +186,87 @@ export default function LandingPage() {
 
         </motion.div>
       </main>
+
+      {/* How It Works Modal */}
+      <AnimatePresence>
+        {showHowItWorks && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowHowItWorks(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-3xl max-w-lg w-full p-8 relative shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowHowItWorks(false)}
+                className="absolute top-5 right-5 text-black/30 hover:text-black/60 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="font-display text-3xl text-[#1A2E1C] mb-2">How It Works</h2>
+              <p className="text-[#1A2E1C]/60 text-sm mb-8">Four steps to your perfect off-the-beaten-path trip.</p>
+
+              <div className="flex flex-col gap-6">
+                {[
+                  {
+                    step: '01',
+                    title: 'Pick a destination',
+                    desc: 'Search for any region in the world. Our AI fetches real rural villages and local experiences specific to that area.',
+                    color: '#0B6E2A',
+                  },
+                  {
+                    step: '02',
+                    title: 'Build your personality profile',
+                    desc: 'Answer 15 behavioral questions — swipe choices, audio scenarios, emoji picks. A Hidden Markov Model maps your responses to a 5-dimension travel personality.',
+                    color: '#C84A31',
+                  },
+                  {
+                    step: '03',
+                    title: 'Get matched to experiences',
+                    desc: 'Our graph engine scores every village experience against your personality vector. The closer the match, the higher it ranks.',
+                    color: '#F5A623',
+                  },
+                  {
+                    step: '04',
+                    title: 'Book & track your impact',
+                    desc: '70% of your booking goes directly to the host, 15% to the community, 10% to cultural preservation. Watch the Community Wellbeing Signal rise in real time.',
+                    color: '#60A5FA',
+                  },
+                ].map(item => (
+                  <div key={item.step} className="flex gap-4">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5"
+                      style={{ backgroundColor: item.color }}
+                    >
+                      {item.step}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-[#1A2E1C] mb-1">{item.title}</h3>
+                      <p className="text-[#1A2E1C]/60 text-sm leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => { setShowHowItWorks(false); router.push('/onboarding'); }}
+                className="mt-8 w-full bg-[#0B6E2A] text-white font-semibold py-3 rounded-full hover:bg-[#095A22] transition-colors"
+              >
+                Start your journey →
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

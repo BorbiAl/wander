@@ -104,9 +104,9 @@ export default function ImpactPage() {
       <div className="mb-12">
         <h2 className="font-display text-2xl text-white mb-6">Latest Booking Flow</h2>
         <div className="bg-surface border border-[#222] rounded-card p-6 overflow-hidden">
-          <SankeyDiagram amount={latestBooking.amount} split={latestBooking.split} />
+          <SankeyDiagram amount={latestBooking.amount} split={latestBooking.split ?? { host: latestBooking.amount * 0.70, community: latestBooking.amount * 0.15, culture: latestBooking.amount * 0.10, platform: latestBooking.amount * 0.05 }} />
           <p className="text-center text-text-2 text-sm mt-4 italic">
-            {latestBooking.hostName || 'The host'} in {latestBooking.villageName} received €{latestBooking.split.host.toFixed(0)} from your booking
+            {latestBooking.hostName || 'The host'} in {latestBooking.villageName} received €{(latestBooking.split?.host ?? latestBooking.amount * 0.70).toFixed(0)} from your booking
           </p>
         </div>
       </div>

@@ -15,7 +15,7 @@ export function Leaderboard() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:8081/graph/leaderboard')
+    fetch('/api/leaderboard')
       .then(r => r.json())
       .then(data => { if (Array.isArray(data) && data.length > 0) setEntries(data); })
       .catch(() => {});

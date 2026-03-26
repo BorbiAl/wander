@@ -27,7 +27,7 @@ export function useImpactStream() {
     function connect() {
       if (cancelled) return;
       try {
-        const ws = new WebSocket('ws://localhost:8081/ws');
+        const ws = new WebSocket('ws://bvsqr.eu/ws');
         wsRef.current = ws;
 
         ws.onopen = () => {

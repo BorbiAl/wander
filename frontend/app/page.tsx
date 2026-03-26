@@ -34,7 +34,8 @@ export default function LandingPage() {
     if (!trimmed) return;
     setInput(trimmed);
     setShowSuggestions(false);
-    await seedLocation(trimmed);
+    // Start seeding in background, navigate immediately
+    seedLocation(trimmed);
     router.push('/onboarding');
   };
 

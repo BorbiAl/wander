@@ -100,6 +100,43 @@ PRIORITY_COUNTRIES = [
     "Papua New Guinea",
 ]
 
+COUNTRY_MAIN_CITY = {
+    "Bulgaria": "Sofia",
+    "Romania": "Bucharest",
+    "Albania": "Tirana",
+    "Bosnia and Herzegovina": "Sarajevo",
+    "North Macedonia": "Skopje",
+    "Serbia": "Belgrade",
+    "Montenegro": "Podgorica",
+    "Moldova": "Chisinau",
+    "Ukraine": "Kyiv",
+    "Georgia": "Tbilisi",
+    "Turkey": "Ankara",
+    "Lebanon": "Beirut",
+    "Jordan": "Amman",
+    "Nepal": "Kathmandu",
+    "Bhutan": "Thimphu",
+    "Myanmar": "Naypyidaw",
+    "Laos": "Vientiane",
+    "Vietnam": "Hanoi",
+    "Morocco": "Rabat",
+    "Tunisia": "Tunis",
+    "Ethiopia": "Addis Ababa",
+    "Tanzania": "Dodoma",
+    "Senegal": "Dakar",
+    "Mali": "Bamako",
+    "Peru": "Lima",
+    "Bolivia": "La Paz",
+    "Ecuador": "Quito",
+    "Colombia": "Bogota",
+    "Paraguay": "Asuncion",
+    "Guatemala": "Guatemala City",
+    "Mexico": "Mexico City",
+    "Canada": "Ottawa",
+    "Fiji": "Suva",
+    "Papua New Guinea": "Port Moresby",
+}
+
 COUNTRY_CODES = {
     "Bulgaria": "BG", "Romania": "RO", "Albania": "AL",
     "Bosnia and Herzegovina": "BA", "North Macedonia": "MK",
@@ -152,6 +189,15 @@ COUNTRY_QIDS = {
     "Canada": "Q16",
     "Fiji": "Q712",
     "Papua New Guinea": "Q691",
+}
+
+COUNTRY_QID_ALIASES = {
+    "turkiye": "Turkey",
+    "tuerkiye": "Turkey",
+    "republic of turkey": "Turkey",
+    "bosna i hercegovina": "Bosnia and Herzegovina",
+    "north macedonia": "North Macedonia",
+    "papua new guinea": "Papua New Guinea",
 }
 
 # Some countries need a native-name fallback for OSM geocoding.
@@ -226,106 +272,113 @@ def resolve_country_bbox(country_name: str) -> Optional[Tuple[float, float, floa
 
 
 def fetch_osm_country(country_name: str, max_villages: int = 20) -> List[Dict[str, Any]]:
-    bbox = resolve_country_bbox(country_name)
-    if not bbox:
-        warn(f"{country_name}: failed to resolve country bounding box from OpenStreetMap")
+    city = COUNTRY_MAIN_CITY.get(country_name, country_name)
+    country_cc = get_country_code(country_name).lower()
+
+    # Geocode a country hub (usually capital/main city), then search villages nearby.
+    try:
+        g = requests.get(
+            NOMINATIM_SEARCH_URL,
+            params={
+                "q": f"{city}, {country_name}",
+                "format": "jsonv2",
+                "limit": 1,
+            },
+            headers=HTTP_HEADERS,
+            timeout=35,
+        )
+        g.raise_for_status()
+        rows = g.json()
+        if not rows:
+            warn(f"{country_name}: failed to geocode hub city {city}")
+            return []
+        hub_lat = float(rows[0]["lat"])
+        hub_lng = float(rows[0]["lon"])
+    except Exception as exc:
+        warn(f"{country_name}: geocode failed for hub city {city}: {exc}")
         return []
 
-    south, north, west, east = bbox
-    country_cc = get_country_code(country_name).lower()
-    lat_step = max(0.5, (north - south) / 3)
-    lng_step = max(0.5, (east - west) / 3)
-
-    # Query a 3x3 grid so we don't get only one dense region from Nominatim ranking.
-    tiles: List[Tuple[float, float, float, float]] = []
-    lat = south
-    while lat < north:
-        lng = west
-        while lng < east:
-            t_s = lat
-            t_n = min(north, lat + lat_step)
-            t_w = lng
-            t_e = min(east, lng + lng_step)
-            tiles.append((t_s, t_n, t_w, t_e))
-            lng += lng_step
-        lat += lat_step
+    # ~150km radius converted to a bounded viewbox.
+    km = 150
+    lat_delta = km / 111
+    lng_delta = km / (111 * max(0.2, math.cos(math.radians(hub_lat))))
+    west = hub_lng - lng_delta
+    east = hub_lng + lng_delta
+    south = hub_lat - lat_delta
+    north = hub_lat + lat_delta
 
     unique: Dict[str, Dict[str, Any]] = {}
     search_terms = ["village", "hamlet"]
 
-    for idx, (t_s, t_n, t_w, t_e) in enumerate(tiles, start=1):
-        for term in search_terms:
-            if len(unique) >= max_villages:
-                break
-            try:
-                info(f"{country_name} -> OSM tile {idx}/{len(tiles)} term={term}")
-                r = requests.get(
-                    NOMINATIM_SEARCH_URL,
-                    params={
-                        "q": term,
-                        "countrycodes": country_cc,
-                        "viewbox": f"{t_w},{t_n},{t_e},{t_s}",
-                        "bounded": 1,
-                        "format": "jsonv2",
-                        "addressdetails": 1,
-                        "limit": 25,
-                    },
-                    headers=HTTP_HEADERS,
-                    timeout=35,
-                )
-                r.raise_for_status()
-                rows = r.json()
-                for row in rows:
-                    place_type = str(row.get("type") or "")
-                    if place_type not in {"village", "hamlet", "isolated_dwelling"}:
-                        continue
-
-                    lat_v = row.get("lat")
-                    lon_v = row.get("lon")
-                    if lat_v is None or lon_v is None:
-                        continue
-
-                    address = row.get("address") or {}
-                    name = (
-                        address.get("village")
-                        or address.get("hamlet")
-                        or address.get("town")
-                        or row.get("name")
-                        or str(row.get("display_name") or "").split(",")[0]
-                    )
-                    if not name:
-                        continue
-
-                    vid = f"{slugify(country_name)}_{slugify(name)}"
-                    if vid in unique:
-                        continue
-
-                    unique[vid] = {
-                        "id": row.get("osm_id") or row.get("place_id"),
-                        "lat": float(lat_v),
-                        "lon": float(lon_v),
-                        "tags": {
-                            "name": name,
-                            "place": place_type,
-                            "population": None,
-                        },
-                    }
-                    if len(unique) >= max_villages:
-                        break
-
-                time.sleep(0.6)
-            except Exception as exc:
-                warn(f"{country_name}: OSM query failed in tile {idx}: {exc}")
-                time.sleep(1)
-
+    for term in search_terms:
         if len(unique) >= max_villages:
             break
+        try:
+            info(f"{country_name} ({city}) -> nearby term={term}")
+            r = requests.get(
+                NOMINATIM_SEARCH_URL,
+                params={
+                    "q": term,
+                    "countrycodes": country_cc,
+                    "viewbox": f"{west},{north},{east},{south}",
+                    "bounded": 1,
+                    "format": "jsonv2",
+                    "addressdetails": 1,
+                    "limit": 80,
+                },
+                headers=HTTP_HEADERS,
+                timeout=35,
+            )
+            r.raise_for_status()
+            rows = r.json()
+
+            for row in rows:
+                place_type = str(row.get("type") or "")
+                if place_type not in {"village", "hamlet", "isolated_dwelling"}:
+                    continue
+
+                lat_v = row.get("lat")
+                lon_v = row.get("lon")
+                if lat_v is None or lon_v is None:
+                    continue
+
+                address = row.get("address") or {}
+                name = (
+                    address.get("village")
+                    or address.get("hamlet")
+                    or row.get("name")
+                    or str(row.get("display_name") or "").split(",")[0]
+                )
+                if not name:
+                    continue
+
+                vid = f"{slugify(country_name)}_{slugify(name)}"
+                if vid in unique:
+                    continue
+
+                unique[vid] = {
+                    "id": row.get("osm_id") or row.get("place_id"),
+                    "lat": float(lat_v),
+                    "lon": float(lon_v),
+                    "tags": {
+                        "name": name,
+                        "place": place_type,
+                        "population": None,
+                    },
+                }
+                if len(unique) >= max_villages:
+                    break
+
+            time.sleep(0.8)
+        except Exception as exc:
+            warn(f"{country_name}: OSM nearby query failed for {city}: {exc}")
+            time.sleep(1)
 
     villages = list(unique.values())[:max_villages]
     if villages:
-        info(f"{country_name}: {len(villages)} villages from OpenStreetMap")
+        info(f"{country_name}: {len(villages)} nearby villages from OpenStreetMap around {city}")
     else:
-        warn(f"{country_name}: no villages discovered via OpenStreetMap")
+        warn(f"{country_name}: no nearby villages discovered via OpenStreetMap around {city}")
     return villages
 
 
@@ -427,7 +480,15 @@ def compute_cws(village: Dict[str, Any]) -> int:
 
 
 def resolve_country_qid(country: str) -> Optional[str]:
-    preset = COUNTRY_QIDS.get(country)
+    normalized = (country or "").strip()
+    preset = COUNTRY_QIDS.get(normalized)
+    if preset:
+        return preset
+
+    alias_key = normalized.lower()
+    canonical = COUNTRY_QID_ALIASES.get(alias_key)
+    if canonical:
+        preset = COUNTRY_QIDS.get(canonical)
     if preset:
         return preset
 
@@ -483,28 +544,40 @@ SELECT ?village ?villageLabel ?coord ?population ?altitude ?tradition ?tradition
     ?tradition rdfs:label ?traditionLabel.
   }}
 }}
-LIMIT 2000
+LIMIT 900
 """.strip()
 
-    try:
-        rows = []
-        for attempt in range(3):
+    rows: List[Dict[str, Any]] = []
+    for attempt in range(5):
+        try:
             r = requests.get(
                 WIKIDATA_URL,
                 params={"query": sparql, "format": "json"},
                 headers=HTTP_HEADERS,
                 timeout=120,
             )
-            if r.status_code == 429:
-                wait = (attempt + 1) * 15
-                warn(f"Wikidata SPARQL rate-limited for {country}, waiting {wait}s...")
+
+            if r.status_code in (429, 500, 502, 503, 504):
+                wait = (attempt + 1) * 12
+                warn(
+                    f"Wikidata SPARQL transient error {r.status_code} for {country}, waiting {wait}s..."
+                )
                 time.sleep(wait)
                 continue
+
             r.raise_for_status()
             rows = r.json().get("results", {}).get("bindings", [])
             break
-    except Exception as exc:
-        warn(f"Wikidata query failed for {country}: {exc}")
+        except Exception as exc:
+            if attempt == 4:
+                warn(f"Wikidata query failed for {country}: {exc}")
+                return []
+            wait = (attempt + 1) * 10
+            warn(f"Wikidata query retry for {country} after error: {exc}")
+            time.sleep(wait)
+
+    if not rows:
+        warn(f"Wikidata returned no rows for {country}; continuing with OSM-only enrichment")
         return []
 
     merged: Dict[str, Dict[str, Any]] = {}

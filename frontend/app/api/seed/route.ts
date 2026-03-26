@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { EXPERIENCES, VILLAGES } from '@/app/lib/data';
+import { EXPERIENCES } from '@/app/lib/data';
 
 type HubCoords = { lat: number; lng: number };
 type OsmVillage = { id: string; name: string; lat: number; lng: number };
@@ -221,14 +221,6 @@ async function fetchNearbyVillagesByNominatim(lat: number, lng: number, country:
   return Array.from(unique.values()).slice(0, 10);
 }
 
-function buildFallbackVillages(country: string, center: HubCoords): OsmVillage[] {
-  return VILLAGES
-    .filter((v) => (v.country ?? 'Bulgaria') === country)
-    .sort((a, b) => haversineKm(center.lat, center.lng, a.lat, a.lng) - haversineKm(center.lat, center.lng, b.lat, b.lng))
-    .slice(0, 6)
-    .map((v) => ({ id: v.id, name: v.name, lat: v.lat, lng: v.lng }));
-}
-
 function buildSeedPayload(city: string, country: string, villages: OsmVillage[]) {
   const traditions = COUNTRY_TRADITIONS[country] ?? ['folk craft', 'village festivals', 'local cuisine'];
 
@@ -321,8 +313,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: `Unable to locate hub for ${city}, ${country}` }, { status: 404 });
     }
 
-    const osmVillages = await fetchNearbyVillagesByNominatim(center.lat, center.lng, country);
-    const villages = osmVillages.length > 0 ? osmVillages : buildFallbackVillages(country, center);
+    const villages = await fetchNearbyVillagesByNominatim(center.lat, center.lng, country);
 
     if (villages.length === 0) {
       return NextResponse.json({ error: `No nearby villages found for ${city}, ${country}` }, { status: 404 });

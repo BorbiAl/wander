@@ -131,9 +131,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state, isLoaded]);
 
-  // Auto-save behavioural data to account when personality changes and user is logged in
+  // Auto-save all profile data to account whenever anything meaningful changes and user is logged in
   useEffect(() => {
-    if (!isLoaded || !state.email || !state.personality) return;
+    if (!isLoaded || !state.email) return;
     const timer = setTimeout(() => {
       const { seedStatus: _s, ...stateToSave } = state;
       void _s;
@@ -145,7 +145,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, 2000);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.personality, state.observations, isLoaded]);
+  }, [
+    state.personality,
+    state.observations,
+    state.bookings,
+    state.badges,
+    state.points,
+    state.totalImpact,
+    state.villagesVisited,
+    state.matches,
+    state.friends,
+    state.destination,
+    state.activeGroupId,
+    isLoaded,
+  ]);
 
 
   // Build a StoredMember from current user state (requires personality to be set)

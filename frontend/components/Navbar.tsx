@@ -20,9 +20,9 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-[#F4E3D7]/80 backdrop-blur-xl border-b border-[#D6DCCD]/60 z-50 flex items-center justify-center px-6 md:px-12 font-sans shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-300">
-        <div className="w-full max-w-7xl flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
+      <nav className="fixed top-0 left-0 right-0 h-[72px] bg-[#F4E3D7]/80 backdrop-blur-xl border-b border-[#D6DCCD]/60 z-50 flex items-center justify-center px-4 md:px-8 font-sans shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-300">
+        <div className="relative w-full flex items-center justify-center">
+          <Link href="/" className="absolute left-0 flex items-center gap-2.5 group">
             <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#1A2E1C] text-[#E5E9DF] group-hover:scale-105 transition-transform duration-300 shadow-md">
               <span className="font-display text-[15px] font-bold tracking-widest mt-0.5">WG</span>
             </div>
@@ -56,15 +56,13 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="absolute right-0 flex items-center gap-4">
             {!personality ? (
               <Link href="/onboarding" className="bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide px-5 py-2.5 rounded-full hover:bg-[#095A22] transition-colors shadow-md hover:shadow-lg active:scale-95 shadow-[#0B6E2A]/20">
                 Start journey
               </Link>
             ) : (
-              <div className="hidden sm:block text-[11px] font-bold uppercase tracking-widest text-[#1A2E1C]/40">
-                {personality.dominant}
-              </div>
+              <div className="hidden sm:block" />
             )}
           </div>
         </div>

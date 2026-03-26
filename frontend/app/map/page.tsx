@@ -69,7 +69,7 @@ export default function MapPage() {
       {/* Main layout */}
       <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
         {/* Map */}
-        <div className="relative h-[52vh] min-h-[320px] w-full flex-1 lg:h-auto">
+        <div className="relative h-[52vh] min-h-[320px] w-full flex-1 overflow-hidden rounded-3xl lg:h-auto">
           <VillageMap
             onSelectVillage={v => setSelectedVillageId(v.id)}
             visited={showVisited ? villagesVisited : []}

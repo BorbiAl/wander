@@ -1,27 +1,77 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { useApp } from '@/app/lib/store';
-import { ExperienceCard } from '@/components/ExperienceCard';
-import { PersonalityRadar } from '@/components/PersonalityRadar';
-import { Village, EXPERIENCES } from '@/app/lib/data';
-import { getVillage } from '@/app/lib/utils';
+import { Experience, Village, EXPERIENCES, VILLAGES } from '@/app/lib/data';
+import { cwsColor, cwsLabel } from '@/app/lib/utils';
 import { matchScore } from '@/app/lib/hmm';
-import { CommunityExperiences } from '@/components/CommunityExperiences';
 
-const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
+const FILTERS = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore', 'sightseeing'] as const;
+
+type ScoredExperience = Experience & { score: number };
+
+function inferCountryLabel(village: Village, destination: string): string {
+  if (destination.includes(',')) {
+    const chunks = destination.split(',').map(s => s.trim()).filter(Boolean);
+    if (chunks.length > 1) return chunks[chunks.length - 1];
+  }
+  if (village.region.includes(',')) {
+    const chunks = village.region.split(',').map(s => s.trim()).filter(Boolean);
+    if (chunks.length > 1) return chunks[chunks.length - 1];
+  }
+  return village.region || 'Unknown';
+}
+
+function projectToGlobe(lat: number, lng: number, spinDeg: number) {
+  const spin = (spinDeg * Math.PI) / 180;
+  const phi = (lat * Math.PI) / 180;
+  const theta = (lng * Math.PI) / 180 + spin;
+
+  const x = Math.cos(phi) * Math.sin(theta);
+  const y = Math.sin(phi);
+  const z = Math.cos(phi) * Math.cos(theta);
+
+  return { x, y, z };
+}
 
 export default function DiscoverPage() {
-  const { personality, matches, setMatches, seedStatus } = useApp();
+  const { personality, matches, setMatches } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'match'|'price'|'cws'>('match');
-  const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
+  const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
 
-  // Re-score against the in-memory EXPERIENCES array (which has been patched
-  // with seeded destination data client-side) instead of hitting the server,
-  // which only ever sees the static Bulgarian fallback data.
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadLiveData() {
+      try {
+        const [vRes, eRes] = await Promise.all([
+          fetch('/api/villages', { cache: 'no-store' }),
+          fetch('/api/experiences', { cache: 'no-store' }),
+        ]);
+        if (!mounted) return;
+
+        if (vRes.ok) {
+          const data: Village[] = await vRes.json();
+          if (data.length > 0) setVillages(data);
+        }
+        if (eRes.ok) {
+          const data: Experience[] = await eRes.json();
+          if (data.length > 0) setExperiences(data);
+        }
+      } catch {
+        // Keep static fallback arrays when API is unavailable.
+      }
+    }
+
+    loadLiveData();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (!personality) return;
     const scored = EXPERIENCES.map(exp => ({
@@ -29,130 +79,224 @@ export default function DiscoverPage() {
       score: matchScore(personality.vector, exp.personalityWeights),
     })).sort((a, b) => b.score - a.score);
     if (scored.length > 0) setMatches(scored);
-  // Re-run when seed completes so Mexico data replaces Bulgarian fallback
+  // Only run when dominant personality or EXPERIENCES array length changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personality?.dominant, seedStatus]);
+  }, [personality?.dominant, EXPERIENCES.length]);
 
-  const types = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore', 'sightseeing'];
+  const selectedVillage = selectedVillageId ? villageById.get(selectedVillageId) ?? null : null;
 
   const filteredMatches = useMemo(() => {
-    let res = matches;
+    let res = scoredMatches;
     if (filterType !== 'All') {
       res = res.filter(m => m.type === filterType);
     }
-    if (selectedVillage) {
-      res = res.filter(m => m.villageId === selectedVillage.id);
+    if (selectedVillageId) {
+      res = res.filter(m => m.villageId === selectedVillageId);
     }
     if (sortBy === 'price') {
       res = [...res].sort((a, b) => a.price - b.price);
     } else if (sortBy === 'cws') {
       // Sort by CWS impact (lower CWS = higher impact)
       res = [...res].sort((a, b) => {
-        const vA = getVillage(a.villageId)?.cws || 100;
-        const vB = getVillage(b.villageId)?.cws || 100;
+        const vA = villageById.get(a.villageId)?.cws || 100;
+        const vB = villageById.get(b.villageId)?.cws || 100;
         return vA - vB;
       });
     } else {
       res = [...res].sort((a, b) => b.score - a.score);
     }
     return res;
-  }, [matches, filterType, sortBy, selectedVillage]);
+  }, [scoredMatches, filterType, sortBy, selectedVillageId, villageById]);
 
-  if (!personality) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-3.5rem)]">
-        <p className="text-text-2 mb-4">You need to complete onboarding first.</p>
-        <button onClick={() => window.location.href = '/onboarding'} className="bg-accent text-black px-6 py-2 rounded-pill">Complete Onboarding</button>
-      </div>
-    );
-  }
+  const luckyChoice = useMemo(() => {
+    if (filteredMatches.length === 0) return null;
+    return filteredMatches[Math.floor(Math.random() * filteredMatches.length)];
+  }, [filteredMatches]);
+
+  const globeNodes = useMemo(() => {
+    return villages.map(v => {
+      const p = projectToGlobe(v.lat, v.lng, spinDeg);
+      const scale = 0.72 + ((p.z + 1) / 2) * 0.5;
+      return {
+        village: v,
+        visible: p.z > -0.2,
+        xPct: 50 + p.x * 39,
+        yPct: 50 - p.y * 39,
+        scale,
+      };
+    });
+  }, [villages, spinDeg]);
+
+  const avgCws = useMemo(() => {
+    if (villages.length === 0) return 0;
+    return Math.round(villages.reduce((sum, v) => sum + v.cws, 0) / villages.length);
+  }, [villages]);
 
   return (
     <motion.div 
       initial={{ opacity: 0, y: 12 }} 
       animate={{ opacity: 1, y: 0 }} 
       transition={{ duration: 0.35 }}
-      className="flex flex-col md:flex-row h-[calc(100vh-3.5rem)]"
+      className="min-h-[calc(100vh-3.5rem)] bg-[radial-gradient(circle_at_18%_8%,#18312B_0%,transparent_26%),radial-gradient(circle_at_90%_14%,#35240F_0%,transparent_28%),#080808]"
     >
       {/* Map Section */}
       <div className="w-full md:w-[55%] h-[250px] md:h-full relative border-b md:border-b-0 md:border-r border-[#222]">
-        <VillageMap onSelectVillage={setSelectedVillage} seedStatus={seedStatus} />
+        <VillageMap onSelectVillage={setSelectedVillage} />
       </div>
 
-      {/* Sidebar Section */}
-      <div className="w-full md:w-[45%] h-full overflow-y-auto bg-bg p-4 md:p-6 flex flex-col gap-6">
-        
-        {/* Personality Banner */}
-        <div className="bg-surface border border-[#222] rounded-card p-5 flex flex-col items-center text-center">
-          <h2 className="font-display text-2xl text-white mb-1">
-            You are a <span className="text-accent">{personality.dominant}</span>
-          </h2>
-          <p className="text-text-2 text-sm mb-4">Showing experiences matched to your profile</p>
-          <div className="w-32 h-32 mb-2">
-            <PersonalityRadar vector={personality.vector} size={128} />
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="bg-[#121A16] border border-[#253129] rounded-[14px] p-4">
+                <p className="text-text-3 text-xs uppercase mb-1">Villages loaded</p>
+                <p className="font-display text-3xl text-white">{villages.length}</p>
+              </div>
+              <div className="bg-[#121A16] border border-[#253129] rounded-[14px] p-4">
+                <p className="text-text-3 text-xs uppercase mb-1">Experiences matched</p>
+                <p className="font-display text-3xl text-white">{filteredMatches.length}</p>
+              </div>
+              <div className="bg-[#121A16] border border-[#253129] rounded-[14px] p-4">
+                <p className="text-text-3 text-xs uppercase mb-1">Average CWS</p>
+                <p className="font-display text-3xl text-white">{avgCws}</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="xl:col-span-5 bg-[#11161B] border border-[#2C3945] rounded-[22px] p-4 md:p-6 flex flex-col">
+            <div className="relative mx-auto w-full max-w-[460px] aspect-square rounded-full border border-[#385047] bg-[radial-gradient(circle_at_34%_28%,#273A33_0%,#101814_64%)] overflow-hidden">
+              <div
+                className="absolute inset-0 opacity-35"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(to right, rgba(200,245,90,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(200,245,90,0.1) 1px, transparent 1px)',
+                  backgroundSize: '12% 100%, 100% 12%',
+                }}
+              />
+
+              {globeNodes.filter(n => n.visible).map(node => {
+                const isSelected = selectedVillageId === node.village.id;
+                return (
+                  <button
+                    key={node.village.id}
+                    onClick={() => setSelectedVillageId(node.village.id)}
+                    className="absolute -translate-x-1/2 -translate-y-1/2"
+                    style={{
+                      left: `${node.xPct}%`,
+                      top: `${node.yPct}%`,
+                      transform: `translate(-50%, -50%) scale(${node.scale})`,
+                    }}
+                    title={`${node.village.name} (${inferCountryLabel(node.village, destination)})`}
+                  >
+                    <span
+                      className="block rounded-full border border-black/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all"
+                      style={{
+                        width: isSelected ? 16 : 11,
+                        height: isSelected ? 16 : 11,
+                        background: cwsColor(node.village.cws),
+                        boxShadow: isSelected
+                          ? `0 0 0 5px rgba(200,245,90,0.2), 0 0 15px ${cwsColor(node.village.cws)}`
+                          : `0 0 10px ${cwsColor(node.village.cws)}`,
+                      }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-5 bg-[#121920] border border-[#2A3946] rounded-[14px] p-4">
+              {selectedVillage ? (
+                <>
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Selected country node</p>
+                  <h2 className="font-display text-2xl text-white leading-tight">{selectedVillage.name}</h2>
+                  <p className="text-text-2 text-sm mt-1">
+                    {inferCountryLabel(selectedVillage, destination)} · {selectedVillage.region}
+                  </p>
+                  <p className="text-text-2 text-sm mt-3 line-clamp-2">{selectedVillage.description}</p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-xs text-text-3 uppercase">Community signal</span>
+                    <span className="font-semibold" style={{ color: cwsColor(selectedVillage.cws) }}>
+                      {selectedVillage.cws} · {cwsLabel(selectedVillage.cws)}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-text-2 text-sm">Click a node on the globe to scope recommendations to that country context.</p>
+              )}
+            </div>
+          </section>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-white font-medium text-lg">Experiences</h3>
-            {selectedVillage && (
-              <button 
-                onClick={() => setSelectedVillage(null)}
-                className="text-xs text-accent hover:underline"
-              >
-                Clear village filter
-              </button>
-            )}
+        <section className="mt-7 bg-[#101419] border border-[#222F3A] rounded-[22px] p-4 md:p-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+            <div>
+              <h3 className="font-display text-3xl text-white">Real-time recommendation feed</h3>
+              <p className="text-text-2 text-sm mt-1">No hardcoded cards, all items rendered from live experiences and villages.</p>
+            </div>
+            <div className="flex gap-2">
+              {(['match', 'price', 'cws'] as const).map(s => (
+                <button
+                  key={s}
+                  onClick={() => setSortBy(s)}
+                  className={`text-xs px-3 py-2 rounded-pill border transition-colors ${sortBy === s ? 'border-accent text-accent bg-accent/10' : 'border-[#31404B] text-text-2 hover:border-[#4C6072]'}`}
+                >
+                  {s === 'match' ? 'Best match' : s === 'price' ? 'Lowest price' : 'Impact first'}
+                </button>
+              ))}
+            </div>
           </div>
-          
-          <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
-            {types.map(t => (
+
+          <div className="flex overflow-x-auto gap-2 pb-3 mb-4">
+            {FILTERS.map(t => (
               <button
                 key={t}
                 onClick={() => setFilterType(t)}
-                className={`shrink-0 px-4 py-1.5 rounded-pill text-xs font-medium transition-colors ${filterType === t ? 'bg-accent text-black' : 'bg-surface-2 border border-[#333] text-text-2 hover:border-[#555]'}`}
+                className={`shrink-0 px-4 py-2 rounded-pill text-xs font-medium transition-colors ${filterType === t ? 'bg-accent text-black' : 'bg-[#151D25] border border-[#2E3C48] text-text-2 hover:border-[#4D6074]'}`}
               >
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
             ))}
           </div>
 
-          <div className="flex gap-2">
-            <span className="text-text-3 text-xs self-center mr-2">Sort by:</span>
-            {['match', 'price', 'cws'].map(s => (
-              <button
-                key={s}
-                onClick={() => setSortBy(s as any)}
-                className={`text-xs px-3 py-1 rounded-pill border transition-colors ${sortBy === s ? 'border-accent text-accent bg-accent/10' : 'border-[#333] text-text-2 hover:border-[#555]'}`}
-              >
-                {s === 'match' ? 'Best match' : s === 'price' ? 'Price ↑' : 'CWS impact'}
-              </button>
-            ))}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {filteredMatches.slice(0, 10).map(exp => {
+              const village = villageById.get(exp.villageId);
+              if (!village) return null;
+              const pct = Math.round(Math.min(99, exp.score * 100));
+
+              return (
+                <article key={exp.id} className="bg-[#111820] border border-[#2A3742] rounded-[16px] p-4 flex flex-col gap-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-text-3 mb-1">{village.region}</p>
+                      <h4 className="font-display text-2xl text-white leading-tight">{exp.name}</h4>
+                      <p className="text-text-2 text-sm mt-1">{village.name}</p>
+                    </div>
+                    <span className="bg-accent/20 text-accent px-3 py-1 rounded-pill text-xs font-semibold">{pct}% fit</span>
+                  </div>
+
+                  <p className="text-text-2 text-sm line-clamp-3">{exp.description}</p>
+
+                  <div className="flex items-center justify-between text-xs text-text-2">
+                    <span className="capitalize px-2.5 py-1 rounded-pill border border-[#344350]">{exp.type}</span>
+                    <span>€{exp.price} · {exp.duration}</span>
+                    <span style={{ color: cwsColor(village.cws) }}>CWS {village.cws}</span>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Link
+                      href={`/experience/${exp.id}`}
+                      className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
+                    >
+                      View route
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-        </div>
 
-        {/* List */}
-        <div className="flex flex-col gap-3 pb-20 md:pb-0">
-          {filteredMatches.length === 0 ? (
-            <div className="text-center text-text-3 py-8">No experiences found for this filter.</div>
-          ) : (
-            filteredMatches.map(exp => (
-              <ExperienceCard key={exp.id} exp={exp} />
-            ))
+          {filteredMatches.length === 0 && (
+            <div className="text-center py-10 text-text-2">No experiences found for the current globe node and filter.</div>
           )}
-          {filteredMatches.length > 0 && (
-            <button className="w-full py-3 mt-2 text-sm text-text-2 border border-[#333] rounded-pill hover:text-white hover:border-[#555] transition-colors">
-              Show more
-            </button>
-          )}
-
-          {/* Community experiences — loads when a village is selected on the map */}
-          {selectedVillage && (
-            <CommunityExperiences villageName={selectedVillage.name} />
-          )}
-        </div>
+        </section>
       </div>
     </motion.div>
   );

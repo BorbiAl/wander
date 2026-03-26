@@ -27,11 +27,14 @@ export default function ImpactPage() {
 
   // Chart data
   const chartData = useMemo(() => {
-    return [...bookings].reverse().reduce((acc, b, i) => {
+    const cumulative = [...bookings].reverse().reduce((acc, b, i) => {
       const prevImpact = i > 0 ? acc[i - 1].impact : 0;
       acc.push({ name: `Booking ${i+1}`, impact: prevImpact + b.amount });
       return acc;
     }, [] as { name: string, impact: number }[]);
+
+    // Add a baseline so the chart remains visible even with a single booking.
+    return [{ name: 'Start', impact: 0 }, ...cumulative];
   }, [bookings]);
 
   if (bookings.length === 0) {
@@ -153,7 +156,14 @@ export default function ImpactPage() {
             <div className="h-[300px] sm:h-[350px] rounded-[32px] bg-white/60 backdrop-blur-xl border border-white/40 shadow-sm p-6 sm:p-8">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <XAxis dataKey="name" hide />
+                  <XAxis
+                    dataKey="name"
+                    interval={0}
+                    tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 600 }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => (value === 'Start' ? '' : value)}
+                  />
                   <YAxis hide domain={['dataMin', 'dataMax + 20']} />
                   <Tooltip 
                     cursor={{ stroke: '#0B6E2A', strokeWidth: 1, strokeDasharray: '4 4' }}

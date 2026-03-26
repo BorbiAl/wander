@@ -37,7 +37,7 @@ export function SankeyDiagram({
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="mx-auto">
         {/* Left Node */}
         <rect x={leftX - 10} y={0} width={20} height={height} fill="#F5A623" rx={4} />
-        <text x={leftX - 20} y={height/2} fill="white" fontSize="12" textAnchor="end" alignmentBaseline="middle">
+        <text x={leftX - 20} y={height/2} fill="#6B7280" fontSize="12" textAnchor="end" alignmentBaseline="middle">
           Your booking €{amount.toFixed(0)}
         </text>
 
@@ -59,7 +59,7 @@ export function SankeyDiagram({
                 transition={{ duration: 1.2, ease: "easeOut", delay: i * 0.1 }}
               />
               <rect x={rightX - 10} y={p.y2 - p.h/2} width={20} height={p.h} fill={p.color} rx={2} />
-              <text x={rightX + 20} y={p.y2} fill="white" fontSize="12" alignmentBaseline="middle">
+              <text x={rightX + 20} y={p.y2} fill="#6B7280" fontSize="12" alignmentBaseline="middle">
                 {p.label}
               </text>
             </g>

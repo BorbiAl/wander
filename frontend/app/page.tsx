@@ -1,189 +1,187 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
-
-const SUGGESTIONS = [
-  'Rural Tuscany, Italy',
-  'Oaxaca highlands, Mexico',
-  'Cappadocia, Turkey',
-  'Transylvania, Romania',
-  'Rhodope Mountains, Bulgaria',
-  'Kerala backwaters, India',
-  'Faroe Islands',
-  'Atlas Mountains, Morocco',
-  'Patagonia, Argentina',
-  'Yunnan province, China',
-];
+import MarketingGlobe, { DESTINATIONS } from '../components/MarketingGlobe';
+import { Search, MapPin, ChevronDown, Play, Dices, Globe2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function LandingPage() {
   const router = useRouter();
   const { seedLocation, seedStatus, destination } = useApp();
   const [input, setInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const filtered = input.length > 1
-    ? SUGGESTIONS.filter(s => s.toLowerCase().includes(input.toLowerCase()))
-    : SUGGESTIONS;
+    ? DESTINATIONS.filter(s => s.name.toLowerCase().includes(input.toLowerCase()))
+    : DESTINATIONS;
 
   const handleSubmit = async (loc: string) => {
     const trimmed = loc.trim();
     if (!trimmed) return;
     setInput(trimmed);
     setShowSuggestions(false);
-    // Start seeding, navigate immediately — seed completes during onboarding
     seedLocation(trimmed);
     router.push('/onboarding');
+  };
 
+  const handleLucky = () => {
+    const randomDest = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)].name;
+    handleSubmit(randomDest);
   };
 
   const handleKey = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSubmit(input);
   };
 
+  if (!mounted) return null;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="min-h-[calc(100vh-3.5rem)] flex flex-col justify-between px-6 py-12 md:px-12"
-    >
-      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-4xl mx-auto w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0 }}
-          className="border border-accent text-accent text-xs font-medium px-4 py-1.5 rounded-pill mb-8"
-        >
-          HackTUES 12 · Code to Care
-        </motion.div>
+    <div className="relative min-h-screen bg-[#F5F5EC] text-[#1A2E1C] overflow-hidden font-sans selection:bg-[#1A5328] selection:text-white flex flex-col">
+      
+      {/* 3D Global Map Background / Right Side */}
+      <div className="absolute inset-0 lg:left-[45%] z-0 pointer-events-none lg:pointer-events-auto flex items-center justify-center translate-x-1/4 lg:translate-x-0 opacity-40 lg:opacity-100">
+        <MarketingGlobe />
+      </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="font-display text-5xl md:text-7xl leading-[1.1] mb-6"
-        >
-          <span className="text-white">Travel with</span><br />
-          <span className="text-accent">purpose.</span>
-        </motion.h1>
+      {/* Navigation Bar */}
+      <nav className="relative z-20 w-full px-8 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-12">
+          <span className="font-display font-bold text-2xl text-[#0B4D21]">WanderGraph</span>
+          <div className="hidden md:flex items-center gap-8 text-xs font-semibold tracking-widest uppercase text-black/60">
+            <Link href="/" className="text-[#C84A31] border-b-2 border-[#C84A31] pb-1">Discover</Link>
+            <Link href="/map" className="hover:text-black transition-colors pb-1 border-b-2 border-transparent">Map</Link>
+            <Link href="/impact" className="hover:text-black transition-colors pb-1 border-b-2 border-transparent">Impact</Link>
+            <Link href="/profile" className="hover:text-black transition-colors pb-1 border-b-2 border-transparent">Profile</Link>
+          </div>
+        </div>
+        <button onClick={() => router.push('/onboarding')} className="bg-[#0B6E2A] text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-[#095A22] transition-colors shadow-lg">
+          Start Journey
+        </button>
+      </nav>
 
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
+      {/* Main Content Area */}
+      <main className="relative z-10 flex-1 flex flex-col justify-center px-8 lg:px-16 w-full lg:w-[55%]">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-text-2 text-lg md:text-xl max-w-xl mb-10"
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="max-w-xl"
         >
-          Discover authentic off-the-path villages anywhere in the world, matched to your behavioral personality. Not algorithms. Not ratings. Real human connection.
-        </motion.p>
+          {/* Badge */}
+          <div className="inline-block bg-[#F4E3D7] text-[#C84A31] text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-8">
+            Redefining Discovery
+          </div>
 
-        {/* Destination input */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="w-full max-w-lg relative"
-        >
-          <div className="flex gap-2">
-            <div className="flex-1 relative">
+          {/* Headline */}
+          <h1 className="font-display text-6xl lg:text-7xl leading-[1.1] tracking-tight mb-6 text-[#1A2E1C]">
+            The world is a<br /> map of <span className="text-[#0B6E2A] italic">your<br />character.</span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-[#1A2E1C]/70 text-lg leading-relaxed mb-10 max-w-lg">
+            WanderGraph uses behavioral AI to match your unique travel personality with authentic hidden villages. Start your digital ledger by exploring the globe.
+          </p>
+
+          {/* Search Bar Action */}
+          <div className="relative mb-6">
+            <div className="flex items-center bg-white rounded-full p-2 pr-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-black/5 relative z-20">
+              <div className="pl-4 pr-3 text-black/40">
+                <Globe2 className="w-5 h-5" />
+              </div>
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={e => { setInput(e.target.value); setShowSuggestions(true); }}
                 onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 onKeyDown={handleKey}
-                placeholder="Where in the world? e.g. Rural Tuscany"
-                className="w-full bg-surface border border-[#333] text-white placeholder-text-3 rounded-pill px-5 py-3.5 text-sm focus:outline-none focus:border-accent transition-colors"
+                placeholder="Choose a destination..."
+                className="flex-1 bg-transparent text-black placeholder-black/40 py-3 text-sm focus:outline-none min-w-0"
               />
-
-              {/* Suggestions dropdown */}
-              <AnimatePresence>
-                {showSuggestions && filtered.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-surface border border-[#333] rounded-card overflow-hidden z-50 shadow-xl"
-                  >
-                    {filtered.slice(0, 6).map(s => (
-                      <button
-                        key={s}
-                        onMouseDown={() => handleSubmit(s)}
-                        className="w-full text-left px-5 py-3 text-sm text-text-2 hover:bg-surface-2 hover:text-white transition-colors"
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div className="px-3 text-black/40 border-r border-black/10 mr-3">
+                <ChevronDown className="w-4 h-4" />
+              </div>
+              <button
+                onClick={() => handleSubmit(input)}
+                disabled={seedStatus === 'loading' || !input.trim()}
+                className="bg-[#0B6E2A] text-white font-semibold px-6 py-3 text-sm rounded-full hover:bg-[#095A22] active:scale-95 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                {seedStatus === 'loading' ? 'Locating...' : 'Find My Match'}
+              </button>
             </div>
 
+            {/* Suggestions Overlay */}
+            <AnimatePresence>
+              {showSuggestions && filtered.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white border border-black/5 rounded-2xl overflow-hidden z-10 shadow-xl"
+                >
+                  <div className="max-h-60 overflow-y-auto custom-scrollbar p-2">
+                    {filtered.slice(0, 5).map(s => (
+                      <button
+                        key={s.name}
+                        onMouseDown={() => handleSubmit(s.name)}
+                        className="w-full flex items-center gap-3 text-left px-4 py-3 text-sm text-black/70 hover:bg-black/5 hover:text-black rounded-xl transition-colors"
+                      >
+                        <MapPin className="w-4 h-4 text-black/30" />
+                        {s.name}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => handleSubmit(input)}
-              disabled={seedStatus === 'loading' || !input.trim()}
-              className="bg-accent text-black font-semibold px-6 py-3.5 rounded-pill hover:bg-accent-dim active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+              onClick={handleLucky}
+              disabled={seedStatus === 'loading'}
+              className="bg-[#F4E3D7] text-[#C84A31] font-semibold text-sm px-6 py-3 rounded-full hover:bg-[#F0D5C4] transition-colors flex items-center gap-2"
             >
-              {seedStatus === 'loading' ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                  Loading…
-                </span>
-              ) : 'Explore →'}
+              <Dices className="w-4 h-4" />
+              I'm Feeling Lucky
+            </button>
+            <button className="text-black/60 font-medium text-sm px-6 py-3 rounded-full hover:bg-black/5 transition-colors flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#E5E9DF] flex items-center justify-center text-[#0B6E2A]">
+                <Play className="w-3.5 h-3.5 ml-0.5" fill="currentColor" />
+              </div>
+              See How It Works
             </button>
           </div>
 
-          {seedStatus === 'loading' && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-text-3 text-xs mt-3"
-            >
-              Discovering villages in {input} with Gemini…
-            </motion.p>
-          )}
-          {seedStatus === 'error' && (
-            <p className="text-red-400 text-xs mt-3">Could not load destination. Check your API key or try again.</p>
-          )}
-          {seedStatus === 'done' && destination && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-accent text-xs mt-3"
-            >
-              ✓ {destination} loaded — continuing to personality test
-            </motion.p>
-          )}
+          {/* Status Text */}
+          <AnimatePresence>
+            {(seedStatus === 'loading' || seedStatus === 'error' || seedStatus === 'done') && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-6 overflow-hidden"
+              >
+                {seedStatus === 'loading' && <p className="text-[#0B6E2A] text-sm font-medium flex items-center gap-2"><span className="w-3 h-3 border-2 border-[#0B6E2A] border-t-transparent rounded-full animate-spin" /> Fetching geographic demographic data...</p>}
+                {seedStatus === 'error' && <p className="text-red-500 text-sm font-medium">Analysis failed. Invalid region or LLM error.</p>}
+                {seedStatus === 'done' && <p className="text-[#0B6E2A] text-sm font-medium">✓ Region structured. Preparing onboarding...</p>}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <p className="text-text-3 text-xs mt-3">Takes 3 minutes · No account needed · Works anywhere in the world</p>
         </motion.div>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 pb-16 md:pb-0"
-      >
-        <div className="bg-surface border border-[#222] rounded-card p-5 hover:border-[#333] transition-all">
-          <div className="text-white font-medium text-lg mb-1">Any destination</div>
-          <div className="text-text-2 text-sm">Villages worldwide, generated live</div>
-        </div>
-        <div className="bg-surface border border-[#222] rounded-card p-5 hover:border-[#333] transition-all">
-          <div className="text-white font-medium text-lg mb-1">Real traveler data</div>
-          <div className="text-text-2 text-sm">Reddit posts · Gemini structured</div>
-        </div>
-        <div className="bg-surface border border-[#222] rounded-card p-5 hover:border-[#333] transition-all">
-          <div className="text-white font-medium text-lg mb-1">5 personalities</div>
-          <div className="text-text-2 text-sm">Which one are you?</div>
-        </div>
-      </motion.div>
-    </motion.div>
+      </main>
+    </div>
   );
 }

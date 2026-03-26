@@ -161,56 +161,66 @@ export default function DiscoverPage() {
     return Math.round(villages.reduce((sum, v) => sum + v.cws, 0) / villages.length);
   }, [villages]);
 
+  const handleSurprisePick = () => {
+    if (villages.length === 0) return;
+    const randomVillage = villages[Math.floor(Math.random() * villages.length)];
+    setSelectedVillageId(randomVillage.id);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="min-h-[calc(100vh-3.5rem)] bg-[radial-gradient(circle_at_18%_8%,#18312B_0%,transparent_26%),radial-gradient(circle_at_90%_14%,#35240F_0%,transparent_28%),#080808]"
+      className="min-h-[calc(100vh-3.5rem)] bg-[radial-gradient(circle_at_12%_6%,#1E2A1D_0%,transparent_28%),radial-gradient(circle_at_88%_12%,#2A2114_0%,transparent_26%),#090A0B]"
     >
       <div className="mx-auto w-full max-w-[1320px] px-4 md:px-6 py-6 md:py-8">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-          <section className="xl:col-span-7 bg-[#11161B] border border-[#2C3945] rounded-[22px] p-4 md:p-6 flex flex-col gap-5">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="bg-[#121A16] border border-[#253129] rounded-[14px] p-4">
-                <p className="text-text-3 text-xs uppercase mb-1">Villages loaded</p>
-                <p className="font-display text-3xl text-white">{villages.length}</p>
+          <section className="xl:col-span-7 bg-[#101418] border border-[#27313A] rounded-[22px] p-4 md:p-6 flex flex-col gap-5">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.12em] text-text-3">Discover</p>
+                <h1 className="font-display text-3xl md:text-4xl text-white leading-tight mt-1">Start with the globe</h1>
+                <p className="text-text-2 text-sm md:text-base mt-2 max-w-[46ch]">
+                  Pick a village first. The trip list updates instantly to match that place.
+                </p>
               </div>
-              <div className="bg-[#121A16] border border-[#253129] rounded-[14px] p-4">
-                <p className="text-text-3 text-xs uppercase mb-1">Experiences matched</p>
-                <p className="font-display text-3xl text-white">{filteredMatches.length}</p>
-              </div>
-              <div className="bg-[#121A16] border border-[#253129] rounded-[14px] p-4">
-                <p className="text-text-3 text-xs uppercase mb-1">Average CWS</p>
-                <p className="font-display text-3xl text-white">{avgCws}</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSurprisePick}
+                  className="bg-accent text-black text-sm font-semibold rounded-pill px-4 py-2 hover:bg-accent-dim transition-colors"
+                >
+                  Surprise me
+                </button>
+                <button
+                  onClick={() => setSelectedVillageId(null)}
+                  className="border border-[#3A4854] text-text-2 text-sm rounded-pill px-4 py-2 hover:border-[#586A7A] hover:text-white transition-colors"
+                >
+                  Clear focus
+                </button>
               </div>
             </div>
 
-            <div className="h-[280px] md:h-[420px] overflow-hidden rounded-[18px] border border-[#2A3946]">
-              <VillageMap onSelectVillage={v => setSelectedVillageId(v.id)} />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
+                <p className="text-text-3 text-[10px] uppercase">Villages</p>
+                <p className="font-display text-2xl text-white">{villages.length}</p>
+              </div>
+              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
+                <p className="text-text-3 text-[10px] uppercase">Matches</p>
+                <p className="font-display text-2xl text-white">{filteredMatches.length}</p>
+              </div>
+              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
+                <p className="text-text-3 text-[10px] uppercase">Avg CWS</p>
+                <p className="font-display text-2xl text-white">{avgCws}</p>
+              </div>
+              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
+                <p className="text-text-3 text-[10px] uppercase">Focus</p>
+                <p className="font-display text-2xl text-white">{selectedVillage ? '1' : '0'}</p>
+              </div>
             </div>
 
-            {luckyChoice && (
-              <div className="bg-[#0F151C] border border-[#2A3742] rounded-[16px] p-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Lucky route</p>
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h3 className="font-display text-2xl text-white leading-tight">{luckyChoice.name}</h3>
-                    <p className="text-text-2 text-sm mt-1">{villageById.get(luckyChoice.villageId)?.name || 'Unknown village'}</p>
-                  </div>
-                  <Link
-                    href={`/experience/${luckyChoice.id}`}
-                    className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
-                  >
-                    Open route
-                  </Link>
-                </div>
-              </div>
-            )}
-          </section>
-
-          <section className="xl:col-span-5 bg-[#11161B] border border-[#2C3945] rounded-[22px] p-4 md:p-6 flex flex-col">
-            <div className="relative mx-auto w-full max-w-[460px] aspect-square rounded-full border border-[#385047] bg-[radial-gradient(circle_at_34%_28%,#273A33_0%,#101814_64%)] overflow-hidden">
+            <div className="relative mx-auto w-full max-w-[560px] aspect-square rounded-full border border-[#385047] bg-[radial-gradient(circle_at_36%_30%,#2A3A33_0%,#121A16_62%)] overflow-hidden">
               <div
                 className="absolute inset-0 opacity-35"
                 style={{
@@ -249,11 +259,17 @@ export default function DiscoverPage() {
                 );
               })}
             </div>
+          </section>
 
-            <div className="mt-5 bg-[#121920] border border-[#2A3946] rounded-[14px] p-4">
+          <section className="xl:col-span-5 bg-[#10151B] border border-[#2A3641] rounded-[22px] p-4 md:p-6 flex flex-col gap-4">
+            <div className="h-[230px] overflow-hidden rounded-[14px] border border-[#2A3946]">
+              <VillageMap onSelectVillage={v => setSelectedVillageId(v.id)} />
+            </div>
+
+            <div className="bg-[#121920] border border-[#2A3946] rounded-[14px] p-4">
               {selectedVillage ? (
                 <>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Selected country node</p>
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Selected node</p>
                   <h2 className="font-display text-2xl text-white leading-tight">{selectedVillage.name}</h2>
                   <p className="text-text-2 text-sm mt-1">
                     {inferCountryLabel(selectedVillage, destination)} · {selectedVillage.region}
@@ -267,17 +283,35 @@ export default function DiscoverPage() {
                   </div>
                 </>
               ) : (
-                <p className="text-text-2 text-sm">Click a node on the globe to scope recommendations to that country context.</p>
+                <p className="text-text-2 text-sm">Click a globe node to lock recommendations to one place.</p>
               )}
             </div>
+
+            {luckyChoice && (
+              <div className="bg-[#0F151C] border border-[#2A3742] rounded-[14px] p-4">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Suggested route</p>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-display text-xl text-white leading-tight">{luckyChoice.name}</h3>
+                    <p className="text-text-2 text-sm mt-1">{villageById.get(luckyChoice.villageId)?.name || 'Unknown village'}</p>
+                  </div>
+                  <Link
+                    href={`/experience/${luckyChoice.id}`}
+                    className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
+                  >
+                    Open
+                  </Link>
+                </div>
+              </div>
+            )}
           </section>
         </div>
 
-        <section className="mt-7 bg-[#101419] border border-[#222F3A] rounded-[22px] p-4 md:p-6">
+        <section id="discover-feed" className="mt-7 bg-[#101419] border border-[#222F3A] rounded-[22px] p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
             <div>
-              <h3 className="font-display text-3xl text-white">Real-time recommendation feed</h3>
-              <p className="text-text-2 text-sm mt-1">No hardcoded cards, all items rendered from live experiences and villages.</p>
+              <h3 className="font-display text-3xl text-white">Trips you can actually book</h3>
+              <p className="text-text-2 text-sm mt-1">Sorted by fit, cost, or community impact.</p>
             </div>
             <div className="flex gap-2">
               {(['match', 'price', 'cws'] as const).map(s => (

@@ -26,6 +26,105 @@ export default function ExperiencePage() {
 
   const matchPct = percentageMatch(personality.vector, exp.personalityWeights);
 
+  const getCalendarLabel = () => {
+    const ua = navigator.userAgent.toLowerCase();
+    if (/iphone|ipad|ipod|macintosh|mac os x/.test(ua)) return 'Add to Apple Calendar';
+    if (/android/.test(ua)) return 'Add to Android Calendar';
+    if (/windows/.test(ua)) return 'Add to Outlook Calendar';
+    return 'Add to Calendar';
+  };
+
+  const parseDurationMinutes = (durationRaw: string): number => {
+    const duration = String(durationRaw ?? '').trim();
+    const hourMatch = duration.match(/(\d+)\s*h/i);
+    if (hourMatch) return Math.max(30, Number(hourMatch[1]) * 60);
+    const dayMatch = duration.match(/(\d+)\s*d/i);
+    if (dayMatch) return Math.max(60, Number(dayMatch[1]) * 24 * 60);
+    return 120;
+  };
+
+  const addCalendarEvent = () => {
+    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid = /android/.test(ua);
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isMac = /macintosh|mac os x/.test(ua) && !isIOS;
+    const isWindows = /windows/.test(ua);
+
+    const start = new Date();
+    start.setDate(start.getDate() + 1);
+    start.setHours(10, 0, 0, 0);
+    const end = new Date(start.getTime() + parseDurationMinutes(exp.duration) * 60 * 1000);
+
+    const title = `${exp.name} - WanderGraph`;
+    const location = `${village.name}, ${village.region}`;
+    const details = `${exp.description}\n\nHost: ${host.name}`;
+
+    const toGoogleStamp = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    const startStamp = toGoogleStamp(start);
+    const endStamp = toGoogleStamp(end);
+
+    if (isWindows) {
+      const outlookUrl = new URL('https://outlook.live.com/calendar/0/deeplink/compose');
+      outlookUrl.searchParams.set('path', '/calendar/action/compose');
+      outlookUrl.searchParams.set('rru', 'addevent');
+      outlookUrl.searchParams.set('subject', title);
+      outlookUrl.searchParams.set('startdt', start.toISOString());
+      outlookUrl.searchParams.set('enddt', end.toISOString());
+      outlookUrl.searchParams.set('body', details);
+      outlookUrl.searchParams.set('location', location);
+      window.open(outlookUrl.toString(), '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (isAndroid) {
+      const googleUrl = new URL('https://calendar.google.com/calendar/render');
+      googleUrl.searchParams.set('action', 'TEMPLATE');
+      googleUrl.searchParams.set('text', title);
+      googleUrl.searchParams.set('dates', `${startStamp}/${endStamp}`);
+      googleUrl.searchParams.set('details', details);
+      googleUrl.searchParams.set('location', location);
+      window.open(googleUrl.toString(), '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (isIOS || isMac) {
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//WanderGraph//Booking//EN',
+        'BEGIN:VEVENT',
+        `UID:${Date.now()}@wandergraph`,
+        `DTSTAMP:${startStamp}`,
+        `DTSTART:${startStamp}`,
+        `DTEND:${endStamp}`,
+        `SUMMARY:${title.replace(/\n/g, ' ')}`,
+        `DESCRIPTION:${details.replace(/\n/g, '\\n')}`,
+        `LOCATION:${location.replace(/\n/g, ' ')}`,
+        'END:VEVENT',
+        'END:VCALENDAR',
+      ].join('\r\n');
+
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const href = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = `${exp.id}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+      return;
+    }
+
+    const googleUrl = new URL('https://calendar.google.com/calendar/render');
+    googleUrl.searchParams.set('action', 'TEMPLATE');
+    googleUrl.searchParams.set('text', title);
+    googleUrl.searchParams.set('dates', `${startStamp}/${endStamp}`);
+    googleUrl.searchParams.set('details', details);
+    googleUrl.searchParams.set('location', location);
+    window.open(googleUrl.toString(), '_blank', 'noopener,noreferrer');
+  };
+
   const handleBook = async () => {
     setBookingState('loading');
     try {
@@ -240,6 +339,15 @@ export default function ExperiencePage() {
                   <div className="w-16 h-16 rounded-full bg-accent/20 text-accent flex items-center justify-center text-3xl mb-4">✓</div>
                   <h2 className="font-display text-2xl text-white mb-2">Booked! You made an impact.</h2>
                   <p className="text-accent font-medium mb-8">+{bookingResult.cwsDelta} CWS for {village.name}</p>
+                  <div className="w-full rounded-lg border border-[#333] bg-surface-2 p-4 mb-4 text-left">
+                    <p className="text-sm text-white font-medium mb-3">Add this booking to your calendar?</p>
+                    <button
+                      onClick={addCalendarEvent}
+                      className="w-full rounded-pill bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
+                    >
+                      {getCalendarLabel()}
+                    </button>
+                  </div>
                   <button onClick={() => router.push('/impact')} className="w-full bg-accent text-black font-medium rounded-pill py-3 hover:bg-accent-dim transition-colors">
                     View impact →
                   </button>

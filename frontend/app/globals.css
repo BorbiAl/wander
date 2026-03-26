@@ -5,10 +5,51 @@
 @layer base {
   :root {
     color-scheme: light;
+    --bg-deep: #042f2e;
+    --bg-mid: #0b4a45;
+    --bg-soft: #0f766e;
+    --ink-strong: #ecfdf5;
+    --ink-muted: #a7f3d0;
+    --surface: rgba(6, 78, 59, 0.52);
+    --surface-border: rgba(94, 234, 212, 0.35);
+    --accent: #34d399;
+    --accent-strong: #10b981;
   }
 
   body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    font-family: var(--font-body), sans-serif;
+    color: var(--ink-strong);
+    background:
+      radial-gradient(1100px 520px at 0% -10%, #0f766e 0%, transparent 65%),
+      radial-gradient(900px 500px at 100% 0%, #134e4a 0%, transparent 60%),
+      linear-gradient(165deg, var(--bg-deep) 0%, var(--bg-mid) 56%, #022c22 100%);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .wg-shell {
+    border: 1px solid var(--surface-border);
+    background: linear-gradient(140deg, rgba(6, 78, 59, 0.72), var(--surface));
+    --backdrop-filter: blur(12px);
+    box-shadow: 0 24px 70px rgba(2, 44, 34, 0.45);
+  }
+
+  .wg-pill {
+    border: 1px solid rgba(110, 231, 183, 0.35);
+    background: rgba(6, 95, 70, 0.45);
   }
 }

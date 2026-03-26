@@ -74,21 +74,25 @@ export default function AudioReactor() {
   const clip = CLIPS[activeIndex]
 
   return (
-    <div className="w-full max-w-md rounded-2xl bg-white shadow-xl p-6 space-y-4">
+    <div className="wg-shell w-full rounded-3xl p-6 sm:p-7 space-y-5">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-emerald-50">Sound Moodboard</h3>
+        <span className="rounded-full bg-emerald-400/20 px-3 py-1 text-xs text-emerald-100">ambient cues</span>
+      </div>
       <div className="space-y-2">
         {CLIPS.map((c, i) => (
           <button
             key={i}
             type="button"
             onClick={() => selectClip(i)}
-            className={`w-full text-left rounded-xl px-4 py-3 transition-colors ${
+            className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
               i === activeIndex
-                ? 'bg-emerald-50 border border-emerald-400'
-                : 'bg-gray-50 border border-transparent hover:bg-gray-100'
+                ? 'border-emerald-300/70 bg-emerald-200/20'
+                : 'border-emerald-400/20 bg-emerald-950/30 hover:bg-emerald-900/50'
             }`}
           >
-            <p className="font-semibold text-sm text-gray-900">{c.title}</p>
-            <p className="text-xs text-gray-500">{c.description}</p>
+            <p className="text-sm font-semibold text-emerald-50">{c.title}</p>
+            <p className="text-xs text-emerald-100/70">{c.description}</p>
           </button>
         ))}
       </div>
@@ -109,10 +113,10 @@ export default function AudioReactor() {
           step={0.1}
           value={currentTime}
           onChange={handleSlider}
-          className="w-full accent-emerald-500"
+          className="w-full accent-emerald-300"
           aria-label="Playback position"
         />
-        <div className="flex justify-between text-xs text-gray-400">
+        <div className="flex justify-between text-xs text-emerald-100/65">
           <span>{fmt(currentTime)}</span>
           <span>{fmt(duration)}</span>
         </div>
@@ -121,7 +125,7 @@ export default function AudioReactor() {
       <button
         type="button"
         onClick={togglePlay}
-        className="w-full rounded-full bg-emerald-500 py-3 text-white font-semibold hover:bg-emerald-400 transition-colors"
+        className="w-full rounded-full bg-emerald-300 py-3 font-semibold text-emerald-950 transition hover:bg-emerald-200"
       >
         {playing ? 'Pause' : 'Play'}
       </button>

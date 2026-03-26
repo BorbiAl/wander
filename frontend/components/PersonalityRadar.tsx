@@ -1,10 +1,10 @@
 'use client'
 
 const AXES = ['Explorer', 'Connector', 'Restorer', 'Achiever', 'Guardian']
-const SIZE = 200
+const SIZE = 260
 const CX = SIZE / 2
 const CY = SIZE / 2
-const R = 80
+const R = 84
 
 function angleAt(i: number) {
   return (-Math.PI / 2) + i * (2 * Math.PI / AXES.length)
@@ -32,7 +32,6 @@ export default function PersonalityRadar({ personality_vector }: Props) {
 
   return (
     <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
-      {/* Grid rings */}
       {gridLevels.map(level => {
         const pts = AXES.map((_, i) => point(level, i)).map(p => `${p.x},${p.y}`).join(' ')
         return (
@@ -46,7 +45,6 @@ export default function PersonalityRadar({ personality_vector }: Props) {
         )
       })}
 
-      {/* Axis lines */}
       {AXES.map((_, i) => {
         const p = point(1, i)
         return (
@@ -60,7 +58,6 @@ export default function PersonalityRadar({ personality_vector }: Props) {
         )
       })}
 
-      {/* Data polygon */}
       <polygon
         points={polygonPoints}
         fill="rgba(16,185,129,0.3)"
@@ -68,9 +65,8 @@ export default function PersonalityRadar({ personality_vector }: Props) {
         strokeWidth={2}
       />
 
-      {/* Axis labels */}
       {AXES.map((label, i) => {
-        const p = point(1.25, i)
+        const p = point(1.38, i)
         return (
           <text
             key={i}
@@ -78,8 +74,8 @@ export default function PersonalityRadar({ personality_vector }: Props) {
             y={p.y}
             textAnchor="middle"
             dominantBaseline="middle"
-            fontSize={10}
-            fill="#065f46"
+            fontSize={12}
+            fill="#064e3b"
             fontWeight="600"
           >
             {label}

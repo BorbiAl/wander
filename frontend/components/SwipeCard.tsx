@@ -37,34 +37,35 @@ export default function SwipeCard({ children, onChoice }: SwipeCardProps) {
         dragElastic={1}
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={handleDragEnd}
-        className="relative cursor-grab active:cursor-grabbing rounded-2xl bg-white shadow-xl p-6 w-72 select-none touch-none"
+        className="relative w-[min(88vw,24rem)] cursor-grab select-none rounded-3xl border border-emerald-100/70 bg-gradient-to-br from-white to-emerald-50 p-7 shadow-[0_25px_60px_rgba(2,44,34,0.35)] touch-none active:cursor-grabbing"
       >
         <motion.div
           style={{ opacity: leftOpacity }}
-          className="absolute top-4 left-4 rounded border-2 border-red-500 px-2 py-1 text-red-500 font-bold text-sm -rotate-12"
+          className="absolute left-4 top-4 -rotate-12 rounded border-2 border-rose-500 px-3 py-1 text-xs font-bold tracking-wide text-rose-600"
         >
-          NOPE
+          SKIP
         </motion.div>
         <motion.div
           style={{ opacity: rightOpacity }}
-          className="absolute top-4 right-4 rounded border-2 border-green-500 px-2 py-1 text-green-500 font-bold text-sm rotate-12"
+          className="absolute right-4 top-4 rotate-12 rounded border-2 border-emerald-500 px-3 py-1 text-xs font-bold tracking-wide text-emerald-600"
         >
-          YES
+          ADD
         </motion.div>
         {children}
       </motion.div>
 
-      {/* Button fallback so it always works */}
-      <div className="flex gap-6">
+      <div className="mt-1 flex gap-5">
         <button
           onClick={() => fly('left')}
-          className="w-12 h-12 rounded-full border-2 border-red-400 text-red-400 text-xl font-bold hover:bg-red-50 transition-colors"
+          className="grid h-14 w-14 place-items-center rounded-full border-2 border-rose-400/90 text-2xl font-bold text-rose-300 transition hover:bg-rose-400/10"
+          aria-label="Skip"
         >
           ✕
         </button>
         <button
           onClick={() => fly('right')}
-          className="w-12 h-12 rounded-full border-2 border-green-500 text-green-500 text-xl font-bold hover:bg-green-50 transition-colors"
+          className="grid h-14 w-14 place-items-center rounded-full border-2 border-emerald-400 text-2xl font-bold text-emerald-200 transition hover:bg-emerald-400/10"
+          aria-label="Include"
         >
           ✓
         </button>

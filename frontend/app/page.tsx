@@ -4,25 +4,70 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
-import MarketingGlobe, { DESTINATIONS } from '../components/MarketingGlobe';
-import { Search, MapPin, ChevronDown, Play, Dices, Globe2 } from 'lucide-react';
+import MarketingGlobe, { DEFAULT_DESTINATIONS, type DestinationNode } from '../components/MarketingGlobe';
+import { MapPin, ChevronDown, Play, Dices, Globe2 } from 'lucide-react';
 import Link from 'next/link';
+
+type ApiVillage = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  country?: string;
+};
 
 export default function LandingPage() {
   const router = useRouter();
-  const { seedLocation, seedStatus, destination } = useApp();
+  const { seedLocation, seedStatus } = useApp();
   const [input, setInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [destinations, setDestinations] = useState<DestinationNode[]>(DEFAULT_DESTINATIONS);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
+
+    async function loadDestinations() {
+      try {
+        const res = await fetch('/api/villages');
+        if (!res.ok) return;
+        const villages: ApiVillage[] = await res.json();
+        if (!Array.isArray(villages) || villages.length === 0) return;
+
+        const byCountry = new Map<string, { latSum: number; lngSum: number; count: number }>();
+        for (const v of villages) {
+          if (typeof v.lat !== 'number' || typeof v.lng !== 'number') continue;
+          const country = (v.country?.trim() || 'Bulgaria');
+          const bucket = byCountry.get(country) ?? { latSum: 0, lngSum: 0, count: 0 };
+          bucket.latSum += v.lat;
+          bucket.lngSum += v.lng;
+          bucket.count += 1;
+          byCountry.set(country, bucket);
+        }
+
+        const nodes: DestinationNode[] = Array.from(byCountry.entries())
+          .map(([country, agg]) => ({
+            name: country,
+            country,
+            lat: agg.latSum / agg.count,
+            lng: agg.lngSum / agg.count,
+            villages: agg.count,
+          }))
+          .sort((a, b) => b.villages - a.villages);
+
+        if (nodes.length > 0) setDestinations(nodes);
+      } catch {
+        // Keep default destinations
+      }
+    }
+
+    loadDestinations();
   }, []);
 
   const filtered = input.length > 1
-    ? DESTINATIONS.filter(s => s.name.toLowerCase().includes(input.toLowerCase()))
-    : DESTINATIONS;
+    ? destinations.filter(s => s.name.toLowerCase().includes(input.toLowerCase()))
+    : destinations;
 
   const handleSubmit = async (loc: string) => {
     const trimmed = loc.trim();
@@ -34,7 +79,8 @@ export default function LandingPage() {
   };
 
   const handleLucky = () => {
-    const randomDest = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)].name;
+    const randomDest = destinations[Math.floor(Math.random() * destinations.length)]?.name;
+    if (!randomDest) return;
     handleSubmit(randomDest);
   };
 
@@ -49,7 +95,7 @@ export default function LandingPage() {
       
       {/* 3D Global Map Background / Right Side */}
       <div className="absolute inset-0 lg:left-[45%] z-0 pointer-events-none lg:pointer-events-auto flex items-center justify-center translate-x-1/4 lg:translate-x-0 opacity-40 lg:opacity-100">
-        <MarketingGlobe />
+        <MarketingGlobe destinations={destinations} onSelect={handleSubmit} />
       </div>
 
       {/* Navigation Bar */}
@@ -131,14 +177,14 @@ export default function LandingPage() {
                   className="absolute top-full left-0 right-0 mt-2 bg-white border border-black/5 rounded-2xl overflow-hidden z-10 shadow-xl"
                 >
                   <div className="max-h-60 overflow-y-auto custom-scrollbar p-2">
-                    {filtered.slice(0, 5).map(s => (
+                    {filtered.slice(0, 8).map(s => (
                       <button
                         key={s.name}
                         onMouseDown={() => handleSubmit(s.name)}
                         className="w-full flex items-center gap-3 text-left px-4 py-3 text-sm text-black/70 hover:bg-black/5 hover:text-black rounded-xl transition-colors"
                       >
                         <MapPin className="w-4 h-4 text-black/30" />
-                        {s.name}
+                        {s.name} ({s.villages})
                       </button>
                     ))}
                   </div>

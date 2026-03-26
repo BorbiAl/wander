@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { VILLAGES } from '@/app/lib/data';
 import { cwsColor } from '@/app/lib/utils';
 import type { Village } from '@/app/lib/data';
+import type { SeedStatus } from '@/app/lib/store';
 
-// Recenter map whenever VILLAGES changes (new destination seeded)
-function AutoCenter() {
+// Recenter map whenever seedStatus changes to 'done' (new destination seeded)
+function AutoCenter({ seedStatus }: { seedStatus: SeedStatus }) {
   const map = useMap();
   useEffect(() => {
     if (VILLAGES.length === 0) return;
@@ -22,24 +23,32 @@ function AutoCenter() {
     // Rough zoom: wider span = lower zoom
     const zoom = span < 0.5 ? 12 : span < 2 ? 10 : span < 5 ? 8 : span < 15 ? 7 : 5;
     map.setView([centerLat, centerLng], zoom);
-  }, [map]);
+  }, [map, seedStatus]);
   return null;
 }
 
 export default function VillageMap({
   onSelectVillage,
   visited = [],
+  seedStatus = 'idle',
 }: {
   onSelectVillage?: (v: Village) => void;
   visited?: string[];
+  seedStatus?: SeedStatus;
 }) {
+  // Re-read VILLAGES from the mutable array when seed completes
+  const [villages, setVillages] = useState([...VILLAGES]);
+  useEffect(() => {
+    setVillages([...VILLAGES]);
+  }, [seedStatus]);
+
   const villagesToShow = visited.length > 0
-    ? VILLAGES.filter(v => visited.includes(v.name))
-    : VILLAGES;
+    ? villages.filter(v => visited.includes(v.name))
+    : villages;
 
   // Initial center: compute from current VILLAGES (or world default)
-  const lats = VILLAGES.map(v => v.lat);
-  const lngs = VILLAGES.map(v => v.lng);
+  const lats = villages.map(v => v.lat);
+  const lngs = villages.map(v => v.lng);
   const initLat = lats.length ? (Math.min(...lats) + Math.max(...lats)) / 2 : 20;
   const initLng = lngs.length ? (Math.min(...lngs) + Math.max(...lngs)) / 2 : 0;
 
@@ -55,7 +64,7 @@ export default function VillageMap({
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
-        <AutoCenter />
+        <AutoCenter seedStatus={seedStatus} />
         {villagesToShow.map(village => (
           <CircleMarker
             key={village.id}

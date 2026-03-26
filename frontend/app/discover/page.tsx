@@ -14,7 +14,7 @@ import { CommunityExperiences } from '@/components/CommunityExperiences';
 const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 
 export default function DiscoverPage() {
-  const { personality, matches, setMatches } = useApp();
+  const { personality, matches, setMatches, seedStatus } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'match'|'price'|'cws'>('match');
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
@@ -29,9 +29,9 @@ export default function DiscoverPage() {
       score: matchScore(personality.vector, exp.personalityWeights),
     })).sort((a, b) => b.score - a.score);
     if (scored.length > 0) setMatches(scored);
-  // Only run when dominant personality or EXPERIENCES array length changes
+  // Re-run when seed completes so Mexico data replaces Bulgarian fallback
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personality?.dominant, EXPERIENCES.length]);
+  }, [personality?.dominant, seedStatus]);
 
   const types = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore', 'sightseeing'];
 
@@ -76,7 +76,7 @@ export default function DiscoverPage() {
     >
       {/* Map Section */}
       <div className="w-full md:w-[55%] h-[250px] md:h-full relative border-b md:border-b-0 md:border-r border-[#222]">
-        <VillageMap onSelectVillage={setSelectedVillage} />
+        <VillageMap onSelectVillage={setSelectedVillage} seedStatus={seedStatus} />
       </div>
 
       {/* Sidebar Section */}

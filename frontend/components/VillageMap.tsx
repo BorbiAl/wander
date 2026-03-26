@@ -55,7 +55,7 @@ export default function VillageMap({
   const initLng = lngs.length ? (Math.min(...lngs) + Math.max(...lngs)) / 2 : 0;
 
   return (
-    <div className="w-full h-full relative z-0">
+    <div className="w-full h-full relative z-0 overflow-hidden rounded-3xl border border-[#D6DCCD]">
       <MapContainer
         center={[initLat, initLng]}
         zoom={7}

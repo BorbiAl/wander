@@ -23,7 +23,7 @@ const ResponsiveContainer = dynamic(() => import('recharts').then(m => ({ defaul
 export default function ImpactPage() {
   const router = useRouter();
   const { bookings, totalImpact, villagesVisited, points } = useApp();
-  const { impacts: liveImpacts, connected: wsConnected } = useImpactStream();
+  const { impacts: liveImpacts } = useImpactStream();
 
   // Chart data
   const chartData = useMemo(() => {
@@ -72,12 +72,6 @@ export default function ImpactPage() {
               Your contributions to the community.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2.5 rounded-full bg-white/40 backdrop-blur-md border border-white/40 px-4 py-2 shadow-sm">
-            <span className={`h-2.5 w-2.5 rounded-full ${wsConnected ? 'bg-[#0B6E2A] animate-pulse shadow-[0_0_8px_rgba(11,110,42,0.6)]' : 'bg-[#1A2E1C]/30'}`} />
-            <span className="text-[12px] font-semibold uppercase tracking-widest text-[#1A2E1C]/70">
-              {wsConnected ? 'Live Network' : 'Offline'}
-            </span>
-          </div>
         </div>
 
         {/* Top Stats Grid */}
@@ -124,8 +118,8 @@ export default function ImpactPage() {
           <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] text-[#1A2E1C] mb-6 pl-2">Booking Flow</h2>
           <div className="rounded-[32px] bg-white/60 backdrop-blur-xl border border-white/40 shadow-sm p-8 sm:p-10">
             <SankeyDiagram amount={latestBooking.amount} split={latestBooking.split ?? { host: latestBooking.amount * 0.70, community: latestBooking.amount * 0.15, culture: latestBooking.amount * 0.10, platform: latestBooking.amount * 0.05 }} />
-            <p className="text-[#1A2E1C]/50 mt-8 text-center text-[15px] font-medium tracking-tight">
-              <span className="font-semibold text-[#1A2E1C]/80">{latestBooking.hostName || 'The host'}</span> in <span className="font-semibold text-[#1A2E1C]/80">{latestBooking.villageName}</span> received <span className="text-[#0B6E2A] font-bold">€{(latestBooking.split?.host ?? latestBooking.amount * 0.70).toFixed(0)}</span> directly from your booking.
+            <p className="mt-8 text-center text-[15px] font-medium tracking-tight text-[#6B7280]">
+              <span className="font-semibold text-[#6B7280]">{latestBooking.hostName || 'The host'}</span> in <span className="font-semibold text-[#6B7280]">{latestBooking.villageName}</span> received <span className="font-bold text-[#6B7280]">€{(latestBooking.split?.host ?? latestBooking.amount * 0.70).toFixed(0)}</span> directly from your booking.
             </p>
           </div>
         </div>

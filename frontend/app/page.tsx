@@ -1,31 +1,85 @@
-import Link from 'next/link'
+'use client';
 
-export default function Home() {
+import { motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
+
+export default function LandingPage() {
+  const router = useRouter();
+
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-10">
-      <div className="wg-shell relative w-full max-w-3xl rounded-3xl p-8 sm:p-12">
-        <p className="wg-pill inline-flex rounded-full px-4 py-1 text-xs uppercase tracking-[0.22em] text-emerald-100/90">
-          mindful travel graph
-        </p>
-        <h1 className="mt-6 text-5xl font-bold text-emerald-50 sm:text-7xl">WanderGraph</h1>
-        <p className="mt-5 max-w-xl text-lg text-emerald-100/85 sm:text-xl">
-          Match your personality to villages and experiences designed around pace, place, and purpose.
-        </p>
-        <div className="mt-10 flex flex-wrap items-center gap-4">
-          <Link
-            href="/onboarding"
-            className="rounded-full bg-emerald-400 px-10 py-4 text-base font-semibold text-emerald-950 transition hover:-translate-y-0.5 hover:bg-emerald-300"
+    <motion.div 
+      initial={{ opacity: 0, y: 12 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.35 }}
+      className="min-h-[calc(100vh-3.5rem)] flex flex-col justify-between px-6 py-12 md:px-12"
+    >
+      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-4xl mx-auto w-full">
+        <motion.div 
+          initial={{ opacity: 0, y: 12 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0 }}
+          className="border border-accent text-accent text-xs font-medium px-4 py-1.5 rounded-pill mb-8"
+        >
+          HackTUES 12 · Code to Care
+        </motion.div>
+
+        <motion.h1 
+          initial={{ opacity: 0, y: 12 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.1 }}
+          className="font-display text-5xl md:text-7xl leading-[1.1] mb-6"
+        >
+          <span className="text-white">Travel with</span><br />
+          <span className="text-accent">purpose.</span>
+        </motion.h1>
+
+        <motion.p 
+          initial={{ opacity: 0, y: 12 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.2 }}
+          className="text-text-2 text-lg md:text-xl max-w-xl mb-10"
+        >
+          Discover authentic Bulgarian villages matched to your behavioral personality. Not algorithms. Not ratings. Real human connection.
+        </motion.p>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 12 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.3 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <button 
+            onClick={() => router.push('/onboarding')}
+            className="bg-accent text-black font-semibold px-10 py-4 rounded-pill hover:bg-accent-dim active:scale-[0.97] transition-all text-lg"
           >
-            Begin Profiling
-          </Link>
-          <span className="text-sm text-emerald-100/70">15 quick choices · under 2 minutes</span>
-        </div>
-        <div className="mt-10 grid gap-3 text-sm text-emerald-50/85 sm:grid-cols-3">
-          <div className="wg-pill rounded-2xl p-4">HMM personality decode</div>
-          <div className="wg-pill rounded-2xl p-4">Graph-based ranking</div>
-          <div className="wg-pill rounded-2xl p-4">Village-first booking flow</div>
-        </div>
+            Begin your journey →
+          </button>
+          <span className="text-text-3 text-xs">Takes 3 minutes · No account needed</span>
+        </motion.div>
       </div>
-    </main>
-  )
+
+      <motion.div 
+        initial={{ opacity: 0, y: 12 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ delay: 0.4 }}
+        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 pb-16 md:pb-0"
+      >
+        <div className="bg-surface border border-[#222] rounded-card p-5 hover:border-[#333] transition-all">
+          <div className="text-white font-medium text-lg mb-1">25 villages</div>
+          <div className="text-text-2 text-sm">Across 6 regions</div>
+        </div>
+        <div className="bg-surface border border-[#222] rounded-card p-5 hover:border-[#333] transition-all">
+          <div className="text-white font-medium text-lg mb-1">60 experiences</div>
+          <div className="text-text-2 text-sm">Craft, hike, homestay</div>
+        </div>
+        <div className="bg-surface border border-[#222] rounded-card p-5 hover:border-[#333] transition-all flex justify-between items-end">
+          <div>
+            <div className="text-white font-medium text-lg mb-1">5 personalities</div>
+            <div className="text-text-2 text-sm">Which one are you?</div>
+          </div>
+          <div className="text-text-3 text-xs">Built for Bulgaria 🇧🇬</div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
 }

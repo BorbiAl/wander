@@ -1,75 +1,56 @@
-'use client'
+'use client';
 
-import { useMotionValue, useTransform, motion, animate } from 'framer-motion'
-import { useState } from 'react'
+import { motion, useMotionValue, useTransform } from 'motion/react';
+import { useState } from 'react';
 
-interface SwipeCardProps {
-  children: React.ReactNode
-  onChoice: (direction: 'left' | 'right') => void
-}
+export function SwipeCard({ 
+  leftLabel, rightLabel, leftColor, rightColor, onChoice 
+}: { 
+  leftLabel: string, rightLabel: string, leftColor: string, rightColor: string, onChoice: (side: 'left'|'right') => void 
+}) {
+  const [chosen, setChosen] = useState<'left'|'right'|null>(null);
 
-export default function SwipeCard({ children, onChoice }: SwipeCardProps) {
-  const x = useMotionValue(0)
-  const rotate = useTransform(x, [-150, 150], [-15, 15])
-  const leftOpacity = useTransform(x, [-150, -50, 0], [1, 0, 0])
-  const rightOpacity = useTransform(x, [0, 50, 150], [0, 0, 1])
-  const [gone, setGone] = useState(false)
-
-  function fly(dir: 'left' | 'right') {
-    if (gone) return
-    setGone(true)
-    animate(x, dir === 'right' ? 500 : -500, { duration: 0.3 }).then(() => onChoice(dir))
-  }
-
-  function handleDragEnd(_: unknown, info: { offset: { x: number } }) {
-    if (info.offset.x > 80) fly('right')
-    else if (info.offset.x < -80) fly('left')
-    else animate(x, 0, { type: 'spring', stiffness: 300 })
-  }
-
-  if (gone) return null
+  const handleChoice = (side: 'left'|'right') => {
+    setChosen(side);
+    setTimeout(() => onChoice(side), 400);
+  };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <motion.div
-        style={{ x, rotate }}
-        drag="x"
-        dragElastic={1}
-        dragConstraints={{ left: 0, right: 0 }}
-        onDragEnd={handleDragEnd}
-        className="relative w-[min(88vw,24rem)] cursor-grab select-none rounded-3xl border border-emerald-100/70 bg-gradient-to-br from-white to-emerald-50 p-7 shadow-[0_25px_60px_rgba(2,44,34,0.35)] touch-none active:cursor-grabbing"
-      >
-        <motion.div
-          style={{ opacity: leftOpacity }}
-          className="absolute left-4 top-4 -rotate-12 rounded border-2 border-rose-500 px-3 py-1 text-xs font-bold tracking-wide text-rose-600"
+    <div className="flex flex-col items-center w-full max-w-md mx-auto">
+      <p className="text-text-2 text-sm mb-6">Which calls to you?</p>
+      <div className="flex gap-4 w-full justify-center">
+        <motion.div 
+          whileHover={{ scale: 1.03 }}
+          onClick={() => handleChoice('left')}
+          className={`w-[160px] h-[210px] rounded-card border ${chosen === 'left' ? 'border-accent' : 'border-[#222] hover:border-accent'} overflow-hidden cursor-pointer relative transition-colors`}
         >
-          SKIP
+          <div className="h-[140px] w-full" style={{ backgroundColor: leftColor }} />
+          <div className="h-[70px] p-3 flex items-center justify-center text-center">
+            <span className="font-sans text-sm font-medium text-text-1">{leftLabel}</span>
+          </div>
+          {chosen === 'left' && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-black">✓</div>
+            </div>
+          )}
         </motion.div>
-        <motion.div
-          style={{ opacity: rightOpacity }}
-          className="absolute right-4 top-4 rotate-12 rounded border-2 border-emerald-500 px-3 py-1 text-xs font-bold tracking-wide text-emerald-600"
-        >
-          ADD
-        </motion.div>
-        {children}
-      </motion.div>
 
-      <div className="mt-1 flex gap-5">
-        <button
-          onClick={() => fly('left')}
-          className="grid h-14 w-14 place-items-center rounded-full border-2 border-rose-400/90 text-2xl font-bold text-rose-300 transition hover:bg-rose-400/10"
-          aria-label="Skip"
+        <motion.div 
+          whileHover={{ scale: 1.03 }}
+          onClick={() => handleChoice('right')}
+          className={`w-[160px] h-[210px] rounded-card border ${chosen === 'right' ? 'border-accent' : 'border-[#222] hover:border-accent'} overflow-hidden cursor-pointer relative transition-colors`}
         >
-          ✕
-        </button>
-        <button
-          onClick={() => fly('right')}
-          className="grid h-14 w-14 place-items-center rounded-full border-2 border-emerald-400 text-2xl font-bold text-emerald-200 transition hover:bg-emerald-400/10"
-          aria-label="Include"
-        >
-          ✓
-        </button>
+          <div className="h-[140px] w-full" style={{ backgroundColor: rightColor }} />
+          <div className="h-[70px] p-3 flex items-center justify-center text-center">
+            <span className="font-sans text-sm font-medium text-text-1">{rightLabel}</span>
+          </div>
+          {chosen === 'right' && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-black">✓</div>
+            </div>
+          )}
+        </motion.div>
       </div>
     </div>
-  )
+  );
 }

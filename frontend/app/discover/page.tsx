@@ -1,100 +1,138 @@
-'use client'
+'use client';
 
-import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
-import AudioReactor from '@/components/AudioReactor'
+import { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
+import { motion } from 'motion/react';
+import { useApp } from '@/app/lib/store';
+import { ExperienceCard } from '@/components/ExperienceCard';
+import { PersonalityRadar } from '@/components/PersonalityRadar';
+import { Village } from '@/app/lib/data';
+import { getVillage } from '@/app/lib/utils';
 
-interface MatchItem {
-  id?: string
-  name?: string
-  score?: number
-  type?: string
-  village_id?: string
-  price_eur?: number
-  duration_hours?: number
-}
-
-interface StoredResult {
-  matches?: MatchItem[]
-  personality?: {
-    dominant_type?: string
-  }
-}
-
-function formatScore(score?: number) {
-  if (typeof score !== 'number' || Number.isNaN(score)) return 'N/A'
-  return `${(score * 100).toFixed(0)}%`
-}
+const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 
 export default function DiscoverPage() {
-  const [matches, setMatches] = useState<MatchItem[]>([])
-  const [personality, setPersonality] = useState('Explorer')
+  const { personality, matches } = useApp();
+  const [filterType, setFilterType] = useState<string>('All');
+  const [sortBy, setSortBy] = useState<'match'|'price'|'cws'>('match');
+  const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
 
-  useEffect(() => {
-    const raw = window.localStorage.getItem('wander:lastResult')
-    if (!raw) return
-    try {
-      const parsed = JSON.parse(raw) as StoredResult
-      setMatches(Array.isArray(parsed.matches) ? parsed.matches : [])
-      setPersonality(parsed.personality?.dominant_type || 'Explorer')
-    } catch {
-      setMatches([])
+  const types = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore'];
+
+  const filteredMatches = useMemo(() => {
+    let res = matches;
+    if (filterType !== 'All') {
+      res = res.filter(m => m.type === filterType);
     }
-  }, [])
+    if (selectedVillage) {
+      res = res.filter(m => m.villageId === selectedVillage.id);
+    }
+    if (sortBy === 'price') {
+      res = [...res].sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'cws') {
+      // Sort by CWS impact (lower CWS = higher impact)
+      res = [...res].sort((a, b) => {
+        const vA = getVillage(a.villageId)?.cws || 100;
+        const vB = getVillage(b.villageId)?.cws || 100;
+        return vA - vB;
+      });
+    } else {
+      res = [...res].sort((a, b) => b.score - a.score);
+    }
+    return res;
+  }, [matches, filterType, sortBy, selectedVillage]);
 
-  const topMatches = useMemo(() => matches.slice(0, 6), [matches])
+  if (!personality) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-3.5rem)]">
+        <p className="text-text-2 mb-4">You need to complete onboarding first.</p>
+        <button onClick={() => window.location.href = '/onboarding'} className="bg-accent text-black px-6 py-2 rounded-pill">Complete Onboarding</button>
+      </div>
+    );
+  }
 
   return (
-    <main className="min-h-screen px-6 py-10 sm:px-8">
-      <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-        <section className="wg-shell rounded-3xl p-6 sm:p-8">
-          <p className="wg-pill inline-flex rounded-full px-4 py-1 text-xs uppercase tracking-[0.22em] text-emerald-100/90">
-            personality: {personality}
-          </p>
-          <h1 className="mt-4 text-4xl font-bold text-emerald-50 sm:text-5xl">Your Best-Matched Experiences</h1>
-          <p className="mt-3 max-w-2xl text-sm text-emerald-100/80 sm:text-base">
-            Ranked by graph relevance to your onboarding profile. Use village links to view local context.
-          </p>
-
-          {topMatches.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-emerald-200/30 bg-emerald-900/25 p-5 text-emerald-100/85">
-              No saved matches yet. Complete onboarding first, then return here.
-              <div className="mt-4">
-                <Link href="/onboarding" className="rounded-full bg-emerald-300 px-5 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-200">
-                  Start onboarding
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-8 grid gap-4">
-              {topMatches.map((item, idx) => (
-                <article key={`${item.id ?? 'm'}-${idx}`} className="rounded-2xl border border-emerald-200/30 bg-emerald-950/30 p-5">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h2 className="text-xl font-semibold text-emerald-50">{item.name || 'Untitled experience'}</h2>
-                    <span className="rounded-full bg-emerald-300/20 px-3 py-1 text-sm font-semibold text-emerald-100">
-                      Match {formatScore(item.score)}
-                    </span>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-emerald-100/80">
-                    {item.type ? <span className="wg-pill rounded-full px-3 py-1">{item.type}</span> : null}
-                    {item.duration_hours ? <span className="wg-pill rounded-full px-3 py-1">{item.duration_hours}h</span> : null}
-                    {item.price_eur ? <span className="wg-pill rounded-full px-3 py-1">EUR {item.price_eur}</span> : null}
-                    {item.village_id ? (
-                      <Link className="wg-pill rounded-full px-3 py-1 transition hover:bg-emerald-400/20" href={`/village/${item.village_id}`}>
-                        village {item.village_id}
-                      </Link>
-                    ) : null}
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <aside>
-          <AudioReactor />
-        </aside>
+    <motion.div 
+      initial={{ opacity: 0, y: 12 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.35 }}
+      className="flex flex-col md:flex-row h-[calc(100vh-3.5rem)]"
+    >
+      {/* Map Section */}
+      <div className="w-full md:w-[55%] h-[250px] md:h-full relative border-b md:border-b-0 md:border-r border-[#222]">
+        <VillageMap onSelectVillage={setSelectedVillage} />
       </div>
-    </main>
-  )
+
+      {/* Sidebar Section */}
+      <div className="w-full md:w-[45%] h-full overflow-y-auto bg-bg p-4 md:p-6 flex flex-col gap-6">
+        
+        {/* Personality Banner */}
+        <div className="bg-surface border border-[#222] rounded-card p-5 flex flex-col items-center text-center">
+          <h2 className="font-display text-2xl text-white mb-1">
+            You are a <span className="text-accent">{personality.dominant}</span>
+          </h2>
+          <p className="text-text-2 text-sm mb-4">Showing experiences matched to your profile</p>
+          <div className="w-32 h-32 mb-2">
+            <PersonalityRadar vector={personality.vector} size={128} />
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-white font-medium text-lg">Experiences</h3>
+            {selectedVillage && (
+              <button 
+                onClick={() => setSelectedVillage(null)}
+                className="text-xs text-accent hover:underline"
+              >
+                Clear village filter
+              </button>
+            )}
+          </div>
+          
+          <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
+            {types.map(t => (
+              <button
+                key={t}
+                onClick={() => setFilterType(t)}
+                className={`shrink-0 px-4 py-1.5 rounded-pill text-xs font-medium transition-colors ${filterType === t ? 'bg-accent text-black' : 'bg-surface-2 border border-[#333] text-text-2 hover:border-[#555]'}`}
+              >
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-2">
+            <span className="text-text-3 text-xs self-center mr-2">Sort by:</span>
+            {['match', 'price', 'cws'].map(s => (
+              <button
+                key={s}
+                onClick={() => setSortBy(s as any)}
+                className={`text-xs px-3 py-1 rounded-pill border transition-colors ${sortBy === s ? 'border-accent text-accent bg-accent/10' : 'border-[#333] text-text-2 hover:border-[#555]'}`}
+              >
+                {s === 'match' ? 'Best match' : s === 'price' ? 'Price ↑' : 'CWS impact'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* List */}
+        <div className="flex flex-col gap-3 pb-20 md:pb-0">
+          {filteredMatches.length === 0 ? (
+            <div className="text-center text-text-3 py-8">No experiences found for this filter.</div>
+          ) : (
+            filteredMatches.map(exp => (
+              <ExperienceCard key={exp.id} exp={exp} />
+            ))
+          )}
+          {filteredMatches.length > 0 && (
+            <button className="w-full py-3 mt-2 text-sm text-text-2 border border-[#333] rounded-pill hover:text-white hover:border-[#555] transition-colors">
+              Show more
+            </button>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
 }

@@ -1,36 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
+import { computePersonality, matchScore } from '@/app/lib/hmm';
+import { EXPERIENCES } from '@/app/lib/data';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { observations } = await req.json()
+    const body = await req.json();
+    const { observations } = body;
 
-    const hmrRes = await fetch('http://localhost:5000/hmm/decode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ observations }),
-    })
+    // Run HMM locally instead of Python
+    const personality = computePersonality(observations);
 
-    if (!hmrRes.ok) {
-      return NextResponse.json({ error: 'HMM service error' }, { status: 502 })
-    }
+    // Compute matches
+    const matches = EXPERIENCES.map(exp => ({
+      ...exp,
+      score: matchScore(personality.vector, exp.personalityWeights)
+    })).sort((a, b) => b.score - a.score).slice(0, 10);
 
-    const personality = await hmrRes.json()
-    const { personality_vector } = personality
-
-    const graphRes = await fetch('http://localhost:8081/graph/match', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ personality_vector }),
-    })
-
-    if (!graphRes.ok) {
-      return NextResponse.json({ error: 'Graph service error' }, { status: 502 })
-    }
-
-    const matches = await graphRes.json()
-
-    return NextResponse.json({ personality, matches })
-  } catch (err) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ personality, matches });
+  } catch (error) {
+    console.error('Onboarding API Error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -1,55 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    color-scheme: light;
-    --bg-deep: #042f2e;
-    --bg-mid: #0b4a45;
-    --bg-soft: #0f766e;
-    --ink-strong: #ecfdf5;
-    --ink-muted: #a7f3d0;
-    --surface: rgba(6, 78, 59, 0.52);
-    --surface-border: rgba(94, 234, 212, 0.35);
-    --accent: #34d399;
-    --accent-strong: #10b981;
-  }
+@theme {
+  --color-bg: #080808;
+  --color-surface: #111111;
+  --color-surface-2: #1A1A1A;
+  --color-border: #222222;
+  --color-border-hot: #333333;
+  --color-accent: #C8F55A;
+  --color-accent-dim: #8FB83D;
+  --color-amber: #F5A623;
+  --color-text-1: #F0F0F0;
+  --color-text-2: #888888;
+  --color-text-3: #444444;
+  --color-red: #FF4444;
+  --color-green: #22C55E;
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: var(--font-body), sans-serif;
-    color: var(--ink-strong);
-    background:
-      radial-gradient(1100px 520px at 0% -10%, #0f766e 0%, transparent 65%),
-      radial-gradient(900px 500px at 100% 0%, #134e4a 0%, transparent 60%),
-      linear-gradient(165deg, var(--bg-deep) 0%, var(--bg-mid) 56%, #022c22 100%);
-    background-attachment: fixed;
-  }
+  --font-display: var(--font-display), serif;
+  --font-sans: var(--font-sans), sans-serif;
 
-  h1,
-  h2,
-  h3 {
-    font-family: var(--font-display), sans-serif;
-    letter-spacing: -0.02em;
-  }
+  --radius-card: 12px;
+  --radius-pill: 999px;
 
-  * {
-    box-sizing: border-box;
+  --animate-fade-up: fadeUp 0.4s ease forwards;
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 
-@layer components {
-  .wg-shell {
-    border: 1px solid var(--surface-border);
-    background: linear-gradient(140deg, rgba(6, 78, 59, 0.72), var(--surface));
-    --backdrop-filter: blur(12px);
-    box-shadow: 0 24px 70px rgba(2, 44, 34, 0.45);
-  }
-
-  .wg-pill {
-    border: 1px solid rgba(110, 231, 183, 0.35);
-    background: rgba(6, 95, 70, 0.45);
-  }
-}
+* { box-sizing: border-box; }
+body { background: #080808; color: #F0F0F0; font-family: var(--font-sans), sans-serif; }
+::selection { background: #C8F55A; color: #000; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }

@@ -1,87 +1,83 @@
-'use client'
+'use client';
 
-const AXES = ['Explorer', 'Connector', 'Restorer', 'Achiever', 'Guardian']
-const SIZE = 260
-const CX = SIZE / 2
-const CY = SIZE / 2
-const R = 84
+import { motion } from 'motion/react';
+import { PERSONALITIES, PERSONALITY_INFO } from '@/app/lib/data';
 
-function angleAt(i: number) {
-  return (-Math.PI / 2) + i * (2 * Math.PI / AXES.length)
-}
+export function PersonalityRadar({ 
+  vector, size = 280 
+}: { 
+  vector: [number, number, number, number, number], size?: number 
+}) {
+  const cx = size / 2;
+  const cy = size / 2;
+  const radius = (size / 2) * 0.7; // Leave room for labels
 
-function point(value: number, i: number) {
-  const a = angleAt(i)
-  return {
-    x: CX + value * R * Math.cos(a),
-    y: CY + value * R * Math.sin(a),
-  }
-}
+  // Compute points for the polygon
+  const points = PERSONALITIES.map((_, i) => {
+    const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+    const r = vector[i] * radius * 2; // scale up to fill radar
+    return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+  });
 
-interface Props {
-  personality_vector: number[]
-}
+  const pointsString = points.map(p => p.join(',')).join(' ');
+  const centerPointsString = PERSONALITIES.map(() => `${cx},${cy}`).join(' ');
 
-export default function PersonalityRadar({ personality_vector }: Props) {
-  const gridLevels = [0.25, 0.5, 0.75, 1]
-
-  const polygonPoints = personality_vector
-    .map((v, i) => point(v, i))
-    .map(p => `${p.x},${p.y}`)
-    .join(' ')
+  // Dominant color
+  const dominantIndex = vector.indexOf(Math.max(...vector));
+  const dominantColor = PERSONALITY_INFO[PERSONALITIES[dominantIndex]].color;
 
   return (
-    <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
-      {gridLevels.map(level => {
-        const pts = AXES.map((_, i) => point(level, i)).map(p => `${p.x},${p.y}`).join(' ')
-        return (
-          <polygon
-            key={level}
-            points={pts}
-            fill="none"
-            stroke="#d1fae5"
-            strokeWidth={1}
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="absolute inset-0">
+        {/* Grid lines */}
+        {[0.25, 0.5, 0.75, 1].map((scale, i) => (
+          <circle 
+            key={i} cx={cx} cy={cy} r={radius * scale} 
+            fill="none" stroke="#333" strokeWidth="1" 
           />
-        )
-      })}
+        ))}
 
-      {AXES.map((_, i) => {
-        const p = point(1, i)
+        {/* Axes */}
+        {PERSONALITIES.map((_, i) => {
+          const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+          const x2 = cx + radius * Math.cos(angle);
+          const y2 = cy + radius * Math.sin(angle);
+          return (
+            <line 
+              key={i} x1={cx} y1={cy} x2={x2} y2={y2} 
+              stroke="#333" strokeWidth="1" 
+            />
+          );
+        })}
+
+        {/* Polygon */}
+        <motion.polygon
+          initial={{ points: centerPointsString }}
+          animate={{ points: pointsString }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          fill={`${dominantColor}4D`} // 30% opacity
+          stroke={dominantColor}
+          strokeWidth="2"
+        />
+      </svg>
+
+      {/* Labels */}
+      {PERSONALITIES.map((p, i) => {
+        const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+        const labelRadius = radius * 1.25;
+        const x = cx + labelRadius * Math.cos(angle);
+        const y = cy + labelRadius * Math.sin(angle);
         return (
-          <line
-            key={i}
-            x1={CX} y1={CY}
-            x2={p.x} y2={p.y}
-            stroke="#d1fae5"
-            strokeWidth={1}
-          />
-        )
-      })}
-
-      <polygon
-        points={polygonPoints}
-        fill="rgba(16,185,129,0.3)"
-        stroke="#10b981"
-        strokeWidth={2}
-      />
-
-      {AXES.map((label, i) => {
-        const p = point(1.38, i)
-        return (
-          <text
-            key={i}
-            x={p.x}
-            y={p.y}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fontSize={12}
-            fill="#064e3b"
-            fontWeight="600"
+          <div 
+            key={i} 
+            className="absolute flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2"
+            style={{ left: x, top: y }}
           >
-            {label}
-          </text>
-        )
+            <span className="text-xl">{PERSONALITY_INFO[p].emoji}</span>
+            <span className="text-[10px] text-text-2 mt-1">{p}</span>
+          </div>
+        );
       })}
-    </svg>
-  )
+    </div>
+  );
 }

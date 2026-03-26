@@ -208,13 +208,8 @@ export default function FriendsPage() {
                 placeholder="https://… or base64 code"
                 className={inputCls} />
               <button onClick={handleAddFriend}
-<<<<<<< HEAD
                 className="bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-full hover:bg-[#095A22] transition-colors whitespace-nowrap">
                 Добави
-=======
-                className="bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#095A22] transition-colors whitespace-nowrap">
-                Add
->>>>>>> 995f644de3e16bfa587a1a5af9678e19d9855926
               </button>
             </div>
             {addError && <p className="text-xs text-red-600">{addError}</p>}

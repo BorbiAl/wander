@@ -22,4 +22,8 @@ run: $(TARGET)
 	./$(TARGET)
 
 clean:
+ifeq ($(OS),Windows_NT)
+	del /f $(TARGET) $(TARGET).exe 2>nul || true
+else
 	rm -f $(TARGET)
+endif

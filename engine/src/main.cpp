@@ -8,6 +8,7 @@
 #include <atomic>
 #include <mutex>
 #include <random>
+#include <set>
 
 #include "algorithms.hpp"
 #include "graph.hpp"
@@ -26,13 +27,37 @@ static std::unordered_map<std::string, int>  village_cws_delta;
 static std::mutex cws_mutex;
 static std::atomic<int> booking_counter{1};
 
+// Leaderboard: userId -> {score, bookings, villages}
+struct UserScore {
+  std::string user_id;
+  int score = 0;
+  int bookings = 0;
+  std::unordered_set<std::string> villages;
+};
+static std::unordered_map<std::string, UserScore> leaderboard;
+static std::mutex leaderboard_mutex;
+
+// WebSocket client registry
+static std::set<httplib::ws::WebSocket*> ws_clients;
+static std::mutex ws_mutex;
+
+static void broadcast_impact(const json& impact) {
+  json msg;
+  msg["type"] = "IMPACT_UPDATE";
+  msg["data"] = impact;
+  const std::string text = msg.dump();
+  std::lock_guard<std::mutex> lk(ws_mutex);
+  for (auto* ws : ws_clients) {
+    ws->send(text);
+  }
+}
+
 // ---------------------------------------------------------------------------
-// Data loading (their version: bidirectional edges + village_ids set)
+// Data loading
 // ---------------------------------------------------------------------------
 static void load_data(PropertyGraph& graph) {
   std::unordered_set<std::string> village_ids;
 
-  // Villages
   for (const auto& path : {"data/villages.json", "engine/data/villages.json"}) {
     std::ifstream f(path);
     if (!f.is_open()) continue;
@@ -52,7 +77,6 @@ static void load_data(PropertyGraph& graph) {
     break;
   }
 
-  // Experiences
   for (const auto& path : {"data/experiences.json", "engine/data/experiences.json"}) {
     std::ifstream f(path);
     if (!f.is_open()) continue;
@@ -81,7 +105,6 @@ static void load_data(PropertyGraph& graph) {
           graph.add_node(vid);
           graph.set_node_prop(vid, "is_experience", 0.0);
         }
-        // Bidirectional: village → experience and experience → village
         graph.add_edge(vid, id, 1.0);
         graph.add_edge(id, vid, 1.0);
       }
@@ -126,6 +149,28 @@ int main() {
 
   httplib::Server svr;
   svr.set_default_headers({{"Access-Control-Allow-Origin", "*"}});
+
+  // ---- WebSocket /ws -------------------------------------------------------
+  svr.WebSocket("/ws",
+    [](const httplib::Request&, httplib::ws::WebSocket& ws) {
+      {
+        std::lock_guard<std::mutex> lk(ws_mutex);
+        ws_clients.insert(&ws);
+      }
+      std::cout << "WS client connected (" << ws_clients.size() << " total)" << std::endl;
+
+      // Keep alive: read until the client disconnects
+      std::string payload;
+      while (ws.read(payload) != httplib::ReadResult::Fail) {
+        // ping/pong handled by httplib; ignore other messages
+      }
+
+      {
+        std::lock_guard<std::mutex> lk(ws_mutex);
+        ws_clients.erase(&ws);
+      }
+      std::cout << "WS client disconnected (" << ws_clients.size() << " remaining)" << std::endl;
+    });
 
   // ---- GET /health --------------------------------------------------------
   svr.Get("/health", [](const httplib::Request&, httplib::Response& res) {
@@ -178,8 +223,9 @@ int main() {
     [](const httplib::Request& req, httplib::Response& res) {
       try {
         json payload    = json::parse(req.body);
-        const std::string exp_id = payload.value("experience_id", "");
-        const double amount_eur  = payload.value("amount_eur", 0.0);
+        const std::string exp_id  = payload.value("experience_id", "");
+        const double amount_eur   = payload.value("amount_eur", 0.0);
+        const std::string user_id = payload.value("user_id", "anonymous");
 
         auto eit = experience_lookup.find(exp_id);
         if (eit == experience_lookup.end()) {
@@ -208,6 +254,21 @@ int main() {
           village_cws_delta[vid] += cws_delta;
         }
 
+        // Score = 10 base + bonus for low-CWS villages (frontier villages score more)
+        auto vit = village_lookup.find(vid);
+        int cws_base = (vit != village_lookup.end() && vit->second.contains("cws_base"))
+                       ? vit->second["cws_base"].get<int>() : 50;
+        int booking_score = 10 + std::max(0, (100 - cws_base) / 5);
+
+        {
+          std::lock_guard<std::mutex> lk(leaderboard_mutex);
+          auto& entry = leaderboard[user_id];
+          entry.user_id = user_id;
+          entry.score   += booking_score;
+          entry.bookings += 1;
+          entry.villages.insert(vid);
+        }
+
         int bid = booking_counter.fetch_add(1);
         json impact;
         impact["booking_id"]    = bid;
@@ -218,8 +279,11 @@ int main() {
         impact["cws_before"]    = get_cws(vid) - cws_delta;
         impact["cws_after"]     = get_cws(vid);
         impact["cws_delta"]     = cws_delta;
+        impact["user_id"]       = user_id;
+        impact["score_earned"]  = booking_score;
 
-        std::cout << "IMPACT_UPDATE:" << impact.dump() << std::endl;
+        broadcast_impact(impact);
+
         res.set_content(impact.dump(), "application/json");
       } catch (...) {
         res.status = 400;
@@ -249,7 +313,24 @@ int main() {
   // ---- GET /graph/leaderboard ---------------------------------------------
   svr.Get("/graph/leaderboard",
     [](const httplib::Request&, httplib::Response& res) {
-      res.set_content("[]", "application/json");
+      std::vector<json> entries;
+      {
+        std::lock_guard<std::mutex> lk(leaderboard_mutex);
+        for (const auto& [uid, u] : leaderboard) {
+          json e;
+          e["user_id"]       = uid;
+          e["score"]         = u.score;
+          e["bookings"]      = u.bookings;
+          e["villages_count"] = static_cast<int>(u.villages.size());
+          entries.push_back(e);
+        }
+      }
+      std::sort(entries.begin(), entries.end(),
+        [](const json& a, const json& b) { return a["score"].get<int>() > b["score"].get<int>(); });
+      json out = json::array();
+      for (std::size_t i = 0; i < std::min(entries.size(), std::size_t(10)); ++i)
+        out.push_back(entries[i]);
+      res.set_content(out.dump(), "application/json");
     });
 
   // ---- GET /graph/clusters ------------------------------------------------
@@ -264,6 +345,47 @@ int main() {
       json out = json::array();
       for (const auto& [cid, vids] : clusters)
         out.push_back({{"id", cid}, {"villages", vids}});
+      res.set_content(out.dump(), "application/json");
+    });
+
+  // ---- GET /graph/export (for D3 knowledge graph visualization) -----------
+  svr.Get("/graph/export",
+    [&graph](const httplib::Request&, httplib::Response& res) {
+      json nodes_arr = json::array();
+      json edges_arr = json::array();
+
+      for (const auto& [id, node] : graph.nodes()) {
+        json n;
+        n["id"] = id;
+        auto vit = village_lookup.find(id);
+        auto eit = experience_lookup.find(id);
+        if (vit != village_lookup.end()) {
+          n["type"]  = "village";
+          n["name"]  = vit->second.value("name", id);
+          n["cws"]   = get_cws(id);
+          n["region"] = vit->second.value("region", "");
+        } else if (eit != experience_lookup.end()) {
+          n["type"]  = "experience";
+          n["name"]  = eit->second.value("title", eit->second.value("name", id));
+          n["exp_type"] = eit->second.value("type", "");
+        } else {
+          n["type"] = "unknown";
+          n["name"] = id;
+        }
+        nodes_arr.push_back(n);
+      }
+
+      for (const auto& e : graph.edges()) {
+        json edge;
+        edge["source"] = e.from;
+        edge["target"] = e.to;
+        edge["weight"] = e.weight;
+        edges_arr.push_back(edge);
+      }
+
+      json out;
+      out["nodes"] = nodes_arr;
+      out["edges"] = edges_arr;
       res.set_content(out.dump(), "application/json");
     });
 

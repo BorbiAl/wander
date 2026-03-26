@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useApp } from '@/app/lib/store';
-import { Map, Zap, User, Home } from 'lucide-react';
+import { Map, Zap, User, Home, GitFork } from 'lucide-react';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -12,6 +12,7 @@ export function Navbar() {
   const navItems = [
     { label: 'Discover', href: '/discover', icon: Map },
     { label: 'Impact', href: '/impact', icon: Zap, badge: bookings.length },
+    { label: 'Graph', href: '/graph', icon: GitFork },
     { label: 'Profile', href: '/profile', icon: User },
   ];
 

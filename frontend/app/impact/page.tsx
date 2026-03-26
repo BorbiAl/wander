@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { useApp } from '@/app/lib/store';
 import { SankeyDiagram } from '@/components/SankeyDiagram';
 import { CWSCounter } from '@/components/CWSCounter';
@@ -9,10 +10,12 @@ import { ImpactFeed } from '@/components/ImpactFeed';
 import { getVillage, getExperience } from '@/app/lib/utils';
 import { VILLAGES } from '@/app/lib/data';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useImpactStream } from '@/hooks/useImpactStream';
 
 export default function ImpactPage() {
   const router = useRouter();
   const { bookings, totalImpact, villagesVisited, points } = useApp();
+  const { impacts: liveImpacts, connected: wsConnected } = useImpactStream();
 
   // Chart data
   const chartData = useMemo(() => {
@@ -50,10 +53,33 @@ export default function ImpactPage() {
       initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
       className="max-w-4xl mx-auto px-4 py-8 md:py-12 pb-24"
     >
-      <div className="mb-10">
-        <h1 className="font-display text-4xl text-white mb-2">Impact Dashboard</h1>
-        <p className="text-text-2">Every booking you make strengthens a village community</p>
+      <div className="mb-10 flex items-start justify-between">
+        <div>
+          <h1 className="font-display text-4xl text-white mb-2">Impact Dashboard</h1>
+          <p className="text-text-2">Every booking you make strengthens a village community</p>
+        </div>
+        <div className="flex items-center gap-2 mt-1">
+          <span className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-accent animate-pulse' : 'bg-[#555]'}`} />
+          <span className="text-xs text-text-3">{wsConnected ? 'Live' : 'Offline'}</span>
+        </div>
       </div>
+
+      {liveImpacts.length > 0 && (
+        <div className="mb-8 bg-surface border border-accent/30 rounded-card p-4">
+          <div className="text-[10px] uppercase text-accent mb-3 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            Live global bookings
+          </div>
+          <div className="flex flex-col gap-2 max-h-32 overflow-y-auto">
+            {liveImpacts.map((evt) => (
+              <div key={evt.booking_id} className="flex justify-between text-sm">
+                <span className="text-text-2">{evt.village_id}</span>
+                <span className="text-accent font-medium">+{evt.cws_delta} CWS · €{evt.amount_eur}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         <div className="bg-surface border border-[#222] rounded-card p-5">

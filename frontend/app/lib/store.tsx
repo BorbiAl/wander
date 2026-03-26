@@ -247,11 +247,31 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const setActiveGroup = (groupId: string | null) => setState(prev => ({ ...prev, activeGroupId: groupId }));
 
+  async function parseResponseBody(res: Response): Promise<Record<string, unknown>> {
+    // Some responses are empty or return HTML/text on server errors; parse defensively.
+    if (res.status === 204 || res.status === 205) return {};
+
+    const contentType = (res.headers.get('content-type') || '').toLowerCase();
+
+    if (contentType.includes('application/json')) {
+      return (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    }
+
+    const text = await res.text().catch(() => '');
+    if (!text) return {};
+
+    try {
+      return JSON.parse(text) as Record<string, unknown>;
+    } catch {
+      return { message: text };
+    }
+  }
+
   const seedLocation = async (location: string) => {
     setState(prev => ({ ...prev, destination: location, seedStatus: 'loading' }));
     try {
       const res = await fetch(`/api/seed?location=${encodeURIComponent(location)}`);
-      const data = await res.json().catch(() => ({}));
+      const data = await parseResponseBody(res);
       if (!res.ok) {
         const message = typeof data?.error === 'string' ? data.error : `Seed failed: ${res.status}`;
         console.error('Seed error:', message);

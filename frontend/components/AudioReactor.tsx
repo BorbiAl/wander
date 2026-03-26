@@ -36,10 +36,11 @@ function createNoiseBuffer(ctx: AudioContext): AudioBuffer {
 }
 
 export function AudioReactor({ 
-  clipTitle, clipDescription, sliderLabels, onChoice 
+  clipTitle, clipDescription, clipSrc, sliderLabels, onChoice 
 }: { 
   clipTitle: string,
   clipDescription: string,
+  clipSrc?: string,
   sliderLabels: [string, string, string],
   onChoice: (val: 0|1|2) => void
 }) {
@@ -49,6 +50,7 @@ export function AudioReactor({
   const profile = useMemo(() => inferProfile(`${clipTitle} ${clipDescription}`), [clipDescription, clipTitle]);
   const ctxRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const stopAmbient = () => {
     if (timerRef.current) {
@@ -60,6 +62,27 @@ export function AudioReactor({
       ctxRef.current = null;
     }
     setIsPlaying(false);
+  };
+
+  const stopAudioClip = () => {
+    if (!audioRef.current) return;
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+    setIsPlaying(false);
+  };
+
+  const startAudioClip = () => {
+    if (!clipSrc) return;
+    if (!audioRef.current) {
+      const audio = new Audio(clipSrc);
+      audio.preload = 'auto';
+      audio.addEventListener('ended', () => setIsPlaying(false));
+      audioRef.current = audio;
+    }
+
+    audioRef.current.currentTime = 0;
+    void audioRef.current.play();
+    setIsPlaying(true);
   };
 
   const startAmbient = () => {
@@ -136,14 +159,37 @@ export function AudioReactor({
     setIsPlaying(true);
   };
 
-  useEffect(() => stopAmbient, []);
   useEffect(() => {
+    return () => {
+      stopAmbient();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (clipSrc) return;
+
     if (isPlaying) {
       stopAmbient();
       startAmbient();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile]);
+  }, [profile, clipSrc]);
+
+  const togglePlayback = () => {
+    if (isPlaying) {
+      if (clipSrc) stopAudioClip();
+      else stopAmbient();
+      return;
+    }
+
+    if (clipSrc) startAudioClip();
+    else startAmbient();
+  };
 
   const handleNext = () => {
     let choice: 0|1|2 = 1;
@@ -184,10 +230,10 @@ export function AudioReactor({
       </div>
 
       <button
-        onClick={() => (isPlaying ? stopAmbient() : startAmbient())}
+        onClick={togglePlayback}
         className="border border-[#D6DCCD] text-[#1A2E1C]/70 rounded-pill px-6 py-3 hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors mb-4 w-full text-sm"
       >
-        {isPlaying ? '■ Stop ambience' : '▶ Play ambience'}
+        {isPlaying ? '■ Stop audio' : '▶ Play audio'}
       </button>
 
       <button 

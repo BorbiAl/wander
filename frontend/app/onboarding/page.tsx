@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '@/app/lib/store';
-import { EXPERIENCES, VILLAGES } from '@/app/lib/data';
 import { SwipeCard } from '@/components/SwipeCard';
 import { AudioReactor } from '@/components/AudioReactor';
 import { ScrollCard } from '@/components/ScrollCard';
@@ -31,18 +30,6 @@ export default function OnboardingPage() {
 
   // Generate a random set of questions once per session
   const questions = useMemo(() => generateQuestions(), []);
-
-  // Pick 3 real experiences from seeded data for scroll cards
-  const scrollCardExps = useMemo(() => {
-    const exps = EXPERIENCES.slice(0, 3);
-    return exps.map(e => {
-      const village = VILLAGES.find(v => v.id === e.villageId);
-      return {
-        title: `${e.name}${village ? `, ${village.name}` : ''}`,
-        description: e.description,
-      };
-    });
-  }, []);
 
   const handleChoice = async (val: number) => {
     const newObs = [...obs, val];
@@ -128,14 +115,14 @@ export default function OnboardingPage() {
             {step === 7 && <AudioReactor {...questions.audios[1]} onChoice={(v) => handleChoice(15 + v)} />}
             {step === 8 && <AudioReactor {...questions.audios[2]} onChoice={(v) => handleChoice(18 + v)} />}
 
-            {step === 9 && <ScrollCard title={scrollCardExps[0]?.title ?? 'A local craft workshop'} description={scrollCardExps[0]?.description ?? 'Work alongside a master craftsperson and leave with something made by your own hands.'} onChoice={(v) => handleChoice(18 + v)} />}
-            {step === 10 && <ScrollCard title={scrollCardExps[1]?.title ?? 'Dawn nature walk'} description={scrollCardExps[1]?.description ?? 'Pre-dawn hike into untouched wilderness with a local guide who knows every trail by memory.'} onChoice={(v) => handleChoice(18 + v)} />}
-            {step === 11 && <ScrollCard title={scrollCardExps[2]?.title ?? 'Village homestay'} description={scrollCardExps[2]?.description ?? 'Stay in a centuries-old house. Wake to roosters. Eat dinner at a table that has seated generations. No WiFi. No schedule.'} onChoice={(v) => handleChoice(18 + v)} />}
+            {step === 9 && <ScrollCard {...questions.scrollCards[0]} onChoice={(v) => handleChoice(18 + v)} />}
+            {step === 10 && <ScrollCard {...questions.scrollCards[1]} onChoice={(v) => handleChoice(18 + v)} />}
+            {step === 11 && <ScrollCard {...questions.scrollCards[2]} onChoice={(v) => handleChoice(18 + v)} />}
 
-            {step === 12 && <EmojiScenario scenario={questions.emojis[0].scenario} onChoice={(v) => handleChoice(21 + v % 3)} />}
-            {step === 13 && <EmojiScenario scenario={questions.emojis[1].scenario} onChoice={(v) => handleChoice(21 + v % 3)} />}
+            {step === 12 && <EmojiScenario scenario={questions.emojis[0].scenario} options={questions.emojis[0].options} onChoice={(v) => handleChoice(21 + v % 3)} />}
+            {step === 13 && <EmojiScenario scenario={questions.emojis[1].scenario} options={questions.emojis[1].options} onChoice={(v) => handleChoice(21 + v % 3)} />}
 
-            {step === 14 && <BudgetSlider onChoice={(v) => handleChoice(21 + v)} />}
+            {step === 14 && <BudgetSlider question={questions.budget} onChoice={(v) => handleChoice(21 + v)} />}
           </motion.div>
         </AnimatePresence>
       </div>

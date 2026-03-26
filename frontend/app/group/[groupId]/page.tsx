@@ -6,8 +6,10 @@ import { motion } from 'motion/react';
 import { useApp } from '@/app/lib/store';
 import { StoredGroup } from '@/app/lib/store';
 import { PERSONALITY_INFO } from '@/app/lib/data';
+import { GroupScoredExperience } from '@/app/lib/data';
 import { computeGroupVector } from '@/app/lib/hmm';
 import { GroupRadarOverlay } from '@/components/GroupRadarOverlay';
+import { GroupExperienceCard } from '@/components/GroupExperienceCard';
 
 function compatibilityPct(a: number[], b: number[]): number {
   const dot = a.reduce((s, v, i) => s + v * b[i], 0);
@@ -30,6 +32,9 @@ export default function GroupDiscoverPage() {
   const [destInput, setDestInput] = useState('');
   const [settingDest, setSettingDest] = useState(false);
   const [copiedInvite, setCopiedInvite] = useState(false);
+  const [results, setResults] = useState<GroupScoredExperience[]>([]);
+  const [loadingResults, setLoadingResults] = useState(false);
+  const [sortMode, setSortMode] = useState<'group' | 'allSatisfied'>('group');
 
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prevMemberCount = useRef(0);
@@ -86,6 +91,70 @@ export default function GroupDiscoverPage() {
     return group.members.map(a => group.members.map(b => compatibilityPct(a.vector, b.vector)));
   }, [group]);
 
+  const pairwiseCompat = useMemo(() => {
+    if (!group || group.members.length < 2) return [] as number[];
+    const values: number[] = [];
+    for (let i = 0; i < group.members.length; i += 1) {
+      for (let j = i + 1; j < group.members.length; j += 1) {
+        values.push(compatMatrix[i][j]);
+      }
+    }
+    return values;
+  }, [group, compatMatrix]);
+
+  const avgGroupFit = useMemo(() => {
+    if (pairwiseCompat.length === 0) return 100;
+    const sum = pairwiseCompat.reduce((acc, value) => acc + value, 0);
+    return Math.round(sum / pairwiseCompat.length);
+  }, [pairwiseCompat]);
+
+  const worstFit = useMemo(() => {
+    if (pairwiseCompat.length === 0) return 100;
+    return Math.min(...pairwiseCompat);
+  }, [pairwiseCompat]);
+
+  useEffect(() => {
+    async function fetchResults() {
+      if (!group || !groupVector || !group.destination) {
+        setResults([]);
+        return;
+      }
+
+      setLoadingResults(true);
+      try {
+        const res = await fetch('/api/group-match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            personality_vector: groupVector,
+            member_vectors: group.members.map((m) => m.vector),
+            location: group.destination,
+          }),
+        });
+        if (!res.ok) {
+          setResults([]);
+          return;
+        }
+        const data = (await res.json()) as GroupScoredExperience[];
+        setResults(Array.isArray(data) ? data : []);
+      } catch {
+        setResults([]);
+      } finally {
+        setLoadingResults(false);
+      }
+    }
+
+    void fetchResults();
+  }, [group, groupVector]);
+
+  const sorted = useMemo(() => {
+    const copy = [...results];
+    if (sortMode === 'allSatisfied') {
+      return copy.sort((a, b) => b.minMemberScore - a.minMemberScore || b.score - a.score);
+    }
+    return copy.sort((a, b) => b.score - a.score || b.minMemberScore - a.minMemberScore);
+  }, [results, sortMode]);
+
   if (loadingGroup) {
     return (
       <div className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 flex min-h-screen items-center justify-center">
@@ -136,7 +205,7 @@ export default function GroupDiscoverPage() {
             {/* Stats */}
             <div className="flex flex-wrap gap-3 mb-6">
               <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] px-4 py-3 text-center">
-                <div className="text-2xl font-bold text-[#F5A623]-600">{avgGroupFit}%</div>
+                <div className="text-2xl font-bold text-[#F5A623]">{avgGroupFit}%</div>
                 <div className="text-[10px] text-[#1A2E1C]/40">Средна група</div>
               </div>
               <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] px-4 py-3 text-center">

@@ -43,6 +43,8 @@ export function AuthModal({ onClose, onSuccess }: Props) {
       <div className="relative bg-[#F5F7F2] rounded-2xl shadow-2xl w-full max-w-sm p-7 border border-[#D6DCCD]">
         <button
           onClick={onClose}
+          aria-label="Close auth dialog"
+          title="Close"
           className="absolute top-4 right-4 text-[#1A2E1C]/40 hover:text-[#1A2E1C] transition-colors"
         >
           <X size={18} />

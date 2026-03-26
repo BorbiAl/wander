@@ -39,10 +39,10 @@
 }
 
 * { box-sizing: border-box; }
-body { background: var(--page-bg-light); color: var(--page-text-primary); font-family: var(--font-sans), sans-serif; }
-::selection { background: #C8F55A; color: #000; }
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }
+body { background: #E5E9DF; color: #1A2E1C; font-family: var(--font-sans), sans-serif; }
+::selection { background: rgba(11, 110, 42, 0.2); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(26, 46, 28, 0.2); border-radius: 4px; }
 
 .page-standard {
   background: var(--page-bg-light);

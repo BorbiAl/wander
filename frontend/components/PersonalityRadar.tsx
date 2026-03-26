@@ -33,7 +33,7 @@ export function PersonalityRadar({
         {[0.25, 0.5, 0.75, 1].map((scale, i) => (
           <circle 
             key={i} cx={cx} cy={cy} r={radius * scale} 
-            fill="none" stroke="#333" strokeWidth="1" 
+            fill="none" stroke="#D6DCCD" strokeWidth="1" 
           />
         ))}
 
@@ -45,7 +45,7 @@ export function PersonalityRadar({
           return (
             <line 
               key={i} x1={cx} y1={cy} x2={x2} y2={y2} 
-              stroke="#333" strokeWidth="1" 
+              stroke="#D6DCCD" strokeWidth="1" 
             />
           );
         })}

@@ -67,7 +67,7 @@ export default function OnboardingPage() {
     return (
       <div className="fixed inset-0 bg-[#E5E9DF] z-50 flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-[#D6DCCD] border-t-[#0B6E2A] rounded-full animate-spin mb-6" />
-        <p className="text-[#1A2E1C] font-display text-xl">
+        <p className="text-[#1A2E1C] font-bold tracking-tighter leading-tight text-xl">
           {seedStatus === 'loading' ? `Discovering villages in ${destination}…` : 'Analyzing your personality...'}
         </p>
       </div>
@@ -75,7 +75,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="page-standard min-h-[calc(100vh-3.5rem)] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 min-h-[calc(100vh-3.5rem)] flex flex-col font-sans">
       {/* Header */}
       <div className="px-4 py-4 flex items-center justify-between border-b border-[#D6DCCD]">
         <div className="flex items-center gap-2">

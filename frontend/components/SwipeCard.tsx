@@ -41,7 +41,7 @@ export function SwipeCard({
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('left')}
-          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#F4EDE2] overflow-hidden cursor-pointer relative transition-colors`}
+          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/50 overflow-hidden cursor-pointer relative transition-colors`}
         >
           <div className="h-[210px] w-full" style={{ backgroundColor: leftColor }}>
             <img
@@ -65,7 +65,7 @@ export function SwipeCard({
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('right')}
-          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#F4EDE2] overflow-hidden cursor-pointer relative transition-colors`}
+          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/50 overflow-hidden cursor-pointer relative transition-colors`}
         >
           <div className="h-[210px] w-full" style={{ backgroundColor: rightColor }}>
             <img

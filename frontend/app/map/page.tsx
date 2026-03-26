@@ -42,10 +42,10 @@ export default function MapPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="page-standard flex min-h-screen flex-col"
+      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 flex min-h-screen flex-col"
     >
       {/* Top bar */}
-      <div className="page-shell flex shrink-0 flex-col items-start justify-between gap-3 border-b border-[#D6DCCD] py-4 md:flex-row md:items-center">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 flex shrink-0 flex-col items-start justify-between gap-3 border-b border-[#D6DCCD] py-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-2xl sm:text-3xl">Village Map</h1>
           <p className="text-muted text-xs">{stats.total} villages · avg CWS {stats.avgCws} · {stats.pioneering} pioneer territories</p>
@@ -53,13 +53,13 @@ export default function MapPage() {
         <div className="flex w-full flex-wrap items-center gap-2 sm:gap-3 md:w-auto md:justify-end">
           <button
             onClick={() => setShowVisited(v => !v)}
-            className={`rounded-pill border px-3 py-1.5 text-xs transition-colors ${showVisited ? 'border-[#0B6E2A] bg-[#0B6E2A]/10 text-[#0B6E2A]' : 'border-[#D6DCCD] text-[#1A2E1C]/70 hover:border-[#A8B09F]'}`}
+            className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${showVisited ? 'border-[#0B6E2A] bg-[#0B6E2A]/10 text-[#0B6E2A]' : 'border-[#D6DCCD] text-[#1A2E1C]/70 hover:border-[#A8B09F]'}`}
           >
             {showVisited ? 'Showing visited' : 'Show visited only'}
           </button>
           <Link
             href="/discover"
-            className="rounded-pill bg-[#0B6E2A] px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#095A22]"
+            className="rounded-full bg-[#0B6E2A] px-4 py-1.5 text-xs font-semibold text-[#1A2E1C] transition-colors hover:bg-[#095A22]"
           >
             Browse experiences →
           </Link>
@@ -83,7 +83,7 @@ export default function MapPage() {
           initial={{ opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.25 }}
-          className="surface-card flex w-full shrink-0 flex-col overflow-y-auto border-t lg:w-80 lg:border-l lg:border-t-0"
+          className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm flex w-full shrink-0 flex-col overflow-y-auto border-t lg:w-80 lg:border-l lg:border-t-0"
         >
           {selectedVillage ? (
             <div className="p-5 flex flex-col gap-5">
@@ -92,14 +92,14 @@ export default function MapPage() {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-muted text-[10px] uppercase tracking-widest">{selectedVillage.region}</span>
                   {visitedSet.has(selectedVillage.name) && (
-                    <span className="rounded-pill bg-[#0B6E2A]/15 px-2 py-0.5 text-[10px] text-[#0B6E2A]">Visited</span>
+                    <span className="rounded-full bg-[#0B6E2A]/15 px-2 py-0.5 text-[10px] text-[#0B6E2A]">Visited</span>
                   )}
                 </div>
                 <h2 className="text-2xl leading-tight">{selectedVillage.name}</h2>
               </div>
 
               {/* CWS bar */}
-              <div className="surface-card rounded-xl p-4">
+              <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-muted text-xs uppercase tracking-wider">Community Signal</span>
                   <span className="font-bold text-sm" style={{ color: cwsColor(selectedVillage.cws) }}>
@@ -138,7 +138,7 @@ export default function MapPage() {
                       <Link
                         key={exp.id}
                         href={`/experience/${exp.id}`}
-                        className="surface-card group flex items-center justify-between rounded-xl p-3 transition-colors hover:border-[#0B6E2A]/40"
+                        className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm group flex items-center justify-between rounded-xl p-3 transition-colors hover:border-[#0B6E2A]/40"
                       >
                         <div>
                           <p className="text-sm font-medium transition-colors group-hover:text-[#0B6E2A]">{exp.name}</p>
@@ -153,7 +153,7 @@ export default function MapPage() {
 
               <Link
                 href={`/discover`}
-                className="w-full rounded-pill bg-[#0B6E2A] px-4 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-[#095A22]"
+                className="w-full rounded-full bg-[#0B6E2A] px-4 py-2.5 text-center text-sm font-semibold text-[#1A2E1C] transition-colors hover:bg-[#095A22]"
               >
                 Find matching experiences
               </Link>

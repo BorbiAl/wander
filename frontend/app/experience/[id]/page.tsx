@@ -27,7 +27,7 @@ export default function ExperiencePage() {
   const village = exp ? getVillage(exp.villageId) : null;
 
   if (!exp || !host || !village || !personality) {
-    return <div className="p-8 text-center text-text-2">Loading or not found...</div>;
+    return <div className="p-8 text-center text-[#1A2E1C]/60">Loading or not found...</div>;
   }
 
   const matchPct = percentageMatch(personality.vector, exp.personalityWeights);
@@ -221,54 +221,54 @@ export default function ExperiencePage() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 12 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ duration: 0.35 }}
-      className="max-w-3xl mx-auto px-4 py-6 md:py-10 pb-32"
+      initial={{ opacity: 0, scale: 0.98 }} 
+      animate={{ opacity: 1, scale: 1 }} 
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="max-w-4xl mx-auto px-5 py-8 md:py-12 pb-32 font-sans text-[#1A2E1C]"
     >
-      <button onClick={() => router.back()} className="text-text-2 hover:text-white mb-8 text-sm flex items-center gap-2">
+      <button onClick={() => router.back()} className="text-[#1A2E1C]/60 hover:text-[#1A2E1C] mb-8 text-[13px] font-bold uppercase tracking-widest flex items-center gap-2 transition-colors">
         ← Back to map
       </button>
 
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
-        <span className="text-[10px] px-3 py-1 rounded-pill bg-surface-2 border border-[#333] text-text-2 capitalize">
+        <span className="text-[10px] px-3 py-1 rounded-full bg-white/60 backdrop-blur-md border border-white/50 text-[#1A2E1C]/70 shadow-sm font-bold tracking-widest capitalize">
           {exp.type}
         </span>
-        <span className="text-[10px] px-3 py-1 rounded-pill bg-accent/20 border border-accent text-accent font-bold">
+        <span className="text-[10px] px-3 py-1 rounded-full bg-[#0B6E2A]/10 border border-[#0B6E2A]/20 text-[#0B6E2A] font-bold">
           {matchPct}% Match
         </span>
       </div>
 
-      <h1 className="font-display text-4xl md:text-5xl text-white leading-[1.1] mb-4">{exp.name}</h1>
-      <div className="text-text-2 text-base flex items-center gap-2 mb-6">
+      <h1 className="font-bold tracking-tighter text-4xl md:text-6xl text-[#1A2E1C] leading-[1.05] mb-4">{exp.name}</h1>
+      <div className="text-[#1A2E1C]/60 text-[15px] sm:text-lg flex items-center gap-2 font-medium tracking-tight mb-6">
         <span>📍</span> {village.name}, {village.region}
       </div>
 
-      <div className="flex items-center gap-4 text-sm text-text-2 mb-10 bg-surface border border-[#222] rounded-card p-4 inline-flex">
-        <span className="text-white font-medium">€{exp.price}</span>
-        <span className="w-1 h-1 rounded-full bg-[#444]" />
+      <div className="flex items-center gap-4 text-[14px] font-semibold tracking-wide text-[#1A2E1C]/70 mb-10 bg-white/60 backdrop-blur-md border border-white/50 rounded-[24px] shadow-sm hover:shadow-md transition-all p-4 inline-flex">
+        <span className="text-[#1A2E1C] font-bold">€{exp.price}</span>
+        <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
         <span>⏱ {exp.duration}</span>
-        <span className="w-1 h-1 rounded-full bg-[#444]" />
-        <span className="text-amber">⭐ {host.rating}</span>
+        <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
+        <span className="text-[#F5A623] font-bold">⭐ {host.rating}</span>
       </div>
 
       {/* Host Card */}
-      <div className="bg-surface border border-[#222] rounded-card p-5 flex gap-4 mb-10 items-center hover:border-[#333] transition-colors">
-        <div className="w-12 h-12 rounded-full bg-accent text-black flex items-center justify-center text-lg font-bold shrink-0">
+      <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[28px] p-6 flex gap-5 mb-12 items-center transition-transform hover:scale-[1.02]">
+        <div className="w-12 h-12 rounded-full bg-[#0B6E2A] text-white shadow-md flex items-center justify-center text-lg font-bold shrink-0">
           {host.name.split(' ').map(n => n[0]).join('')}
         </div>
         <div>
-          <div className="text-text-3 text-[11px] uppercase mb-1">Your host</div>
-          <div className="text-white font-medium text-base mb-1">{host.name}</div>
-          <div className="text-text-2 text-sm italic">{host.bio}</div>
+          <div className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Your host</div>
+          <div className="text-[#1A2E1C] font-bold text-base mb-1">{host.name}</div>
+          <div className="text-[#1A2E1C]/60 text-sm italic">{host.bio}</div>
         </div>
       </div>
 
       {/* Description */}
       <div className="mb-12">
-        <h2 className="font-display text-[22px] text-white mb-4">The experience</h2>
-        <p className="font-sans text-base text-text-2 leading-relaxed">{exp.description}</p>
+        <h2 className="font-display text-[22px] text-[#1A2E1C] mb-4">The experience</h2>
+        <p className="font-sans text-base text-[#1A2E1C]/60 leading-relaxed">{exp.description}</p>
       </div>
 
       {/* Personality Match */}
@@ -282,10 +282,10 @@ export default function ExperiencePage() {
             
             return (
               <div key={p} className="flex items-center gap-4">
-                <div className="w-24 text-xs text-text-2 flex items-center gap-2">
+                <div className="w-24 text-xs text-[#1A2E1C]/60 flex items-center gap-2">
                   <span>{PERSONALITY_INFO[p].emoji}</span> {p}
                 </div>
-                <div className="flex-1 h-2 bg-surface-2 rounded-full relative overflow-hidden">
+                <div className="flex-1 h-2 bg-white/90 backdrop-blur-md rounded-full relative overflow-hidden">
                   <div className="absolute top-0 left-0 bottom-0 opacity-30" style={{ width: `${expWeight * 100}%`, backgroundColor: color }} />
                   <div className="absolute top-0 bottom-0 w-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)] z-10" style={{ left: `calc(${userWeight * 100}% - 3px)`, backgroundColor: color }} />
                 </div>
@@ -302,27 +302,27 @@ export default function ExperiencePage() {
       </div>
 
       {/* Village Context */}
-      <div className="bg-surface border border-[#222] rounded-card p-5 mb-10">
+      <div className="bg-white/90 backdrop-blur-xl border border-[#D6DCCD]/30 rounded-[24px] p-5 mb-10">
         <div className="flex justify-between items-end mb-4">
-          <h3 className="font-display text-xl text-white">{village.name}</h3>
+          <h3 className="font-display text-xl text-[#1A2E1C]">{village.name}</h3>
           <div className="text-2xl font-bold" style={{ color: cwsColor(village.cws) }}>{village.cws}</div>
         </div>
-        <div className="w-full h-1.5 bg-[#222] rounded-full mb-6 overflow-hidden">
+        <div className="w-full h-1.5 bg-[#1A2E1C]/10 rounded-full mb-6 overflow-hidden">
           <div className="h-full" style={{ width: `${village.cws}%`, backgroundColor: cwsColor(village.cws) }} />
         </div>
-        <p className="text-sm text-text-2 mb-4">{village.description}</p>
+        <p className="text-sm text-[#1A2E1C]/60 mb-4">{village.description}</p>
         <p className="text-[10px] text-text-3 uppercase">CWS: Community Wellbeing Score — measures economic + cultural health</p>
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 md:sticky md:bottom-auto bg-[#080808F0] md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-t border-[#222] md:border-none p-4 md:p-0 z-40 flex justify-between items-center">
+      <div className="fixed bottom-0 left-0 right-0 md:sticky md:bottom-auto bg-[#080808F0] md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-t border-[rgba(0,0,0,0.05)] md:border-none p-4 md:p-0 z-40 flex justify-between items-center">
         <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-bold text-white">€{exp.price}</span>
-          <span className="text-text-2 text-sm">/person</span>
+          <span className="text-2xl font-bold text-[#1A2E1C]">€{exp.price}</span>
+          <span className="text-[#1A2E1C]/60 text-sm">/person</span>
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          className="bg-accent text-black font-semibold px-8 py-3.5 rounded-pill hover:bg-accent-dim active:scale-[0.97] transition-all"
+          className="bg-[#0B6E2A] text-white shadow-md font-semibold px-8 py-3.5 rounded-full hover:bg-[#0B6E2A]-dim active:scale-[0.97] transition-all"
         >
           Book this experience
         </button>
@@ -337,62 +337,62 @@ export default function ExperiencePage() {
           >
             <motion.div 
               initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
-              className="bg-surface border border-[#333] rounded-card p-6 w-full max-w-sm flex flex-col"
+              className="bg-white/90 backdrop-blur-xl border border-[#D6DCCD]/40 rounded-[24px] p-6 w-full max-w-sm flex flex-col"
             >
               {bookingState === 'idle' && (
                 <>
-                  <h2 className="font-display text-2xl text-white mb-2">Confirm booking</h2>
-                  <p className="text-text-2 text-sm mb-6">{exp.name} in {village.name}</p>
+                  <h2 className="font-display text-2xl text-[#1A2E1C] mb-2">Confirm booking</h2>
+                  <p className="text-[#1A2E1C]/60 text-[15px] font-medium tracking-tight mb-8">{exp.name} in {village.name}</p>
                   
-                  <div className="bg-surface-2 rounded-lg p-4 mb-6">
+                  <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 mb-6">
                     <div className="text-xs text-text-3 uppercase mb-3">Your €{exp.price} will be distributed:</div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-text-2">Host (70%)</span>
-                      <span className="text-accent font-medium">€{(exp.price * 0.7).toFixed(2)}</span>
+                      <span className="text-[#1A2E1C]/60">Host (70%)</span>
+                      <span className="text-[#0B6E2A] font-medium">€{(exp.price * 0.7).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-text-2">Community (15%)</span>
-                      <span className="text-amber">€{(exp.price * 0.15).toFixed(2)}</span>
+                      <span className="text-[#1A2E1C]/60">Community (15%)</span>
+                      <span className="text-[#F5A623] font-bold">€{(exp.price * 0.15).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-text-2">Culture (10%)</span>
+                      <span className="text-[#1A2E1C]/60">Culture (10%)</span>
                       <span className="text-blue-400">€{(exp.price * 0.1).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-text-2">Platform (5%)</span>
+                      <span className="text-[#1A2E1C]/60">Platform (5%)</span>
                       <span className="text-text-3">€{(exp.price * 0.05).toFixed(2)}</span>
                     </div>
                   </div>
 
                   <div className="flex gap-3">
-                    <button onClick={() => setShowModal(false)} className="flex-1 border border-[#333] text-text-2 rounded-pill py-3 hover:text-white transition-colors">Cancel</button>
-                    <button onClick={handleBook} className="flex-1 bg-accent text-black font-medium rounded-pill py-3 hover:bg-accent-dim transition-colors">Confirm →</button>
+                    <button onClick={() => setShowModal(false)} className="flex-1 border border-[#D6DCCD]/40 text-[#1A2E1C]/60 rounded-full py-3 hover:text-[#1A2E1C] transition-colors">Cancel</button>
+                    <button onClick={handleBook} className="flex-1 bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">Confirm →</button>
                   </div>
                 </>
               )}
 
               {bookingState === 'loading' && (
                 <div className="py-12 flex flex-col items-center justify-center">
-                  <div className="w-12 h-12 border-4 border-[#333] border-t-accent rounded-full animate-spin mb-4" />
-                  <p className="text-text-2">Processing impact...</p>
+                  <div className="w-12 h-12 border-4 border-[#D6DCCD]/40 border-t-[#0B6E2A] rounded-full animate-spin mb-4" />
+                  <p className="text-[#1A2E1C]/60">Processing impact...</p>
                 </div>
               )}
 
               {bookingState === 'success' && bookingResult && (
                 <div className="py-6 flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full bg-accent/20 text-accent flex items-center justify-center text-3xl mb-4">✓</div>
-                  <h2 className="font-display text-2xl text-white mb-2">Booked! You made an impact.</h2>
-                  <p className="text-accent font-medium mb-8">+{bookingResult.cwsDelta} CWS for {village.name}</p>
-                  <div className="w-full rounded-lg border border-[#333] bg-surface-2 p-4 mb-4 text-left">
-                    <p className="text-sm text-white font-medium mb-3">Add this booking to your calendar?</p>
+                  <div className="w-16 h-16 rounded-full bg-[#0B6E2A]/20 text-[#0B6E2A] flex items-center justify-center text-3xl mb-4">✓</div>
+                  <h2 className="font-display text-2xl text-[#1A2E1C] mb-2">Booked! You made an impact.</h2>
+                  <p className="text-[#0B6E2A] font-medium mb-8">+{bookingResult.cwsDelta} CWS for {village.name}</p>
+                  <div className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md p-4 mb-4 text-left">
+                    <p className="text-sm text-[#1A2E1C] font-bold mb-3">Add this booking to your calendar?</p>
                     <button
                       onClick={openDatePicker}
-                      className="w-full rounded-pill bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
+                      className="w-full rounded-full bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-[#1A2E1C] hover:bg-[#095A22] transition-colors"
                     >
                       {getCalendarLabel()}
                     </button>
                   </div>
-                  <button onClick={() => router.push('/impact')} className="w-full bg-accent text-black font-medium rounded-pill py-3 hover:bg-accent-dim transition-colors">
+                  <button onClick={() => router.push('/impact')} className="w-full bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">
                     View impact →
                   </button>
                 </div>
@@ -410,28 +410,28 @@ export default function ExperiencePage() {
           >
             <motion.div
               initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 12 }}
-              className="bg-surface border border-[#333] rounded-card p-6 w-full max-w-sm"
+              className="bg-white/90 backdrop-blur-xl border border-[#D6DCCD]/40 rounded-[24px] p-6 w-full max-w-sm"
             >
-              <h3 className="font-display text-2xl text-white mb-2">Choose experience date</h3>
-              <p className="text-sm text-text-2 mb-4">Pick when you plan to do this experience.</p>
+              <h3 className="font-display text-2xl text-[#1A2E1C] mb-2">Choose experience date</h3>
+              <p className="text-sm text-[#1A2E1C]/60 mb-4">Pick when you plan to do this experience.</p>
               <input
                 type="datetime-local"
                 value={scheduledAt}
                 onChange={(e) => setScheduledAt(e.target.value)}
                 aria-label="Experience date and time"
                 title="Experience date and time"
-                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C]"
               />
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={() => setShowDatePicker(false)}
-                  className="flex-1 rounded-pill border border-[#3A3A3A] px-4 py-2 text-sm text-text-2 hover:text-white transition-colors"
+                  className="flex-1 rounded-full border border-[#3A3A3A] px-4 py-2 text-sm text-[#1A2E1C]/60 hover:text-[#1A2E1C] transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmCalendarDate}
-                  className="flex-1 rounded-pill bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
+                  className="flex-1 rounded-full bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-[#1A2E1C] hover:bg-[#095A22] transition-colors"
                 >
                   Continue
                 </button>
@@ -449,16 +449,16 @@ export default function ExperiencePage() {
           >
             <motion.div
               initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 12 }}
-              className="bg-surface border border-[#333] rounded-card p-6 w-full max-w-md"
+              className="bg-white/90 backdrop-blur-xl border border-[#D6DCCD]/40 rounded-[24px] p-6 w-full max-w-md"
             >
-              <h3 className="font-display text-2xl text-white mb-2">Quick reflection</h3>
-              <p className="text-sm text-text-2 mb-4">That date is in the past. Answer these quick questions instead.</p>
+              <h3 className="font-display text-2xl text-[#1A2E1C] mb-2">Quick reflection</h3>
+              <p className="text-sm text-[#1A2E1C]/60 mb-4">That date is in the past. Answer these quick questions instead.</p>
 
               <label className="block text-xs text-text-3 uppercase mb-2">How did it go?</label>
               <textarea
                 value={reflectionQ1}
                 onChange={(e) => setReflectionQ1(e.target.value)}
-                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white mb-3"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C] mb-3"
                 rows={3}
                 placeholder="Share your experience"
               />
@@ -469,7 +469,7 @@ export default function ExperiencePage() {
                 onChange={(e) => setReflectionQ2(e.target.value as 'yes' | 'maybe' | 'no')}
                 aria-label="Would you recommend this experience"
                 title="Would you recommend this experience"
-                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white mb-3"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C] mb-3"
               >
                 <option value="yes">Yes</option>
                 <option value="maybe">Maybe</option>
@@ -480,7 +480,7 @@ export default function ExperiencePage() {
               <textarea
                 value={reflectionQ3}
                 onChange={(e) => setReflectionQ3(e.target.value)}
-                className="w-full rounded-lg border border-[#333] bg-surface-2 px-3 py-2 text-sm text-white"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C]"
                 rows={2}
                 placeholder="What should they know?"
               />
@@ -488,13 +488,13 @@ export default function ExperiencePage() {
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={() => setShowReflection(false)}
-                  className="flex-1 rounded-pill border border-[#3A3A3A] px-4 py-2 text-sm text-text-2 hover:text-white transition-colors"
+                  className="flex-1 rounded-full border border-[#3A3A3A] px-4 py-2 text-sm text-[#1A2E1C]/60 hover:text-[#1A2E1C] transition-colors"
                 >
                   Close
                 </button>
                 <button
                   onClick={submitReflection}
-                  className="flex-1 rounded-pill bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
+                  className="flex-1 rounded-full bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-[#1A2E1C] hover:bg-[#095A22] transition-colors"
                 >
                   Submit
                 </button>

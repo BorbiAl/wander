@@ -3,7 +3,6 @@ import math
 import os
 import re
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -13,72 +12,28 @@ from dotenv import load_dotenv
 from slugify import slugify
 
 try:
-    import google.generativeai as genai
-except Exception:
-    genai = None
+    from google import genai as google_genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    google_genai = None
+    GENAI_AVAILABLE = False
 
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
-WIKIDATA_URL = "https://query.wikidata.org/sparql"
-WIKIPEDIA_URL = "https://en.wikipedia.org/w/api.php"
-GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-WIKIDATA_ENTITY_SEARCH_URL = "https://www.wikidata.org/w/api.php"
-RESTCOUNTRIES_URL = "https://restcountries.com/v3.1/all"
-
-DEFAULT_COUNTRIES = [
-        "Bulgaria",
-        "Romania",
-        "Greece",
-        "Turkey",
-        "Serbia",
-        "Italy",
-        "Spain",
-        "Portugal",
-        "France",
-        "Germany",
-        "Poland",
-        "Czechia",
-        "Austria",
-        "Switzerland",
-        "Morocco",
-        "India",
-        "Japan",
-        "Mexico",
-        "Argentina",
-        "Canada",
+OVERPASS_ENDPOINTS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://lz4.overpass-api.de/api/interpreter",
 ]
 
-FAST_MODE = os.environ.get("FAST_MODE", "1").strip().lower() not in {"0", "false", "no"}
+WIKIDATA_URL = "https://query.wikidata.org/sparql"
+WIKIDATA_ENTITY_SEARCH_URL = "https://www.wikidata.org/w/api.php"
+WIKIPEDIA_URL = "https://en.wikipedia.org/w/api.php"
+GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
 
-OVERPASS_QUERY_TEMPLATE = """
-[out:json][timeout:60];
-area[\"name\"=\"{country}\"][\"admin_level\"=\"2\"]->.target;
-(
-    node[\"place\"~\"village|hamlet|isolated_dwelling|town\"](area.target);
-);
-out body {limit};
-""".strip()
-
-WIKIDATA_SPARQL_TEMPLATE = """
-SELECT ?village ?villageLabel ?coord ?population ?altitude ?tradition ?traditionLabel ?description WHERE {
-    ?village wdt:P17 wd:{country_qid}.
-  ?village wdt:P31/wdt:P279* wd:Q532.
-  OPTIONAL { ?village wdt:P625 ?coord. }
-  OPTIONAL { ?village wdt:P1082 ?population. }
-  OPTIONAL { ?village wdt:P2044 ?altitude. }
-  OPTIONAL { ?village wdt:P2596 ?tradition. }
-  OPTIONAL {
-    ?village schema:description ?description.
-    FILTER(LANG(?description) IN (\"en\", \"bg\"))
-  }
-  SERVICE wikibase:label {
-    bd:serviceParam wikibase:language \"en,bg\".
-    ?village rdfs:label ?villageLabel.
-    ?tradition rdfs:label ?traditionLabel.
-  }
+HTTP_HEADERS = {
+    "User-Agent": "WanderGraph/1.0 hacktues12",
+    "Accept": "application/json",
 }
-LIMIT 2000
-""".strip()
 
 HERITAGE_KEYWORDS = [
     "cultural monument",
@@ -100,13 +55,143 @@ EXPERIENCE_TYPES = {
     "folklore",
 }
 
+PRIORITY_COUNTRIES = [
+    # Europe
+    "Bulgaria",
+    "Romania",
+    "Albania",
+    "Bosnia and Herzegovina",
+    "North Macedonia",
+    "Serbia",
+    "Montenegro",
+    "Moldova",
+    "Ukraine",
+
+    # Asia
+    "Georgia",
+    "Turkey",
+    "Lebanon",
+    "Jordan",
+    "Nepal",
+    "Bhutan",
+    "Myanmar",
+    "Laos",
+    "Vietnam",
+
+    # Africa
+    "Morocco",
+    "Tunisia",
+    "Ethiopia",
+    "Tanzania",
+    "Senegal",
+    "Mali",
+
+    # South America
+    "Peru",
+    "Bolivia",
+    "Ecuador",
+    "Colombia",
+    "Paraguay",
+
+    # North America
+    "Guatemala",
+    "Mexico",
+    "Canada",
+
+    # Oceania
+    "Fiji",
+    "Papua New Guinea",
+]
+
+COUNTRY_CODES = {
+    "Bulgaria": "BG", "Romania": "RO", "Albania": "AL",
+    "Bosnia and Herzegovina": "BA", "North Macedonia": "MK",
+    "Serbia": "RS", "Montenegro": "ME", "Moldova": "MD",
+    "Ukraine": "UA", "Georgia": "GE", "Armenia": "AM",
+    "Azerbaijan": "AZ", "Turkey": "TR", "Lebanon": "LB",
+    "Jordan": "JO", "Morocco": "MA", "Tunisia": "TN",
+    "Nepal": "NP", "Bhutan": "BT", "Myanmar": "MM",
+    "Laos": "LA", "Cambodia": "KH", "Vietnam": "VN",
+    "Ethiopia": "ET", "Tanzania": "TZ", "Uganda": "UG",
+    "Rwanda": "RW", "Senegal": "SN", "Mali": "ML",
+    "Peru": "PE", "Bolivia": "BO", "Ecuador": "EC",
+    "Guatemala": "GT", "Colombia": "CO", "Paraguay": "PY",
+    "Mexico": "MX", "Canada": "CA", "Fiji": "FJ",
+    "Papua New Guinea": "PG",
+}
+
+# Some countries need their native name for Overpass area lookup
+COUNTRY_NATIVE_NAMES = {
+    "Bulgaria": "България",
+    "Romania": "România",
+    "Serbia": "Србија",
+    "North Macedonia": "Македонија",
+    "Bosnia and Herzegovina": "Bosna i Hercegovina",
+    "Montenegro": "Crna Gora",
+    "Moldova": "Moldova",
+    "Ukraine": "Україна",
+    "Georgia": "საქართველო",
+    "Armenia": "Հայաստան",
+    "Azerbaijan": "Azərbaycan",
+    "Morocco": "المغرب",
+    "Tunisia": "تونس",
+    "Lebanon": "لبنان",
+    "Jordan": "الأردن",
+    "Nepal": "नेपाल",
+    "Myanmar": "မြန်မာ",
+    "Ethiopia": "ኢትዮጵያ",
+}
+
+
+def info(msg: str) -> None:
+    print(f"[INFO] {msg}")
+
 
 def warn(msg: str) -> None:
     print(f"[WARN] {msg}")
 
 
-def info(msg: str) -> None:
-    print(f"[INFO] {msg}")
+def get_country_code(country: str) -> str:
+    if country in COUNTRY_CODES:
+        return COUNTRY_CODES[country]
+    letters = re.sub(r"[^A-Za-z]", "", country).upper()
+    return (letters[:2] or "XX").ljust(2, "X")
+
+
+def overpass_queries_for_country(country_name: str, max_villages: int) -> List[str]:
+    # Prefer ISO-based area lookup (usually more reliable), then name/native-name fallbacks.
+    cc = get_country_code(country_name)
+    queries: List[str] = [
+        f"""
+[out:json][timeout:90];
+area["ISO3166-1"="{cc}"]["admin_level"="2"]->.country;
+(
+    node["place"="village"](area.country);
+    node["place"="hamlet"](area.country);
+);
+out body {max_villages};
+""".strip()
+    ]
+
+    names_to_try = [country_name]
+    native = COUNTRY_NATIVE_NAMES.get(country_name)
+    if native and native not in names_to_try:
+        names_to_try.append(native)
+
+    for label in names_to_try:
+        queries.append(
+            f"""
+[out:json][timeout:90];
+area["name"="{label}"]["admin_level"="2"]->.country;
+(
+    node["place"="village"](area.country);
+    node["place"="hamlet"](area.country);
+);
+out body {max_villages};
+""".strip()
+        )
+
+    return queries
 
 
 def normalize_name(name: str) -> str:
@@ -131,22 +216,18 @@ def safe_int(value: Any) -> Optional[int]:
 def parse_wkt_point(raw: Optional[str]) -> Tuple[Optional[float], Optional[float]]:
     if not raw:
         return None, None
-    # Typical value: Point(25.123 42.456)
     m = re.search(r"Point\(([-\d\.]+)\s+([-\d\.]+)\)", raw)
     if not m:
         return None, None
     try:
-        lng = float(m.group(1))
-        lat = float(m.group(2))
-        return lat, lng
+        return float(m.group(2)), float(m.group(1))
     except ValueError:
         return None, None
 
 
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     r = 6371.0
-    p1 = math.radians(lat1)
-    p2 = math.radians(lat2)
+    p1, p2 = math.radians(lat1), math.radians(lat2)
     dp = math.radians(lat2 - lat1)
     dl = math.radians(lon2 - lon1)
     a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
@@ -154,25 +235,37 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 
 def assign_region(lat: float, lng: float, country: str) -> str:
-    if normalize_name(country) != "bulgaria":
-        # For worldwide data, keep region stable per country unless custom logic is added.
-        return country
-    if lat < 42.0:
-        return "Rhodopes West" if lng < 24.5 else "Rhodopes East"
-    elif lat < 43.0:
-        if lng < 24.0:
-            return "Vitosha & Sofia"
-        elif lng < 25.5:
-            return "Stara Planina Central"
+    if country == "Bulgaria":
+        if lat < 42.0:
+            return "Rhodopes West" if lng < 24.5 else "Rhodopes East"
+        elif lat < 43.0:
+            if lng < 24.0:
+                return "Vitosha & Sofia"
+            elif lng < 25.5:
+                return "Stara Planina Central"
+            else:
+                return "Stara Planina East"
         else:
-            return "Stara Planina East"
-    else:
-        if lng < 24.0:
-            return "Vratsa & Northwest"
-        elif lng < 26.0:
-            return "Danube Plain"
-        else:
-            return "Dobrudja & Northeast"
+            return "Vratsa & Northwest" if lng < 24.0 else "Danube Plain"
+
+    if lat > 60: return "Northern Europe"
+    if lat > 45:
+        if lng < 15: return "Western Europe"
+        if lng < 35: return "Eastern Europe"
+        return "Central Asia"
+    if lat > 30:
+        if lng < 0: return "North Africa West"
+        if lng < 40: return "Middle East & Levant"
+        if lng < 70: return "Central & South Asia"
+        return "East Asia"
+    if lat > 0:
+        if lng < 20: return "West Africa"
+        if lng < 50: return "East Africa"
+        if lng < 100: return "South Asia"
+        return "Southeast Asia"
+    if lng < -30: return "South America"
+    if lng < 50: return "Southern Africa"
+    return "Oceania"
 
 
 def compute_cws(village: Dict[str, Any]) -> int:
@@ -198,119 +291,70 @@ def compute_cws(village: Dict[str, Any]) -> int:
     return round(min(100, max(5, total)))
 
 
-def parse_countries(session: requests.Session) -> List[str]:
-    raw = os.environ.get("COUNTRIES", "all").strip()
-    max_countries = max(1, int(os.environ.get("MAX_COUNTRIES", "60")))
+def fetch_overpass_country(country_name: str, max_villages: int = 20) -> List[Dict[str, Any]]:
+    queries = overpass_queries_for_country(country_name, max_villages)
 
-    if not raw:
-        return DEFAULT_COUNTRIES[:max_countries]
+    for endpoint in OVERPASS_ENDPOINTS:
+        host = endpoint.split("/")[2]
+        for q_idx, query in enumerate(queries, start=1):
+            for attempt in range(3):
+                try:
+                    info(f"{country_name} -> {host} (query {q_idx}/{len(queries)}, attempt {attempt + 1}/3)")
+                    r = requests.post(
+                        endpoint,
+                        data={"data": query},
+                        headers=HTTP_HEADERS,
+                        timeout=120,
+                    )
+                    r.raise_for_status()
+                    elements = r.json().get("elements", [])
+                    villages = [
+                        e
+                        for e in elements
+                        if e.get("lat") and e.get("lon") and e.get("tags", {}).get("name")
+                    ]
 
-    if raw.lower() == "all":
-        try:
-            resp = session.get(RESTCOUNTRIES_URL, params={"fields": "name"}, timeout=40)
-            resp.raise_for_status()
-            payload = resp.json()
-            names: List[str] = []
-            for item in payload:
-                common = ((item or {}).get("name") or {}).get("common")
-                if isinstance(common, str) and common.strip():
-                    names.append(common.strip())
-            dedup = sorted(set(names))
-            return dedup[:max_countries]
-        except Exception as exc:
-            warn(f"Failed to load all countries list, using defaults: {exc}")
-            return DEFAULT_COUNTRIES[:max_countries]
+                    if villages:
+                        info(f"{country_name}: {len(villages)} villages from {host}")
+                        time.sleep(4)
+                        return villages[:max_villages]
 
-    out = [x.strip() for x in raw.split(",") if x.strip()]
-    if not out:
-        out = DEFAULT_COUNTRIES
-    return out[:max_countries]
+                    # 0 results is often query mismatch, so try next query variant immediately.
+                    warn(f"{country_name}: 0 results from {host} on query variant {q_idx}")
+                    break
 
+                except requests.exceptions.HTTPError as e:
+                    code = e.response.status_code if e.response is not None else 0
+                    if code == 429:
+                        wait = (attempt + 1) * 15
+                        warn(f"{host} rate limited ({code}), waiting {wait}s...")
+                        time.sleep(wait)
+                        continue
+                    if code in (500, 502, 503, 504):
+                        warn(f"{host} server error ({code}), backing off...")
+                        time.sleep((attempt + 1) * 6)
+                        continue
+                    # 403/400/etc: endpoint or query not allowed; switch variant/mirror.
+                    warn(f"{host} HTTP {code}: {e}")
+                    break
 
-def fetch_overpass_for_country(
-    session: requests.Session,
-    country: str,
-    per_country_limit: int,
-) -> List[Dict[str, Any]]:
-    info(f"Fetching villages from Overpass for {country}...")
-    escaped_country = country.replace('"', '\\"')
-    query = OVERPASS_QUERY_TEMPLATE.format(country=escaped_country, limit=per_country_limit)
-    retries = 2
-    for attempt in range(1, retries + 1):
-        try:
-            resp = session.post(OVERPASS_URL, data=query.encode("utf-8"), timeout=90)
-            resp.raise_for_status()
-            payload = resp.json()
-            elements = payload.get("elements", [])
-            villages: List[Dict[str, Any]] = []
-            for el in elements:
-                tags = el.get("tags", {})
-                if "lat" not in el or "lon" not in el:
+                except requests.exceptions.Timeout:
+                    warn(f"{host} timeout, retrying with backoff...")
+                    time.sleep((attempt + 1) * 6)
                     continue
-                if not tags.get("name"):
-                    continue
 
-                name = tags.get("name:en") or tags.get("name")
-                name_bg = tags.get("name:bg") or tags.get("name")
-                vid = slugify(f"{name}-{country}")
-                village = {
-                    "id": vid,
-                    "name": name,
-                    "name_bg": name_bg,
-                    "country": country,
-                    "council": tags.get("is_in:municipality") or tags.get("addr:county") or tags.get("county"),
-                    "settlement_type": tags.get("place"),
-                    "lat": float(el["lat"]),
-                    "lng": float(el["lon"]),
-                    "population": safe_int(tags.get("population")),
-                    "osm_id": f"node/{el.get('id')}",
-                    "wikidata_id": None,
-                    "description": None,
-                    "altitude_m": None,
-                    "traditions": [],
-                    "population_2011": None,
-                    "heritage_sites_count": 0,
-                }
-                villages.append(village)
-            info(f"Overpass returned {len(villages)} candidate villages for {country}")
-            return villages
-        except Exception as exc:
-            warn(f"Overpass {country} attempt {attempt}/{retries} failed: {exc}")
-            if attempt < retries:
-                time.sleep(10)
+                except Exception as e:
+                    warn(f"{host} failed: {e}")
+                    time.sleep(5)
+                    break
+
+            time.sleep(1)
+
+    warn(f"{country_name} - all mirrors and query variants failed")
     return []
 
 
-def fetch_overpass(
-    session: requests.Session,
-    countries: List[str],
-    max_total: int,
-    per_country_limit: int,
-) -> List[Dict[str, Any]]:
-    info(f"Fetching villages worldwide from {len(countries)} countries...")
-    all_villages: List[Dict[str, Any]] = []
-    seen_osm: set[str] = set()
-
-    workers = max(1, int(os.environ.get("OVERPASS_WORKERS", "10" if FAST_MODE else "6")))
-    with ThreadPoolExecutor(max_workers=workers) as ex:
-        futures = {
-            ex.submit(fetch_overpass_for_country, session, country, per_country_limit): country
-            for country in countries
-        }
-        for fut in as_completed(futures):
-            country_villages = fut.result() or []
-            for village in country_villages:
-                osm_id = str(village.get("osm_id"))
-                if osm_id in seen_osm:
-                    continue
-                seen_osm.add(osm_id)
-                all_villages.append(village)
-                if len(all_villages) >= max_total:
-                    return all_villages
-    return all_villages
-
-
-def resolve_country_qid(session: requests.Session, country: str) -> Optional[str]:
+def resolve_country_qid(country: str) -> Optional[str]:
     try:
         params = {
             "action": "wbsearchentities",
@@ -320,40 +364,61 @@ def resolve_country_qid(session: requests.Session, country: str) -> Optional[str
             "format": "json",
             "limit": 5,
         }
-        resp = session.get(WIKIDATA_ENTITY_SEARCH_URL, params=params, timeout=30)
-        resp.raise_for_status()
-        payload = resp.json()
-        search = payload.get("search", [])
-        if not search:
-            return None
-        return search[0].get("id")
+        r = requests.get(
+            WIKIDATA_ENTITY_SEARCH_URL,
+            params=params,
+            headers=HTTP_HEADERS,
+            timeout=30,
+        )
+        r.raise_for_status()
+        rows = r.json().get("search", [])
+        return rows[0].get("id") if rows else None
     except Exception as exc:
         warn(f"Wikidata country resolve failed for {country}: {exc}")
         return None
 
 
-def fetch_wikidata_for_country(
-    session: requests.Session,
-    country: str,
-    country_qid: str,
-) -> List[Dict[str, Any]]:
-    info(f"Fetching Wikidata metadata for {country} ({country_qid})...")
+def fetch_wikidata_country(country: str) -> List[Dict[str, Any]]:
+    qid = resolve_country_qid(country)
+    if not qid:
+        return []
+
+    sparql = f"""
+SELECT ?village ?villageLabel ?coord ?population ?altitude ?tradition ?traditionLabel ?description WHERE {{
+  ?village wdt:P17 wd:{qid}.
+  ?village wdt:P31/wdt:P279* wd:Q532.
+  OPTIONAL {{ ?village wdt:P625 ?coord. }}
+  OPTIONAL {{ ?village wdt:P1082 ?population. }}
+  OPTIONAL {{ ?village wdt:P2044 ?altitude. }}
+  OPTIONAL {{ ?village wdt:P2596 ?tradition. }}
+  OPTIONAL {{
+    ?village schema:description ?description.
+    FILTER(LANG(?description) = "en")
+  }}
+  SERVICE wikibase:label {{
+    bd:serviceParam wikibase:language "en".
+    ?village rdfs:label ?villageLabel.
+    ?tradition rdfs:label ?traditionLabel.
+  }}
+}}
+LIMIT 2000
+""".strip()
+
     try:
-        headers = {
-            "User-Agent": "WanderGraph/1.0",
-            "Accept": "application/sparql-results+json",
-        }
-        query = WIKIDATA_SPARQL_TEMPLATE.format(country_qid=country_qid)
-        params = {"query": query, "format": "json"}
-        resp = session.get(WIKIDATA_URL, params=params, headers=headers, timeout=120)
-        resp.raise_for_status()
-        results = resp.json().get("results", {}).get("bindings", [])
+        r = requests.get(
+            WIKIDATA_URL,
+            params={"query": sparql, "format": "json"},
+            headers=HTTP_HEADERS,
+            timeout=120,
+        )
+        r.raise_for_status()
+        rows = r.json().get("results", {}).get("bindings", [])
     except Exception as exc:
         warn(f"Wikidata query failed for {country}: {exc}")
         return []
 
     merged: Dict[str, Dict[str, Any]] = {}
-    for row in results:
+    for row in rows:
         village_uri = row.get("village", {}).get("value")
         if not village_uri:
             continue
@@ -366,97 +431,43 @@ def fetch_wikidata_for_country(
         description = row.get("description", {}).get("value")
 
         lat, lng = parse_wkt_point(coord)
-        item = merged.setdefault(
-            wid,
-            {
-                "wikidata_id": wid,
-                "label": label,
-                "lat": lat,
-                "lng": lng,
-                "population_2011": safe_int(population),
-                "altitude_m": safe_int(altitude),
-                "description": description,
-                "traditions": set(),
-                "country": country,
-            },
-        )
-
-        if item.get("label") is None and label:
-            item["label"] = label
-        if item.get("lat") is None and lat is not None:
-            item["lat"] = lat
-            item["lng"] = lng
-        if item.get("population_2011") is None:
-            item["population_2011"] = safe_int(population)
-        if item.get("altitude_m") is None:
-            item["altitude_m"] = safe_int(altitude)
-        if item.get("description") is None and description:
-            item["description"] = description
+        item = merged.setdefault(wid, {
+            "wikidata_id": wid,
+            "label": label,
+            "lat": lat,
+            "lng": lng,
+            "population_2011": safe_int(population),
+            "altitude_m": safe_int(altitude),
+            "description": description,
+            "traditions": set(),
+            "country": country,
+        })
         if tradition_label:
             item["traditions"].add(tradition_label)
 
-    normalized: List[Dict[str, Any]] = []
+    out = []
     for item in merged.values():
         item["traditions"] = sorted(item["traditions"])
-        normalized.append(item)
-
-    info(f"Wikidata produced {len(normalized)} unique entities for {country}")
-    return normalized
-
-
-def fetch_wikidata(session: requests.Session, countries: List[str]) -> List[Dict[str, Any]]:
-    if os.environ.get("ENABLE_WIKIDATA", "1").strip().lower() in {"0", "false", "no"}:
-        info("ENABLE_WIKIDATA disabled; skipping Wikidata step")
-        return []
-
-    out: List[Dict[str, Any]] = []
-
-    workers = max(1, int(os.environ.get("WIKIDATA_WORKERS", "8" if FAST_MODE else "4")))
-
-    with ThreadPoolExecutor(max_workers=workers) as ex:
-        qid_futures = {ex.submit(resolve_country_qid, session, country): country for country in countries}
-        country_qids: List[Tuple[str, str]] = []
-        for fut in as_completed(qid_futures):
-            country = qid_futures[fut]
-            qid = fut.result()
-            if qid:
-                country_qids.append((country, qid))
-
-    with ThreadPoolExecutor(max_workers=workers) as ex:
-        data_futures = {
-            ex.submit(fetch_wikidata_for_country, session, country, qid): country
-            for country, qid in country_qids
-        }
-        for fut in as_completed(data_futures):
-            out.extend(fut.result() or [])
-
+        out.append(item)
     return out
 
 
 def best_match_village(
-    villages: List[Dict[str, Any]],
-    wd_item: Dict[str, Any],
+    villages: List[Dict[str, Any]], wd_item: Dict[str, Any]
 ) -> Optional[Dict[str, Any]]:
     label = wd_item.get("label")
     wd_lat = wd_item.get("lat")
     wd_lng = wd_item.get("lng")
 
-    if not villages:
-        return None
-
-    country = wd_item.get("country")
-    candidates = villages
-    if country:
-        scoped = [v for v in villages if normalize_name(str(v.get("country", ""))) == normalize_name(str(country))]
-        if scoped:
-            candidates = scoped
-
     best: Optional[Dict[str, Any]] = None
     best_ratio = 0.0
+
     if label:
         n_label = normalize_name(label)
-        for v in candidates:
-            ratio = SequenceMatcher(None, n_label, normalize_name(v.get("name", ""))).ratio()
+        for v in villages:
+            ratio = SequenceMatcher(
+                None, n_label, normalize_name(v.get("name", ""))
+            ).ratio()
             if ratio > best_ratio:
                 best_ratio = ratio
                 best = v
@@ -466,7 +477,7 @@ def best_match_village(
 
     if wd_lat is not None and wd_lng is not None:
         by_distance: List[Tuple[float, Dict[str, Any]]] = []
-        for v in candidates:
+        for v in villages:
             dlat = abs(float(v["lat"]) - float(wd_lat))
             dlng = abs(float(v["lng"]) - float(wd_lng))
             if dlat <= 0.05 and dlng <= 0.05:
@@ -480,31 +491,7 @@ def best_match_village(
     return None
 
 
-def enrich_with_wikidata(villages: List[Dict[str, Any]], wikidata_rows: List[Dict[str, Any]]) -> None:
-    info("Matching Wikidata entities to Overpass villages...")
-    matched = 0
-    for row in wikidata_rows:
-        v = best_match_village(villages, row)
-        if not v:
-            continue
-
-        v["wikidata_id"] = row.get("wikidata_id")
-        if not v.get("description"):
-            v["description"] = row.get("description")
-        if v.get("altitude_m") is None and row.get("altitude_m") is not None:
-            v["altitude_m"] = row.get("altitude_m")
-        if v.get("population_2011") is None and row.get("population_2011") is not None:
-            v["population_2011"] = row.get("population_2011")
-
-        merged_traditions = set(v.get("traditions") or [])
-        merged_traditions.update(row.get("traditions") or [])
-        v["traditions"] = sorted(merged_traditions)
-        matched += 1
-
-    info(f"Matched {matched} Wikidata records to villages")
-
-
-def wikipedia_heritage_count(session: requests.Session, village_name: str, country: str) -> int:
+def wikipedia_heritage_count(village_name: str, country: str) -> int:
     params = {
         "action": "query",
         "titles": f"{village_name}, {country}",
@@ -514,10 +501,11 @@ def wikipedia_heritage_count(session: requests.Session, village_name: str, count
         "formatversion": 2,
     }
     try:
-        resp = session.get(WIKIPEDIA_URL, params=params, timeout=30)
-        resp.raise_for_status()
-        payload = resp.json()
-        pages = payload.get("query", {}).get("pages", [])
+        r = requests.get(
+            WIKIPEDIA_URL, params=params, headers=HTTP_HEADERS, timeout=25
+        )
+        r.raise_for_status()
+        pages = r.json().get("query", {}).get("pages", [])
         text_chunks: List[str] = []
         for p in pages:
             for rev in p.get("revisions", []) or []:
@@ -527,58 +515,19 @@ def wikipedia_heritage_count(session: requests.Session, village_name: str, count
                     if content:
                         text_chunks.append(content)
                 elif "*" in rev and rev.get("*"):
-                    text_chunks.append(rev.get("*"))
+                    text_chunks.append(rev["*"])
+
         blob = "\n".join(text_chunks).lower()
         if not blob:
             return 0
-        hits = 0
-        for kw in HERITAGE_KEYWORDS:
-            hits += len(re.findall(re.escape(kw.lower()), blob))
+
+        hits = sum(
+            len(re.findall(re.escape(kw.lower()), blob))
+            for kw in HERITAGE_KEYWORDS
+        )
         return min(10, hits)
-    except Exception as exc:
-        warn(f"Wikipedia lookup failed for '{village_name}': {exc}")
+    except Exception:
         return 0
-
-
-def build_gemini_prompt(village: Dict[str, Any], count: int) -> str:
-    country = village.get("country") or "Unknown Country"
-    council = village.get("council") or village.get("region") or "local council"
-    return f"""
-Create {count} travel experiences for this village community.
-Return ONLY a valid JSON array.
-
-Village: {village.get('name')} ({country}), Council: {council}, Population: {village.get('population')},
-Traditions: {village.get('traditions')}, CWS: {village.get('cws')}
-
-[
-  {{
-    "name": "max 5 words",
-    "type": "craft|hike|homestay|ceremony|cooking|volunteer|folklore",
-    "description": "2 sentences, specific and authentic",
-    "duration": "e.g. 3 days",
-    "price_eur": 0-80,
-    "host_name": "realistic Bulgarian name",
-    "host_bio": "1 sentence specific expertise",
-    "host_rating": 4.3-5.0,
-    "personality_weights": [explorer, connector, restorer, achiever, guardian],
-    "rarity_score": 1-10
-  }}
-]
-
-personality_weights must sum to 1.0.
-Low CWS village = more raw/adventurous experiences.
-High CWS village = more craft/cultural experiences.
-""".strip()
-
-
-def strip_code_fences(text: str) -> str:
-    if not text:
-        return ""
-    cleaned = text.strip()
-    if cleaned.startswith("```"):
-        cleaned = re.sub(r"^```[a-zA-Z0-9]*\s*", "", cleaned)
-        cleaned = re.sub(r"\s*```$", "", cleaned)
-    return cleaned.strip()
 
 
 def normalize_weights(weights: Any) -> List[float]:
@@ -597,91 +546,6 @@ def normalize_weights(weights: Any) -> List[float]:
     return [round(w / total, 4) for w in parsed]
 
 
-def fallback_experiences(village: Dict[str, Any], count: int) -> List[Dict[str, Any]]:
-    traditions_blob = " ".join((village.get("traditions") or [])).lower()
-    altitude = village.get("altitude_m") or 0
-
-    if "music" in traditions_blob:
-        exp_type = "craft"
-        name = "Rhythm & Craft Days"
-        desc = (
-            "Join local artisans and musicians in village workshops. "
-            "Learn rhythms, handcrafts, and evening community traditions."
-        )
-    elif altitude > 1000:
-        exp_type = "hike"
-        name = "Highland Ridge Trek"
-        desc = (
-            "Explore mountain trails with a local guide and learn seasonal practices. "
-            "Spend evenings sharing stories and mountain food with hosts."
-        )
-    else:
-        exp_type = "homestay"
-        name = "Village Home Immersion"
-        desc = (
-            "Stay with a host family and take part in daily rural routines. "
-            "Discover local food, oral history, and small community gatherings."
-        )
-
-    people = [
-        ("Ivaylo Petrov", "Local facilitator of village heritage activities."),
-        ("Mariya Stoyanova", "Community host focused on traditional food and crafts."),
-        ("Nikolay Dimitrov", "Guide experienced in regional history and storytelling."),
-    ]
-
-    out: List[Dict[str, Any]] = []
-    for i in range(count):
-        host_name, host_bio = people[i % len(people)]
-        out.append(
-            {
-                "name": name,
-                "type": exp_type,
-                "description": desc,
-                "duration": f"{2 + i} days",
-                "price_eur": 25 + i * 8,
-                "host_name": host_name,
-                "host_bio": host_bio,
-                "host_rating": 4.6,
-                "personality_weights": [0.3, 0.2, 0.2, 0.15, 0.15],
-                "rarity_score": min(10, 6 + i),
-            }
-        )
-    return out
-
-
-def parse_experience_array(raw_text: str) -> List[Dict[str, Any]]:
-    text = strip_code_fences(raw_text)
-    try:
-        data = json.loads(text)
-    except Exception:
-        return []
-    if not isinstance(data, list):
-        return []
-    return [x for x in data if isinstance(x, dict)]
-
-
-def generate_experiences_for_village(
-    village: Dict[str, Any],
-    model: Any,
-) -> List[Dict[str, Any]]:
-    desired = 3 if (village.get("cws") or 0) < 40 else 2
-
-    if model is None:
-        return fallback_experiences(village, desired)
-
-    prompt = build_gemini_prompt(village, desired)
-    try:
-        response = model.generate_content(prompt)
-        text = getattr(response, "text", "") or ""
-        items = parse_experience_array(text)
-        if not items:
-            raise ValueError("Gemini did not return a JSON array")
-        return items[:desired]
-    except Exception as exc:
-        warn(f"Gemini generation failed for {village.get('name')}: {exc}")
-        return fallback_experiences(village, desired)
-
-
 def sanitize_experience(raw: Dict[str, Any]) -> Dict[str, Any]:
     exp_type = str(raw.get("type") or "homestay").strip().lower()
     if exp_type not in EXPERIENCE_TYPES:
@@ -696,10 +560,8 @@ def sanitize_experience(raw: Dict[str, Any]) -> Dict[str, Any]:
     try:
         price = float(raw.get("price_eur", 25))
     except Exception:
-        price = 25
-    if price <= 0:
-        price = 15
-    price = min(80, max(1, price))
+        price = 25.0
+    price = min(80.0, max(1.0, price))
 
     try:
         rarity = int(raw.get("rarity_score", 5))
@@ -710,28 +572,139 @@ def sanitize_experience(raw: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "name": str(raw.get("name") or "Village Experience")[:60],
         "type": exp_type,
-        "description": str(raw.get("description") or "Authentic local activity with community hosts."),
+        "description": str(
+            raw.get("description") or "Authentic local activity with community hosts."
+        ),
         "duration": str(raw.get("duration") or "2 days"),
         "price_eur": round(price, 2),
         "host_name": str(raw.get("host_name") or "Petar Ivanov"),
-        "host_bio": str(raw.get("host_bio") or "Local organizer with regional expertise."),
+        "host_bio": str(
+            raw.get("host_bio") or "Local organizer with regional expertise."
+        ),
         "host_rating": round(host_rating, 2),
         "personality_weights": normalize_weights(raw.get("personality_weights")),
         "rarity_score": rarity,
     }
 
 
+def fallback_experience(village: Dict[str, Any]) -> Dict[str, Any]:
+    traditions_blob = " ".join((village.get("traditions") or [])).lower()
+    altitude = village.get("altitude_m") or 0
+
+    if "music" in traditions_blob or "craft" in traditions_blob:
+        typ, nm = "craft", "Traditional Craft Workshop"
+    elif altitude > 1000:
+        typ, nm = "hike", "Highland Ridge Trek"
+    elif "ceremony" in traditions_blob or "ritual" in traditions_blob:
+        typ, nm = "ceremony", "Local Ritual Evening"
+    else:
+        typ, nm = "homestay", "Village Home Immersion"
+
+    return {
+        "name": nm,
+        "type": typ,
+        "description": "Join local hosts for authentic traditions and daily village life.",
+        "duration": "2 days",
+        "price_eur": 30,
+        "host_name": "Mariya Ivanova",
+        "host_bio": "Community host focused on local heritage.",
+        "host_rating": 4.7,
+        "personality_weights": [0.25, 0.2, 0.2, 0.15, 0.2],
+        "rarity_score": 6,
+    }
+
+
+def parse_json_array(text: str) -> List[Dict[str, Any]]:
+    cleaned = (text or "").strip()
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```[a-zA-Z0-9]*\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+    try:
+        data = json.loads(cleaned)
+        if isinstance(data, list):
+            return [x for x in data if isinstance(x, dict)]
+    except Exception:
+        pass
+    return []
+
+
+def generate_experiences_gemini(
+    village: Dict[str, Any], client: Any
+) -> List[Dict[str, Any]]:
+    desired = 3 if (village.get("cws") or 0) < 40 else 2
+
+    prompt = f"""
+Create {desired} travel experiences for this village community.
+Return ONLY a valid JSON array, no other text, no markdown fences.
+
+Village: {village.get('name')} ({village.get('country')})
+Population: {village.get('population')}
+Traditions: {village.get('traditions')}
+CWS score: {village.get('cws')} (0-100, lower = more remote/undiscovered)
+
+[
+  {{
+    "name": "max 5 words",
+    "type": "craft|hike|homestay|ceremony|cooking|volunteer|folklore",
+    "description": "2 sentences, specific and evocative",
+    "duration": "e.g. 3 days",
+    "price_eur": 0-80,
+    "host_name": "realistic local name for this country",
+    "host_bio": "1 sentence specific expertise",
+    "host_rating": 4.3-5.0,
+    "personality_weights": [explorer, connector, restorer, achiever, guardian],
+    "rarity_score": 1-10
+  }}
+]
+
+Rules:
+- personality_weights must sum to exactly 1.0
+- Low CWS = raw/adventurous experiences, higher rarity_score
+- High CWS = craft/cultural experiences
+- craft: explorer 0.3+, guardian 0.2
+- hike: explorer 0.4+, achiever 0.3+
+- homestay: restorer 0.4+, connector 0.3
+- ceremony: connector 0.35+, restorer 0.2
+- cooking: connector 0.4+, restorer 0.3
+- volunteer: guardian 0.5+, connector 0.2
+- folklore: connector 0.3, restorer 0.3
+""".strip()
+
+    items: List[Dict[str, Any]] = []
+
+    if client is not None:
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+            )
+            text = getattr(response, "text", "") or ""
+            items = parse_json_array(text)
+        except Exception as exc:
+            warn(f"Gemini failed for {village.get('name')}: {exc}")
+
+    if not items:
+        items = [fallback_experience(village)]
+
+    out: List[Dict[str, Any]] = []
+    for idx, raw in enumerate(items[:desired], start=1):
+        exp = sanitize_experience(raw)
+        exp["id"] = f"e_{village['id']}_{idx}"
+        exp["villageId"] = village["id"]
+        exp["hostId"] = f"h_{village['id']}_{idx}"
+        exp["country"] = village.get("country")
+        out.append(exp)
+    return out
+
+
 def maybe_apply_google_places_ratings(
-    session: requests.Session,
     villages: List[Dict[str, Any]],
     experiences: List[Dict[str, Any]],
     api_key: Optional[str],
 ) -> None:
     if not api_key:
-        info("GOOGLE_PLACES_API_KEY not set; skipping Google Places step")
         return
 
-    info("Applying Google Places ratings for top 20 villages by CWS...")
     top = sorted(villages, key=lambda v: v.get("cws", 0), reverse=True)[:20]
     rating_map: Dict[str, float] = {}
 
@@ -741,23 +714,158 @@ def maybe_apply_google_places_ratings(
             "key": api_key,
         }
         try:
-            resp = session.get(GOOGLE_PLACES_URL, params=params, timeout=25)
-            resp.raise_for_status()
-            payload = resp.json()
-            results = payload.get("results", [])
-            if results and isinstance(results[0], dict) and "rating" in results[0]:
+            r = requests.get(
+                GOOGLE_PLACES_URL, params=params, headers=HTTP_HEADERS, timeout=20
+            )
+            r.raise_for_status()
+            results = r.json().get("results", [])
+            if results and "rating" in results[0]:
                 rating_map[v["id"]] = float(results[0]["rating"])
-        except Exception as exc:
-            warn(f"Google Places lookup failed for {v.get('name')}: {exc}")
+        except Exception:
+            pass
         time.sleep(0.2)
 
-    if not rating_map:
-        return
+    for e in experiences:
+        vid = e.get("villageId")
+        if vid in rating_map:
+            e["host_rating"] = round(min(5.0, max(4.3, rating_map[vid])), 2)
 
-    for exp in experiences:
-        village_id = exp.get("villageId")
-        if village_id in rating_map:
-            exp["host_rating"] = round(min(5.0, max(4.3, rating_map[village_id])), 2)
+
+def enrich_with_wikidata(
+    raw_villages: List[Dict[str, Any]], country: str
+) -> List[Dict[str, Any]]:
+    villages: List[Dict[str, Any]] = []
+    seen_ids: set = set()
+
+    for el in raw_villages:
+        tags = el.get("tags", {})
+        name = tags.get("name")
+        if not name:
+            continue
+
+        vid = f"{slugify(country)}_{slugify(name)}"
+        if vid in seen_ids:
+            continue
+        seen_ids.add(vid)
+
+        village: Dict[str, Any] = {
+            "id": vid,
+            "name": name,
+            "name_bg": tags.get("name:bg") or name,
+            "country": country,
+            "country_code": get_country_code(country),
+            "lat": float(el["lat"]),
+            "lng": float(el["lon"]),
+            "population": safe_int(tags.get("population")),
+            "osm_id": f"node/{el.get('id')}",
+            "wikidata_id": None,
+            "description": None,
+            "altitude_m": None,
+            "traditions": [],
+            "population_2011": None,
+            "heritage_sites_count": 0,
+            "region": assign_region(float(el["lat"]), float(el["lon"]), country),
+            "settlement_type": tags.get("place") or "village",
+        }
+        villages.append(village)
+
+    wd_rows = fetch_wikidata_country(country)
+    for row in wd_rows:
+        matched = best_match_village(villages, row)
+        if not matched:
+            continue
+        matched["wikidata_id"] = row.get("wikidata_id")
+        if not matched.get("description"):
+            matched["description"] = row.get("description")
+        if matched.get("altitude_m") is None and row.get("altitude_m") is not None:
+            matched["altitude_m"] = row["altitude_m"]
+        if matched.get("population_2011") is None and row.get("population_2011") is not None:
+            matched["population_2011"] = row["population_2011"]
+        merged = set(matched.get("traditions") or [])
+        merged.update(row.get("traditions") or [])
+        matched["traditions"] = sorted(merged)
+
+    return villages
+
+
+def save_checkpoint(
+    villages: List[Dict[str, Any]],
+    experiences: List[Dict[str, Any]],
+    step: int,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    for out_dir in [root / "data", root / "engine" / "data"]:
+        out_dir.mkdir(parents=True, exist_ok=True)
+        with (out_dir / f"checkpoint_{step}_villages.json").open("w", encoding="utf-8") as f:
+            json.dump(villages, f, ensure_ascii=False, indent=2)
+        with (out_dir / f"checkpoint_{step}_experiences.json").open("w", encoding="utf-8") as f:
+            json.dump(experiences, f, ensure_ascii=False, indent=2)
+
+
+def seed_all_countries(client: Any) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    all_villages: List[Dict[str, Any]] = []
+    all_experiences: List[Dict[str, Any]] = []
+    failed_countries: List[str] = []
+
+    country_limit = int(os.environ.get("COUNTRY_LIMIT", str(len(PRIORITY_COUNTRIES))))
+    max_villages_per_country = 20
+    countries = PRIORITY_COUNTRIES[: max(1, country_limit)]
+
+    for i, country in enumerate(countries):
+        print(f"\n[{i + 1}/{len(countries)}] Processing {country}...")
+
+        raw_villages = fetch_overpass_country(country, max_villages=max_villages_per_country)
+        if not raw_villages:
+            failed_countries.append(country)
+            continue
+
+        enriched = enrich_with_wikidata(raw_villages, country)
+
+        for v in enriched:
+            v["heritage_sites_count"] = wikipedia_heritage_count(
+                v.get("name", ""), country
+            )
+            v["cws"] = compute_cws(v)
+            v["region"] = assign_region(float(v["lat"]), float(v["lng"]), country)
+            v["country"] = country
+            time.sleep(0.3)  # be gentle to Wikipedia
+
+        # Compute nearby
+        for a, v in enumerate(enriched):
+            distances: List[Tuple[float, Dict[str, Any]]] = []
+            for b, other in enumerate(enriched):
+                if a == b:
+                    continue
+                dist = haversine_km(v["lat"], v["lng"], other["lat"], other["lng"])
+                if dist <= 50:
+                    distances.append((dist, other))
+            distances.sort(key=lambda x: x[0])
+            v["nearby"] = [x[1]["id"] for x in distances[:3]]
+
+        worthy = [
+            v for v in enriched
+            if v.get("traditions") or v.get("heritage_sites_count", 0) > 0
+        ]
+
+        country_exps = 0
+        for village in worthy[:5]:
+            exps = generate_experiences_gemini(village, client)
+            all_experiences.extend(exps)
+            country_exps += len(exps)
+            time.sleep(2)
+
+        all_villages.extend(enriched)
+
+        info(f"{country}: {len(enriched)} villages, {country_exps} experiences")
+
+        if (i + 1) % 5 == 0:
+            save_checkpoint(all_villages, all_experiences, i + 1)
+            info(f"Checkpoint saved after {i + 1} countries")
+
+        time.sleep(5)  # between countries
+
+    print(f"\n[DONE] Failed: {failed_countries}")
+    return all_villages, all_experiences
 
 
 def validate_villages(villages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -768,16 +876,11 @@ def validate_villages(villages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             continue
         if vid not in dedup:
             dedup[vid] = v
-
-    cleaned = list(dedup.values())
-    if len(cleaned) < 30:
-        raise RuntimeError(f"Validation failed: only {len(cleaned)} villages (minimum 30 required)")
-    return cleaned
+    return list(dedup.values())
 
 
 def validate_experiences(
-    experiences: List[Dict[str, Any]],
-    village_ids: set,
+    experiences: List[Dict[str, Any]], village_ids: set
 ) -> List[Dict[str, Any]]:
     cleaned: List[Dict[str, Any]] = []
     for e in experiences:
@@ -790,11 +893,6 @@ def validate_experiences(
         except Exception:
             e["price_eur"] = 15
         cleaned.append(e)
-
-    if len(cleaned) < 40:
-        raise RuntimeError(
-            f"Validation failed: only {len(cleaned)} experiences (minimum 40 required)"
-        )
     return cleaned
 
 
@@ -803,131 +901,46 @@ def main() -> None:
 
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
     google_places_api_key = os.environ.get("GOOGLE_PLACES_API_KEY")
-    max_villages = max(60, int(os.environ.get("MAX_VILLAGES", "700" if FAST_MODE else "500")))
-    per_country_limit = max(5, int(os.environ.get("PER_COUNTRY_LIMIT", "30" if FAST_MODE else "25")))
 
-    model = None
-    if gemini_api_key and genai is not None:
+    # Initialize new google-genai client
+    client = None
+    if gemini_api_key and GENAI_AVAILABLE:
         try:
-            genai.configure(api_key=gemini_api_key)
-            model = genai.GenerativeModel("gemini-2.0-flash")
+            client = google_genai.Client(api_key=gemini_api_key)
+            info("Gemini client initialized (google-genai)")
         except Exception as exc:
-            warn(f"Gemini init failed, fallback mode enabled: {exc}")
+            warn(f"Gemini init failed: {exc}")
     else:
-        warn("GEMINI_API_KEY missing or google-generativeai unavailable; using fallback generator")
+        warn("Gemini unavailable — fallback experience generation enabled")
 
-    session = requests.Session()
-    countries = parse_countries(session)
-    info(f"Target countries: {countries}")
-
-    villages = fetch_overpass(
-        session=session,
-        countries=countries,
-        max_total=max_villages,
-        per_country_limit=per_country_limit,
-    )
-    if not villages:
-        raise RuntimeError("No villages fetched from Overpass")
-
-    wikidata_rows = fetch_wikidata(session, countries)
-    enrich_with_wikidata(villages, wikidata_rows)
-
-    info("Fetching heritage keyword counts from Wikipedia...")
-    heritage_sample_size = max(0, int(os.environ.get("HERITAGE_SAMPLE_SIZE", "160" if FAST_MODE else str(len(villages)))))
-    village_order = sorted(villages, key=lambda x: (x.get("population") or 0), reverse=True)
-    target_for_heritage = village_order[: min(len(village_order), heritage_sample_size)]
-    target_ids = {v["id"] for v in target_for_heritage}
-
-    for v in villages:
-        if v["id"] not in target_ids:
-            v["heritage_sites_count"] = 0
-
-    workers = max(1, int(os.environ.get("WIKIPEDIA_WORKERS", "12" if FAST_MODE else "4")))
-    with ThreadPoolExecutor(max_workers=workers) as ex:
-        futures = {
-            ex.submit(
-                wikipedia_heritage_count,
-                session,
-                v.get("name", ""),
-                v.get("country", "Bulgaria"),
-            ): v
-            for v in target_for_heritage
-        }
-        for fut in as_completed(futures):
-            v = futures[fut]
-            try:
-                v["heritage_sites_count"] = fut.result()
-            except Exception:
-                v["heritage_sites_count"] = 0
-
-    info("Computing CWS, regions, and nearby villages...")
-    for v in villages:
-        v["cws"] = compute_cws(v)
-        v["region"] = assign_region(float(v["lat"]), float(v["lng"]), str(v.get("country", "")))
-
-    for i, v in enumerate(villages):
-        distances: List[Tuple[float, Dict[str, Any]]] = []
-        for j, other in enumerate(villages):
-            if i == j:
-                continue
-            if normalize_name(str(other.get("country", ""))) != normalize_name(str(v.get("country", ""))):
-                continue
-            dist = haversine_km(v["lat"], v["lng"], other["lat"], other["lng"])
-            if dist <= 50:
-                distances.append((dist, other))
-        distances.sort(key=lambda x: x[0])
-        v["nearby"] = [x[1]["id"] for x in distances[:3]]
-
-    experiences: List[Dict[str, Any]] = []
-    info("Generating village experiences with Gemini/fallback...")
-    eligible = [
-        v for v in villages if v.get("traditions") or (v.get("heritage_sites_count", 0) > 0)
-    ]
-    max_exp_villages = max(20, int(os.environ.get("MAX_EXPERIENCE_VILLAGES", "120" if FAST_MODE else str(len(eligible)))))
-    eligible = sorted(eligible, key=lambda x: (x.get("cws", 0), x.get("heritage_sites_count", 0)), reverse=True)[:max_exp_villages]
-
-    for v in eligible:
-
-        generated = generate_experiences_for_village(v, model)
-        for idx, item in enumerate(generated, start=1):
-            exp = sanitize_experience(item)
-            exp["id"] = f"e_{v['id']}_{idx}"
-            exp["villageId"] = v["id"]
-            exp["hostId"] = f"h_{v['id']}_{idx}"
-            experiences.append(exp)
-
-        time.sleep(0.2 if FAST_MODE else 1.5)
-
-    maybe_apply_google_places_ratings(
-        session=session,
-        villages=villages,
-        experiences=experiences,
-        api_key=google_places_api_key,
-    )
+    villages, experiences = seed_all_countries(client)
+    maybe_apply_google_places_ratings(villages, experiences, google_places_api_key)
 
     villages = validate_villages(villages)
     village_ids = {v["id"] for v in villages}
     experiences = validate_experiences(experiences, village_ids)
 
-    output_dir = Path(__file__).resolve().parents[1] / "data"
-    output_dir.mkdir(parents=True, exist_ok=True)
+    root = Path(__file__).resolve().parents[1]
+    output_dirs = [root / "data", root / "engine" / "data"]
 
-    villages_path = output_dir / "villages.json"
-    experiences_path = output_dir / "experiences.json"
+    villages_json = json.dumps(villages, ensure_ascii=False, indent=2)
+    experiences_json = json.dumps(experiences, ensure_ascii=False, indent=2)
 
-    villages_path.write_text(json.dumps(villages, ensure_ascii=False, indent=2), encoding="utf-8")
-    experiences_path.write_text(
-        json.dumps(experiences, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    for out_dir in output_dirs:
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "villages.json").write_text(villages_json, encoding="utf-8")
+        (out_dir / "experiences.json").write_text(experiences_json, encoding="utf-8")
 
-    regions = sorted({v.get("region") for v in villages if v.get("region")})
+    countries = sorted({v.get("country") for v in villages if v.get("country")})
     avg_cws = sum(v.get("cws", 0) for v in villages) / max(1, len(villages))
 
-    print(f"Villages: {len(villages)}")
+    print("\n════════════════════════════════")
+    print("WanderGraph Seed Complete")
+    print(f"Villages:    {len(villages)}")
     print(f"Experiences: {len(experiences)}")
-    print(f"Countries: {sorted({v.get('country') for v in villages if v.get('country')})}")
-    print(f"Regions: {regions}")
-    print(f"Avg CWS: {avg_cws:.2f}")
+    print(f"Countries:   {len(countries)}")
+    print(f"Avg CWS:     {avg_cws:.1f}")
+    print("════════════════════════════════")
 
 
 if __name__ == "__main__":

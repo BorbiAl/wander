@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
-import MarketingGlobe, { DEFAULT_DESTINATIONS, type DestinationNode } from '../components/MarketingGlobe';
+import MarketingGlobe, { type DestinationNode } from '../components/MarketingGlobe';
 import { MapPin, ChevronDown, Play, Dices, Globe2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -16,13 +16,63 @@ type ApiVillage = {
   country?: string;
 };
 
+const MAIN_CITY_BY_COUNTRY: Record<string, { city: string; lat: number; lng: number }> = {
+  Bulgaria: { city: 'Sofia', lat: 42.6977, lng: 23.3219 },
+  Romania: { city: 'Bucharest', lat: 44.4268, lng: 26.1025 },
+  Albania: { city: 'Tirana', lat: 41.3275, lng: 19.8187 },
+  'Bosnia and Herzegovina': { city: 'Sarajevo', lat: 43.8563, lng: 18.4131 },
+  'North Macedonia': { city: 'Skopje', lat: 41.9981, lng: 21.4254 },
+  Serbia: { city: 'Belgrade', lat: 44.7866, lng: 20.4489 },
+  Montenegro: { city: 'Podgorica', lat: 42.4304, lng: 19.2594 },
+  Moldova: { city: 'Chisinau', lat: 47.0105, lng: 28.8638 },
+  Ukraine: { city: 'Kyiv', lat: 50.4501, lng: 30.5234 },
+  Georgia: { city: 'Tbilisi', lat: 41.7151, lng: 44.8271 },
+  Turkey: { city: 'Ankara', lat: 39.9334, lng: 32.8597 },
+  Lebanon: { city: 'Beirut', lat: 33.8938, lng: 35.5018 },
+  Jordan: { city: 'Amman', lat: 31.9454, lng: 35.9284 },
+  Nepal: { city: 'Kathmandu', lat: 27.7172, lng: 85.324 },
+  Bhutan: { city: 'Thimphu', lat: 27.4728, lng: 89.639 },
+  Myanmar: { city: 'Naypyidaw', lat: 19.7633, lng: 96.0785 },
+  Laos: { city: 'Vientiane', lat: 17.9757, lng: 102.6331 },
+  Vietnam: { city: 'Hanoi', lat: 21.0278, lng: 105.8342 },
+  Morocco: { city: 'Rabat', lat: 34.0209, lng: -6.8416 },
+  Tunisia: { city: 'Tunis', lat: 36.8065, lng: 10.1815 },
+  Ethiopia: { city: 'Addis Ababa', lat: 8.9806, lng: 38.7578 },
+  Tanzania: { city: 'Dodoma', lat: -6.163, lng: 35.7516 },
+  Senegal: { city: 'Dakar', lat: 14.7167, lng: -17.4677 },
+  Mali: { city: 'Bamako', lat: 12.6392, lng: -8.0029 },
+  Peru: { city: 'Lima', lat: -12.0464, lng: -77.0428 },
+  Bolivia: { city: 'La Paz', lat: -16.4897, lng: -68.1193 },
+  Ecuador: { city: 'Quito', lat: -0.1807, lng: -78.4678 },
+  Colombia: { city: 'Bogota', lat: 4.711, lng: -74.0721 },
+  Paraguay: { city: 'Asuncion', lat: -25.2637, lng: -57.5759 },
+  Guatemala: { city: 'Guatemala City', lat: 14.6349, lng: -90.5069 },
+  Mexico: { city: 'Mexico City', lat: 19.4326, lng: -99.1332 },
+  Canada: { city: 'Ottawa', lat: 45.4215, lng: -75.6972 },
+  Fiji: { city: 'Suva', lat: -18.1248, lng: 178.4501 },
+  'Papua New Guinea': { city: 'Port Moresby', lat: -9.4438, lng: 147.1803 },
+};
+
+function buildCityHubNodes(villageCounts?: Map<string, number>): DestinationNode[] {
+  return Object.entries(MAIN_CITY_BY_COUNTRY)
+    .map(([country, hub]) => ({
+      name: `${hub.city}, ${country}`,
+      city: hub.city,
+      country,
+      lat: hub.lat,
+      lng: hub.lng,
+      villages: villageCounts?.get(country) ?? 0,
+    }))
+    .sort((a, b) => a.country.localeCompare(b.country));
+}
+
 export default function LandingPage() {
   const router = useRouter();
   const { seedLocation, seedStatus } = useApp();
   const [input, setInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [destinations, setDestinations] = useState<DestinationNode[]>(DEFAULT_DESTINATIONS);
+  const [destinations, setDestinations] = useState<DestinationNode[]>(buildCityHubNodes());
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -35,30 +85,18 @@ export default function LandingPage() {
         const villages: ApiVillage[] = await res.json();
         if (!Array.isArray(villages) || villages.length === 0) return;
 
-        const byCountry = new Map<string, { latSum: number; lngSum: number; count: number }>();
+        const byCountry = new Map<string, number>();
         for (const v of villages) {
-          if (typeof v.lat !== 'number' || typeof v.lng !== 'number') continue;
           const country = (v.country?.trim() || 'Bulgaria');
-          const bucket = byCountry.get(country) ?? { latSum: 0, lngSum: 0, count: 0 };
-          bucket.latSum += v.lat;
-          bucket.lngSum += v.lng;
-          bucket.count += 1;
-          byCountry.set(country, bucket);
+          byCountry.set(country, (byCountry.get(country) ?? 0) + 1);
         }
 
-        const nodes: DestinationNode[] = Array.from(byCountry.entries())
-          .map(([country, agg]) => ({
-            name: country,
-            country,
-            lat: agg.latSum / agg.count,
-            lng: agg.lngSum / agg.count,
-            villages: agg.count,
-          }))
-          .sort((a, b) => b.villages - a.villages);
+        const nodes = buildCityHubNodes(byCountry);
 
         if (nodes.length > 0) setDestinations(nodes);
       } catch {
         // Keep default destinations
+        setDestinations(buildCityHubNodes());
       }
     }
 
@@ -184,7 +222,7 @@ export default function LandingPage() {
                         className="w-full flex items-center gap-3 text-left px-4 py-3 text-sm text-black/70 hover:bg-black/5 hover:text-black rounded-xl transition-colors"
                       >
                         <MapPin className="w-4 h-4 text-black/30" />
-                        {s.name} ({s.villages})
+                        {s.city}, {s.country}
                       </button>
                     ))}
                   </div>

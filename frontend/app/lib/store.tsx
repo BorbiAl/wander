@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PersonalityResult } from './hmm';
-import { Experience } from './data';
+import { Experience, Village, Host, VILLAGES, EXPERIENCES, HOSTS } from './data';
 
 export type Booking = {
   id: string;
@@ -16,6 +16,8 @@ export type Booking = {
   cwsDelta: number;
 }
 
+export type SeedStatus = 'idle' | 'loading' | 'done' | 'error';
+
 export type AppState = {
   observations: number[];
   personality: PersonalityResult | null;
@@ -26,6 +28,8 @@ export type AppState = {
   badges: string[];
   totalImpact: number;
   villagesVisited: string[];
+  destination: string;
+  seedStatus: SeedStatus;
 }
 
 type AppContextType = AppState & {
@@ -36,6 +40,7 @@ type AppContextType = AppState & {
   addPoints: (p: number) => void;
   addBadge: (b: string) => void;
   resetOnboarding: () => void;
+  seedLocation: (location: string) => Promise<void>;
 };
 
 const defaultState: AppState = {
@@ -48,6 +53,8 @@ const defaultState: AppState = {
   badges: [],
   totalImpact: 0,
   villagesVisited: [],
+  destination: '',
+  seedStatus: 'idle',
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -60,8 +67,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem('wandergraph_state');
     if (saved) {
       try {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        setState(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        // Never restore a loading state — it means the previous session crashed mid-request
+        if (parsed.seedStatus === 'loading') parsed.seedStatus = 'idle';
+        setState(parsed);
+        // Re-patch data arrays if a destination was previously seeded
+        if (parsed.destination && parsed.seedStatus === 'done') {
+          // Re-fetch seed data silently to repopulate arrays after page refresh
+          fetch(`/api/seed?location=${encodeURIComponent(parsed.destination)}`)
+            .then(r => r.json())
+            .then(data => patchDataArrays(data))
+            .catch(() => {});
+        }
       } catch (e) {
         console.error('Failed to parse state', e);
       }
@@ -77,6 +94,38 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state, isLoaded]);
 
+  function patchDataArrays(data: { villages?: Village[]; experiences?: Experience[]; hosts?: Host[] }) {
+    if (data.villages?.length) {
+      VILLAGES.splice(0, VILLAGES.length, ...data.villages);
+    }
+    if (data.experiences?.length) {
+      // Normalise field names from Gemini response to frontend shape
+      const exps = data.experiences.map((e: Record<string, unknown>) => ({
+        id: e.id,
+        villageId: e.village_id ?? e.villageId,
+        name: (e.title ?? e.name) as string,
+        type: e.type as Experience['type'],
+        price: (e.price_eur ?? e.price ?? 0) as number,
+        duration: e.duration_h ? `${e.duration_h}h` : (e.duration ?? ''),
+        hostId: (e.host_id ?? e.hostId ?? '') as string,
+        description: (e.description ?? '') as string,
+        personalityWeights: (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as [number, number, number, number, number],
+      })) as Experience[];
+      EXPERIENCES.splice(0, EXPERIENCES.length, ...exps);
+    }
+    if (data.hosts?.length) {
+      const hosts = data.hosts.map((h: Record<string, unknown>) => ({
+        id: h.id,
+        villageId: (h.village_id ?? h.villageId) as string,
+        name: h.name as string,
+        bio: (h.bio ?? '') as string,
+        rating: (h.rating ?? 4.5) as number,
+        experienceIds: (h.experienceIds ?? h.experience_ids ?? []) as string[],
+      })) as Host[];
+      HOSTS.splice(0, HOSTS.length, ...hosts);
+    }
+  }
+
   const setObservations = (obs: number[]) => setState(prev => ({ ...prev, observations: obs }));
   const setPersonality = (p: PersonalityResult | null) => setState(prev => ({ ...prev, personality: p }));
   const setMatches = (m: (Experience & { score: number })[]) => setState(prev => ({ ...prev, matches: m }));
@@ -90,11 +139,38 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const addBadge = (b: string) => setState(prev => ({ ...prev, badges: Array.from(new Set([...prev.badges, b])) }));
   const resetOnboarding = () => setState(prev => ({ ...prev, observations: [], personality: null, matches: [] }));
 
-  if (!isLoaded) return null; // Prevent hydration mismatch
+  const seedLocation = async (location: string) => {
+    setState(prev => ({ ...prev, destination: location, seedStatus: 'loading' }));
+    try {
+      const res = await fetch(`/api/seed?location=${encodeURIComponent(location)}`);
+      if (!res.ok) throw new Error(`Seed failed: ${res.status}`);
+      const data = await res.json();
+      patchDataArrays(data);
+      setState(prev => ({
+        ...prev,
+        seedStatus: 'done',
+        // Reset travel data when destination changes
+        observations: [],
+        personality: null,
+        matches: [],
+        bookings: [],
+        points: 0,
+        badges: [],
+        totalImpact: 0,
+        villagesVisited: [],
+      }));
+    } catch (err) {
+      console.error('Seed error:', err);
+      setState(prev => ({ ...prev, seedStatus: 'error' }));
+    }
+  };
+
+  if (!isLoaded) return null;
 
   return (
     <AppContext.Provider value={{
-      ...state, setObservations, setPersonality, setMatches, addBooking, addPoints, addBadge, resetOnboarding
+      ...state, setObservations, setPersonality, setMatches,
+      addBooking, addPoints, addBadge, resetOnboarding, seedLocation,
     }}>
       {children}
     </AppContext.Provider>

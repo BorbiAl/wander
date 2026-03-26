@@ -1,21 +1,37 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'motion/react';
 import { useApp } from '@/app/lib/store';
 import { ExperienceCard } from '@/components/ExperienceCard';
 import { PersonalityRadar } from '@/components/PersonalityRadar';
-import { Village } from '@/app/lib/data';
+import { Village, EXPERIENCES } from '@/app/lib/data';
 import { getVillage } from '@/app/lib/utils';
+import { matchScore } from '@/app/lib/hmm';
+import { CommunityExperiences } from '@/components/CommunityExperiences';
 
 const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 
 export default function DiscoverPage() {
-  const { personality, matches } = useApp();
+  const { personality, matches, setMatches } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'match'|'price'|'cws'>('match');
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
+
+  // Re-score against the in-memory EXPERIENCES array (which has been patched
+  // with seeded destination data client-side) instead of hitting the server,
+  // which only ever sees the static Bulgarian fallback data.
+  useEffect(() => {
+    if (!personality) return;
+    const scored = EXPERIENCES.map(exp => ({
+      ...exp,
+      score: matchScore(personality.vector, exp.personalityWeights),
+    })).sort((a, b) => b.score - a.score);
+    if (scored.length > 0) setMatches(scored);
+  // Only run when dominant personality or EXPERIENCES array length changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personality?.dominant, EXPERIENCES.length]);
 
   const types = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore'];
 
@@ -130,6 +146,11 @@ export default function DiscoverPage() {
             <button className="w-full py-3 mt-2 text-sm text-text-2 border border-[#333] rounded-pill hover:text-white hover:border-[#555] transition-colors">
               Show more
             </button>
+          )}
+
+          {/* Community experiences — loads when a village is selected on the map */}
+          {selectedVillage && (
+            <CommunityExperiences villageName={selectedVillage.name} />
           )}
         </div>
       </div>

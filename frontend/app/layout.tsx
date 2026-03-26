@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Playfair_Display, DM_Sans } from 'next/font/google';
 import './globals.css';
 import { AppProvider } from './lib/store';
+import { DataProvider } from './lib/DataProvider';
 import { Navbar } from '@/components/Navbar';
 
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-display' });
@@ -17,10 +18,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`}>
       <body suppressHydrationWarning className="bg-bg text-text-1 font-sans min-h-screen flex flex-col">
         <AppProvider>
-          <Navbar />
-          <main className="flex-1 pt-14">
-            {children}
-          </main>
+          <DataProvider>
+            <Navbar />
+            <main className="flex-1 pt-14">
+              {children}
+            </main>
+          </DataProvider>
         </AppProvider>
       </body>
     </html>

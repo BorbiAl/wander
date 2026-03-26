@@ -27,6 +27,8 @@ export const PERSONALITY_INFO: Record<PersonalityType, {color:string, emoji:stri
   Guardian:  { color:'#34D399', emoji:'♻️', description:'You travel to give back. Volunteering, restoration, low-footprint.' },
 }
 
+// These arrays are mutable so DataProvider can patch them with live API data at runtime.
+// All components should read via getVillage() / getExperience() from utils.ts.
 export const VILLAGES: Village[] = [
   { id:'shiroka-laka', name:'Shiroka Laka', lat:41.75, lng:24.54, region:'Rhodopes', cws:72, population:300,
     description:'Famous for its gaida tradition and layered stone architecture. One of Bulgaria\'s most musical villages.',

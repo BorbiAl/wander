@@ -291,6 +291,27 @@ int main() {
       }
     });
 
+  // ---- GET /graph/villages (all villages with live CWS) -------------------
+  svr.Get("/graph/villages",
+    [](const httplib::Request&, httplib::Response& res) {
+      json out = json::array();
+      for (const auto& [vid, v] : village_lookup) {
+        json entry = v;
+        entry["cws"] = get_cws(vid);
+        out.push_back(entry);
+      }
+      res.set_content(out.dump(), "application/json");
+    });
+
+  // ---- GET /graph/experiences (all experiences) ---------------------------
+  svr.Get("/graph/experiences",
+    [](const httplib::Request&, httplib::Response& res) {
+      json out = json::array();
+      for (const auto& [eid, exp] : experience_lookup)
+        out.push_back(exp);
+      res.set_content(out.dump(), "application/json");
+    });
+
   // ---- GET /graph/village/:id ---------------------------------------------
   svr.Get("/graph/village/:id",
     [](const httplib::Request& req, httplib::Response& res) {

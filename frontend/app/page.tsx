@@ -185,10 +185,8 @@ export default function LandingPage() {
   return (
     <>
       <main className="relative min-h-screen overflow-hidden bg-[#E5E9DF] px-6 py-8 lg:px-12">
-        <MarketingGlobe destinations={destinations} onSelect={(location) => void handleSubmit(location)} />
-
-        <section className="relative z-10 mx-auto flex min-h-[86vh] w-full max-w-6xl items-center">
-          <div className="max-w-2xl">
+        <section className="relative z-10 mx-auto grid min-h-[86vh] w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-4">
+          <div className="relative z-20 max-w-2xl">
             <div className="mb-8 inline-block rounded-full bg-[#F4E3D7] px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#C84A31]">
               Redefining Discovery
             </div>
@@ -304,6 +302,19 @@ export default function LandingPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+
+          <div className="relative z-10 h-[400px] w-full lg:-mt-4 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center">
+            <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
+              <div className="absolute right-[8%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(26,46,28,0.12)_0%,rgba(229,233,223,0)_72%)]" />
+            </div>
+            <MarketingGlobe
+              destinations={destinations}
+              onSelect={(location) => void handleSubmit(location)}
+              inline
+              allowOverflow
+              className="lg:h-[660px] lg:w-[760px]"
+            />
           </div>
         </section>
       </main>

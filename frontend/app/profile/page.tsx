@@ -1,17 +1,31 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'motion/react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { useApp } from '@/app/lib/store';
 import { PersonalityRadar } from '@/components/PersonalityRadar';
 import { BadgeGrid } from '@/components/BadgeGrid';
 import { PERSONALITIES, PERSONALITY_INFO, VILLAGES } from '@/app/lib/data';
 import { getExperience, getVillage, cwsColor } from '@/app/lib/utils';
+import { buildShareUrl } from '@/app/lib/friendUtils';
 
 const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { userId, personality, badges, bookings, totalImpact, villagesVisited } = useApp();
+  const [copied, setCopied] = useState(false);
+
+  function handleShare() {
+    if (!personality) return;
+    const url = buildShareUrl(userId, personality.vector, personality.dominant, `Traveler #${userId.slice(-4)}`);
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => router.push('/friends?share=1'));
+  }
 
   if (!personality) {
     return (
@@ -46,6 +60,20 @@ export default function ProfilePage() {
           <p className="text-muted mx-auto max-w-md text-lg italic md:mx-0">
             &quot;{domDesc}&quot;
           </p>
+          <div className="flex gap-3 mt-6 justify-center md:justify-start flex-wrap">
+            <button
+              onClick={handleShare}
+              className="bg-[#0B6E2A] text-white text-sm px-5 py-2 rounded-pill hover:bg-[#095A22] transition-colors"
+            >
+              {copied ? 'Link copied!' : 'Share my profile'}
+            </button>
+            <button
+              onClick={() => router.push('/friends')}
+              className="border border-[#333] text-text-2 text-sm px-5 py-2 rounded-pill hover:border-[#555] transition-colors"
+            >
+              Manage companions →
+            </button>
+          </div>
         </div>
         <div className="h-[min(280px,78vw)] w-[min(280px,78vw)] shrink-0 md:h-[280px] md:w-[280px]">
           <PersonalityRadar vector={personality.vector} size={260} />

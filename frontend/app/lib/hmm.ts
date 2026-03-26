@@ -54,3 +54,18 @@ export function matchScore(pv: number[], pw: number[]): number {
   // Dot product similarity — returns 0 to 1
   return Math.min(1, pv.reduce((sum, v, i) => sum + v * pw[i], 0) * 3.5);
 }
+
+// Compute group personality vector: arithmetic mean per dimension, L1-normalized.
+// The result is a valid personality vector (sums to 1) representing the group as a whole.
+export function computeGroupVector(
+  vectors: Array<[number, number, number, number, number]>
+): [number, number, number, number, number] {
+  const N = vectors.length;
+  if (N === 0) return [0.2, 0.2, 0.2, 0.2, 0.2];
+  const sum = vectors.reduce<number[]>(
+    (acc, v) => acc.map((a, i) => a + v[i]),
+    [0, 0, 0, 0, 0]
+  );
+  const total = sum.reduce((a, b) => a + b, 0) || 1;
+  return sum.map(s => s / total) as [number, number, number, number, number];
+}

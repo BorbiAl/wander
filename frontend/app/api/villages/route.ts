@@ -6,31 +6,37 @@ import path from 'node:path';
 // Normalise C++ village shape → frontend Village type
 function normalise(v: Record<string, unknown>) {
   return {
-    id: v.id,
-    name: v.name,
-    lat: v.lat,
-    lng: v.lng,
+    id: String(v.id ?? ''),
+    name: String(v.name ?? ''),
+    lat: Number(v.lat ?? 0),
+    lng: Number(v.lng ?? 0),
     country: (v.country ?? 'Bulgaria') as string,
-    region: v.region ?? '',
+    region: String(v.region ?? ''),
     cws: (v.cws ?? v.cws_base ?? 50) as number,
-    population: v.population ?? 0,
-    description: v.description ?? '',
+    population: Number(v.population ?? 0),
+    description: String(v.description ?? ''),
     nearby: (v.nearby ?? []) as string[],
+    mainCity: (v.main_city ?? v.mainCity ?? '') as string,
+    mainCityLat: Number(v.main_city_lat ?? v.mainCityLat ?? 0),
+    mainCityLng: Number(v.main_city_lng ?? v.mainCityLng ?? 0),
   };
 }
 
 function normaliseSeedVillage(v: Record<string, unknown>) {
   return {
-    id: v.id,
-    name: v.name,
-    lat: v.lat,
-    lng: v.lng,
+    id: String(v.id ?? ''),
+    name: String(v.name ?? ''),
+    lat: Number(v.lat ?? 0),
+    lng: Number(v.lng ?? 0),
     country: (v.country ?? 'Bulgaria') as string,
-    region: v.region ?? '',
+    region: String(v.region ?? ''),
     cws: (v.cws ?? 50) as number,
-    population: v.population ?? 0,
-    description: v.description ?? '',
+    population: Number(v.population ?? 0),
+    description: String(v.description ?? ''),
     nearby: (v.nearby ?? []) as string[],
+    mainCity: (v.main_city ?? v.mainCity ?? '') as string,
+    mainCityLat: Number(v.main_city_lat ?? v.mainCityLat ?? 0),
+    mainCityLng: Number(v.main_city_lng ?? v.mainCityLng ?? 0),
   };
 }
 

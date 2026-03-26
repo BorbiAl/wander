@@ -8,15 +8,18 @@ function normalise(e: Record<string, unknown>) {
   const pw = (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as number[];
   while (pw.length < 5) pw.push(0.2);
   return {
-    id: e.id,
-    villageId: e.village_id,
+    id: String(e.id ?? ''),
+    villageId: String(e.village_id ?? ''),
     name: (e.title ?? e.name) as string,
     type: (e.type ?? 'craft') as string,
     price: (e.price_eur ?? e.price ?? 0) as number,
-    duration: e.duration_h ? `${e.duration_h}h` : (e.duration ?? ''),
+    duration: e.duration_h ? `${e.duration_h}h` : String(e.duration ?? ''),
     hostId: (e.host_id ?? e.hostId ?? '') as string,
     description: (e.description ?? '') as string,
     personalityWeights: pw.slice(0, 5) as [number, number, number, number, number],
+    mainCity: (e.main_city ?? e.mainCity ?? '') as string,
+    mainCityLat: Number(e.main_city_lat ?? e.mainCityLat ?? 0),
+    mainCityLng: Number(e.main_city_lng ?? e.mainCityLng ?? 0),
   };
 }
 
@@ -24,15 +27,18 @@ function normaliseSeedExperience(e: Record<string, unknown>) {
   const pw = (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as number[];
   while (pw.length < 5) pw.push(0.2);
   return {
-    id: e.id,
-    villageId: e.villageId,
+    id: String(e.id ?? ''),
+    villageId: String(e.villageId ?? ''),
     name: (e.name ?? 'Village Experience') as string,
     type: (e.type ?? 'craft') as string,
     price: (e.price_eur ?? e.price ?? 0) as number,
-    duration: (e.duration ?? '') as string,
+    duration: String(e.duration ?? ''),
     hostId: (e.hostId ?? e.host_id ?? '') as string,
     description: (e.description ?? '') as string,
     personalityWeights: pw.slice(0, 5) as [number, number, number, number, number],
+    mainCity: (e.main_city ?? e.mainCity ?? '') as string,
+    mainCityLat: Number(e.main_city_lat ?? e.mainCityLat ?? 0),
+    mainCityLng: Number(e.main_city_lng ?? e.mainCityLng ?? 0),
   };
 }
 

@@ -360,6 +360,9 @@ def fetch_osm_country(country_name: str, max_villages: int = 20) -> List[Dict[st
                     "id": row.get("osm_id") or row.get("place_id"),
                     "lat": float(lat_v),
                     "lon": float(lon_v),
+                    "main_city": city,
+                    "main_city_lat": hub_lat,
+                    "main_city_lng": hub_lng,
                     "tags": {
                         "name": name,
                         "place": place_type,
@@ -908,6 +911,9 @@ Rules:
         exp["villageId"] = village["id"]
         exp["hostId"] = f"h_{village['id']}_{idx}"
         exp["country"] = village.get("country")
+        exp["main_city"] = village.get("main_city")
+        exp["main_city_lat"] = village.get("main_city_lat")
+        exp["main_city_lng"] = village.get("main_city_lng")
         out.append(exp)
     return out
 
@@ -981,6 +987,9 @@ def enrich_with_wikidata(
             "heritage_sites_count": 0,
             "region": assign_region(float(el["lat"]), float(el["lon"]), country),
             "settlement_type": tags.get("place") or "village",
+            "main_city": el.get("main_city"),
+            "main_city_lat": el.get("main_city_lat"),
+            "main_city_lng": el.get("main_city_lng"),
         }
         villages.append(village)
 
@@ -1028,6 +1037,7 @@ def seed_all_countries(client: Any) -> Tuple[List[Dict[str, Any]], List[Dict[str
 
     for i, country in enumerate(countries):
         print(f"\n[{i + 1}/{len(countries)}] Processing {country}...")
+        main_city = COUNTRY_MAIN_CITY.get(country, country)
 
         raw_villages = fetch_osm_country(country, max_villages=max_villages_per_country)
         if not raw_villages:
@@ -1045,6 +1055,9 @@ def seed_all_countries(client: Any) -> Tuple[List[Dict[str, Any]], List[Dict[str
             v["cws"] = compute_cws(v)
             v["region"] = assign_region(float(v["lat"]), float(v["lng"]), country)
             v["country"] = country
+            v["main_city"] = main_city
+            v["main_city_lat"] = v.get("main_city_lat")
+            v["main_city_lng"] = v.get("main_city_lng")
             time.sleep(0.3)  # be gentle to Wikipedia
 
         # Compute nearby

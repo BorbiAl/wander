@@ -8,6 +8,7 @@ const Globe = dynamic(() => import('react-globe.gl'), { ssr: false });
 
 export type DestinationNode = {
   name: string;
+  city: string;
   country: string;
   lat: number;
   lng: number;
@@ -15,7 +16,7 @@ export type DestinationNode = {
 };
 
 export const DEFAULT_DESTINATIONS: DestinationNode[] = [
-  { name: 'Bulgaria', country: 'Bulgaria', lat: 42.7339, lng: 25.4858, villages: 1 },
+  { name: 'Sofia, Bulgaria', city: 'Sofia', country: 'Bulgaria', lat: 42.6977, lng: 23.3219, villages: 1 },
 ];
 
 type MarketingGlobeProps = {
@@ -87,9 +88,9 @@ export default function MarketingGlobe({ destinations, onSelect }: MarketingGlob
           htmlElement={(d: any) => {
             const el = document.createElement('div');
             el.innerHTML = `<div class="cursor-pointer hover:scale-105 transition-all bg-white rounded-2xl px-4 py-3 border border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col -translate-x-1/2 -translate-y-[120%] select-none pointer-events-auto min-w-max">
-              <span class="text-[10px] font-bold tracking-wider text-black/40 uppercase mb-1">Impact Node</span>
-              <span class="text-[#1A2E1C] text-sm font-display font-semibold mb-0.5 leading-none">${d.country}</span>
-              <span class="text-[#1A2E1C]/60 text-xs font-medium">${d.villages} village${d.villages === 1 ? '' : 's'} in DB</span>
+              <span class="text-[10px] font-bold tracking-wider text-black/40 uppercase mb-1">City Hub</span>
+              <span class="text-[#1A2E1C] text-sm font-display font-semibold mb-0.5 leading-none">${d.city}</span>
+              <span class="text-[#1A2E1C]/60 text-xs font-medium">${d.country}</span>
             </div>`;
             el.style.pointerEvents = 'none';
             // Also enable click on the label themselves!

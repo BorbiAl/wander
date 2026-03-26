@@ -153,14 +153,14 @@ export function AudioReactor({
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto bg-surface border border-[#222] rounded-card p-6 flex flex-col items-center text-center">
+    <div className="w-full max-w-sm mx-auto bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-6 flex flex-col items-center text-center">
       <div className="text-5xl mb-4">🎵</div>
-      <h3 className="font-display text-xl text-white mb-2">{clipTitle}</h3>
-      <p className="font-sans text-sm text-text-2 italic mb-6">{clipDescription}</p>
+      <h3 className="font-display text-xl text-[#1A2E1C] mb-2">{clipTitle}</h3>
+      <p className="font-sans text-sm text-[#1A2E1C]/70 italic mb-6">{clipDescription}</p>
       
-      <div className="w-full h-[1px] bg-[#333] mb-6" />
+      <div className="w-full h-[1px] bg-[#D6DCCD] mb-6" />
       
-      <p className="text-text-2 text-[13px] mb-4">How does this make you feel?</p>
+      <p className="text-[#1A2E1C]/70 text-[13px] mb-4">How does this make you feel?</p>
       
       <div className="w-full mb-8 relative">
         <label htmlFor="audio-feeling-slider" className="sr-only">
@@ -171,28 +171,28 @@ export function AudioReactor({
           type="range" min="1" max="5" step="1" 
           value={val} onChange={(e) => setVal(parseInt(e.target.value))}
           title="Feeling intensity"
-          className="w-full accent-accent h-2 bg-surface-2 rounded-lg appearance-none cursor-pointer"
+          className="w-full accent-[#0B6E2A] h-2 bg-[#D6DCCD] rounded-lg appearance-none cursor-pointer"
         />
-        <div className="flex justify-between text-xs text-text-3 mt-2">
+        <div className="flex justify-between text-xs text-[#1A2E1C]/65 mt-2">
           <span>{sliderLabels[0]}</span>
           <span>{sliderLabels[2]}</span>
         </div>
         <div className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <span className="text-3xl font-bold text-accent leading-none">{val}</span>
-          <span className="text-[11px] text-text-2 mt-1">{activeLabel}</span>
+          <span className="text-3xl font-bold text-[#0B6E2A] leading-none">{val}</span>
+          <span className="text-[11px] text-[#1A2E1C]/70 mt-1">{activeLabel}</span>
         </div>
       </div>
 
       <button
         onClick={() => (isPlaying ? stopAmbient() : startAmbient())}
-        className="border border-[#333] text-text-2 rounded-pill px-6 py-3 hover:border-[#555] hover:text-text-1 transition-colors mb-4 w-full text-sm"
+        className="border border-[#D6DCCD] text-[#1A2E1C]/70 rounded-pill px-6 py-3 hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors mb-4 w-full text-sm"
       >
         {isPlaying ? '■ Stop ambience' : '▶ Play ambience'}
       </button>
 
       <button 
         onClick={handleNext}
-        className="bg-accent text-black font-medium rounded-pill px-6 py-3 hover:bg-accent-dim active:scale-[0.97] transition-all w-full"
+        className="bg-[#0B6E2A] text-white font-medium rounded-pill px-6 py-3 hover:bg-[#095A22] active:scale-[0.97] transition-all w-full"
       >
         Next →
       </button>

@@ -131,7 +131,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <main className="relative min-h-screen overflow-hidden bg-[#E5E9DF] px-4 py-6 sm:px-6 sm:py-8 lg:px-12">
+      <main className="relative min-h-screen overflow-hidden bg-[#E5E9DF] px-6 py-8 lg:px-12">
         <MarketingGlobe destinations={destinations} onSelect={(location) => void handleSubmit(location)} />
 
         <section className="relative z-10 mx-auto flex min-h-[86vh] w-full max-w-6xl items-center">
@@ -140,13 +140,13 @@ export default function LandingPage() {
               Redefining Discovery
             </div>
 
-            <h1 className="mb-6 font-display text-4xl leading-[1.1] tracking-tight text-[#1A2E1C] sm:text-5xl lg:text-7xl">
+            <h1 className="mb-6 font-display text-6xl leading-[1.1] tracking-tight text-[#1A2E1C] lg:text-7xl">
               The world is a
               <br />
               map of <span className="italic text-[#0B6E2A]">your character.</span>
             </h1>
 
-            <p className="mb-8 max-w-lg text-base leading-relaxed text-[#1A2E1C]/70 sm:mb-10 sm:text-lg">
+            <p className="mb-10 max-w-lg text-lg leading-relaxed text-[#1A2E1C]/70">
               WanderGraph uses behavioral AI to match your travel personality with hidden villages and authentic local hosts.
             </p>
 
@@ -154,8 +154,8 @@ export default function LandingPage() {
               <label htmlFor="destination-input" className="sr-only">
                 Choose a destination
               </label>
-              <div className="relative z-20 flex items-center rounded-full border border-black/5 bg-white p-2 pr-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:pr-3">
-                <div className="pl-3 pr-2 text-black/40 sm:pl-4 sm:pr-3">
+              <div className="relative z-20 flex items-center rounded-full border border-black/5 bg-white p-2 pr-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                <div className="pl-4 pr-3 text-black/40">
                   <Globe2 className="h-5 w-5" />
                 </div>
                 <input
@@ -171,22 +171,17 @@ export default function LandingPage() {
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                   onKeyDown={handleKey}
                   placeholder="Choose a destination..."
-                  className="min-w-0 flex-1 bg-transparent py-3 text-xs text-black placeholder-black/40 focus:outline-none sm:text-sm"
+                  className="min-w-0 flex-1 bg-transparent py-3 text-sm text-black placeholder-black/40 focus:outline-none"
                 />
-                <div className="mr-2 border-r border-black/10 px-2 text-black/40 sm:mr-3 sm:px-3">
+                <div className="mr-3 border-r border-black/10 px-3 text-black/40">
                   <ChevronDown className="h-4 w-4" />
                 </div>
                 <button
                   onClick={() => void handleSubmit(input)}
                   disabled={seedStatus === 'loading' || !input.trim()}
-                  className="whitespace-nowrap rounded-full bg-[#0B6E2A] px-3 py-3 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#095A22] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:text-sm"
+                  className="whitespace-nowrap rounded-full bg-[#0B6E2A] px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#095A22] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {seedStatus === 'loading' ? 'Locating...' : (
-                    <>
-                      <span className="sm:hidden">Find</span>
-                      <span className="hidden sm:inline">Find My Match</span>
-                    </>
-                  )}
+                  {seedStatus === 'loading' ? 'Locating...' : 'Find My Match'}
                 </button>
               </div>
 
@@ -216,18 +211,18 @@ export default function LandingPage() {
               </AnimatePresence>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="flex flex-wrap items-center gap-4">
               <button
                 onClick={handleLucky}
                 disabled={seedStatus === 'loading'}
-                className="flex items-center gap-2 rounded-full bg-[#F4E3D7] px-4 py-2.5 text-xs font-semibold text-[#C84A31] transition-colors hover:bg-[#F0D5C4] sm:px-6 sm:py-3 sm:text-sm"
+                className="flex items-center gap-2 rounded-full bg-[#F4E3D7] px-6 py-3 text-sm font-semibold text-[#C84A31] transition-colors hover:bg-[#F0D5C4]"
               >
                 <Dices className="h-4 w-4" />
                 I&apos;m Feeling Lucky
               </button>
               <button
                 onClick={() => setShowHowItWorks(true)}
-                className="flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-medium text-black/60 transition-colors hover:bg-black/5 sm:gap-3 sm:px-6 sm:py-3 sm:text-sm"
+                className="flex items-center gap-3 rounded-full px-6 py-3 text-sm font-medium text-black/60 transition-colors hover:bg-black/5"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E5E9DF] text-[#0B6E2A]">
                   <Play className="ml-0.5 h-3.5 w-3.5" fill="currentColor" />
@@ -272,7 +267,7 @@ export default function LandingPage() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
-              className="relative max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl sm:p-8"
+              className="relative w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl"
             >
               <button
                 type="button"

@@ -135,29 +135,29 @@ export default function DiscoverPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="min-h-[calc(100vh-3.5rem)] bg-[radial-gradient(circle_at_12%_6%,#1E2A1D_0%,transparent_28%),radial-gradient(circle_at_88%_12%,#2A2114_0%,transparent_26%),#090A0B]"
+      className="page-standard min-h-screen"
     >
-      <div className="mx-auto w-full max-w-[1320px] px-4 md:px-6 py-6 md:py-8">
+      <div className="page-shell pb-24">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-          <section className="xl:col-span-7 bg-[#101418] border border-[#27313A] rounded-[22px] p-4 md:p-6 flex flex-col gap-5">
+          <section className="xl:col-span-7 surface-card rounded-[22px] p-4 md:p-6 flex flex-col gap-5">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.12em] text-text-3">Discover</p>
-                <h1 className="font-display text-3xl md:text-4xl text-white leading-tight mt-1">Start with the globe</h1>
-                <p className="text-text-2 text-sm md:text-base mt-2 max-w-[46ch]">
+                <p className="text-[11px] uppercase tracking-[0.12em] text-[#1A2E1C]/65">Discover</p>
+                <h1 className="font-display text-3xl md:text-4xl text-[#1A2E1C] leading-tight mt-1">Start with the globe</h1>
+                <p className="text-[#1A2E1C]/70 text-sm md:text-base mt-2 max-w-[46ch]">
                   Pick a village first. The trip list updates instantly to match that place.
                 </p>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleSurprisePick}
-                  className="bg-accent text-black text-sm font-semibold rounded-pill px-4 py-2 hover:bg-accent-dim transition-colors"
+                  className="bg-[#0B6E2A] text-white text-sm font-semibold rounded-pill px-4 py-2 hover:bg-[#095A22] transition-colors"
                 >
                   Surprise me
                 </button>
                 <button
                   onClick={() => setSelectedVillageId(null)}
-                  className="border border-[#3A4854] text-text-2 text-sm rounded-pill px-4 py-2 hover:border-[#586A7A] hover:text-white transition-colors"
+                  className="border border-[#D6DCCD] text-[#1A2E1C]/70 text-sm rounded-pill px-4 py-2 hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors"
                 >
                   Clear focus
                 </button>
@@ -165,25 +165,25 @@ export default function DiscoverPage() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
-                <p className="text-text-3 text-[10px] uppercase">Villages</p>
-                <p className="font-display text-2xl text-white">{villages.length}</p>
+              <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[12px] px-3 py-2">
+                <p className="text-[#1A2E1C]/65 text-[10px] uppercase">Villages</p>
+                <p className="font-display text-2xl text-[#1A2E1C]">{villages.length}</p>
               </div>
-              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
-                <p className="text-text-3 text-[10px] uppercase">Matches</p>
-                <p className="font-display text-2xl text-white">{filteredMatches.length}</p>
+              <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[12px] px-3 py-2">
+                <p className="text-[#1A2E1C]/65 text-[10px] uppercase">Matches</p>
+                <p className="font-display text-2xl text-[#1A2E1C]">{filteredMatches.length}</p>
               </div>
-              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
-                <p className="text-text-3 text-[10px] uppercase">Avg CWS</p>
-                <p className="font-display text-2xl text-white">{avgCws}</p>
+              <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[12px] px-3 py-2">
+                <p className="text-[#1A2E1C]/65 text-[10px] uppercase">Avg CWS</p>
+                <p className="font-display text-2xl text-[#1A2E1C]">{avgCws}</p>
               </div>
-              <div className="bg-[#121A16] border border-[#253129] rounded-[12px] px-3 py-2">
-                <p className="text-text-3 text-[10px] uppercase">Focus</p>
-                <p className="font-display text-2xl text-white">{selectedVillage ? '1' : '0'}</p>
+              <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[12px] px-3 py-2">
+                <p className="text-[#1A2E1C]/65 text-[10px] uppercase">Focus</p>
+                <p className="font-display text-2xl text-[#1A2E1C]">{selectedVillage ? '1' : '0'}</p>
               </div>
             </div>
 
-            <div className="w-full rounded-[14px] overflow-hidden border border-[#385047]" style={{ height: 420 }}>
+            <div className="w-full rounded-[14px] overflow-hidden border border-[#D6DCCD]" style={{ height: 420 }}>
               <VillageMap
                 onSelectVillage={v => setSelectedVillageId(v.id)}
                 seedStatus={seedStatus}
@@ -191,40 +191,40 @@ export default function DiscoverPage() {
             </div>
           </section>
 
-          <section className="xl:col-span-5 bg-[#10151B] border border-[#2A3641] rounded-[22px] p-4 md:p-6 flex flex-col gap-4">
-            <div className="bg-[#121920] border border-[#2A3946] rounded-[14px] p-4">
+          <section className="xl:col-span-5 surface-card rounded-[22px] p-4 md:p-6 flex flex-col gap-4">
+            <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[14px] p-4">
               {selectedVillage ? (
                 <>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Selected node</p>
-                  <h2 className="font-display text-2xl text-white leading-tight">{selectedVillage.name}</h2>
-                  <p className="text-text-2 text-sm mt-1">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-[#1A2E1C]/65 mb-2">Selected node</p>
+                  <h2 className="font-display text-2xl text-[#1A2E1C] leading-tight">{selectedVillage.name}</h2>
+                  <p className="text-[#1A2E1C]/70 text-sm mt-1">
                     {selectedVillage.region}
                   </p>
-                  <p className="text-text-2 text-sm mt-3 line-clamp-2">{selectedVillage.description}</p>
+                  <p className="text-[#1A2E1C]/70 text-sm mt-3 line-clamp-2">{selectedVillage.description}</p>
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="text-xs text-text-3 uppercase">Community signal</span>
+                    <span className="text-xs text-[#1A2E1C]/65 uppercase">Community signal</span>
                     <span className="font-semibold" style={{ color: cwsColor(selectedVillage.cws) }}>
                       {selectedVillage.cws} · {cwsLabel(selectedVillage.cws)}
                     </span>
                   </div>
                 </>
               ) : (
-                <p className="text-text-2 text-sm">Click a village on the map to lock recommendations to one place.</p>
+                <p className="text-[#1A2E1C]/70 text-sm">Click a village on the map to lock recommendations to one place.</p>
               )}
             </div>
 
             {suggestedRoutes.length > 0 && (
-              <div className="bg-[#0F151C] border border-[#2A3742] rounded-[14px] p-4 flex flex-col gap-3">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-text-3">Suggested routes</p>
+              <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[14px] p-4 flex flex-col gap-3">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-[#1A2E1C]/65">Suggested routes</p>
                 {suggestedRoutes.map((route, i) => (
-                  <div key={route.id} className={`flex flex-wrap items-center justify-between gap-3 ${i > 0 ? 'border-t border-[#1E2D3A] pt-3' : ''}`}>
+                  <div key={route.id} className={`flex flex-wrap items-center justify-between gap-3 ${i > 0 ? 'border-t border-[#D6DCCD] pt-3' : ''}`}>
                     <div>
-                      <h3 className="font-display text-lg text-white leading-tight">{route.name}</h3>
-                      <p className="text-text-2 text-sm mt-0.5">{villageById.get(route.villageId)?.name || 'Unknown village'}</p>
+                      <h3 className="font-display text-lg text-[#1A2E1C] leading-tight">{route.name}</h3>
+                      <p className="text-[#1A2E1C]/70 text-sm mt-0.5">{villageById.get(route.villageId)?.name || 'Unknown village'}</p>
                     </div>
                     <Link
                       href={`/experience/${route.id}`}
-                      className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
+                      className="bg-[#0B6E2A] text-white font-semibold px-4 py-2 rounded-pill hover:bg-[#095A22] transition-colors"
                     >
                       Open
                     </Link>
@@ -235,18 +235,18 @@ export default function DiscoverPage() {
           </section>
         </div>
 
-        <section id="discover-feed" className="mt-7 bg-[#101419] border border-[#222F3A] rounded-[22px] p-4 md:p-6">
+        <section id="discover-feed" className="mt-7 surface-card rounded-[22px] p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
             <div>
-              <h3 className="font-display text-3xl text-white">Trips you can actually book</h3>
-              <p className="text-text-2 text-sm mt-1">Sorted by fit, cost, or community impact.</p>
+              <h3 className="font-display text-3xl text-[#1A2E1C]">Trips you can actually book</h3>
+              <p className="text-[#1A2E1C]/70 text-sm mt-1">Sorted by fit, cost, or community impact.</p>
             </div>
             <div className="flex gap-2">
               {(['match', 'price', 'cws'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSortBy(s)}
-                  className={`text-xs px-3 py-2 rounded-pill border transition-colors ${sortBy === s ? 'border-accent text-accent bg-accent/10' : 'border-[#31404B] text-text-2 hover:border-[#4C6072]'}`}
+                  className={`text-xs px-3 py-2 rounded-pill border transition-colors ${sortBy === s ? 'border-[#0B6E2A] text-[#0B6E2A] bg-[#0B6E2A]/10' : 'border-[#D6DCCD] text-[#1A2E1C]/70 hover:border-[#A8B09F]'}`}
                 >
                   {s === 'match' ? 'Best match' : s === 'price' ? 'Lowest price' : 'Impact first'}
                 </button>
@@ -259,7 +259,7 @@ export default function DiscoverPage() {
               <button
                 key={t}
                 onClick={() => setFilterType(t)}
-                className={`shrink-0 px-4 py-2 rounded-pill text-xs font-medium transition-colors ${filterType === t ? 'bg-accent text-black' : 'bg-[#151D25] border border-[#2E3C48] text-text-2 hover:border-[#4D6074]'}`}
+                className={`shrink-0 px-4 py-2 rounded-pill text-xs font-medium transition-colors ${filterType === t ? 'bg-[#0B6E2A] text-white' : 'bg-[#F4EDE2] border border-[#D6DCCD] text-[#1A2E1C]/70 hover:border-[#A8B09F]'}`}
               >
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
@@ -273,20 +273,20 @@ export default function DiscoverPage() {
               const pct = Math.round(Math.min(99, exp.score * 100));
 
               return (
-                <article key={exp.id} className="bg-[#111820] border border-[#2A3742] rounded-[16px] p-4 flex flex-col gap-4">
+                <article key={exp.id} className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-[16px] p-4 flex flex-col gap-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.14em] text-text-3 mb-1">{village.region}</p>
-                      <h4 className="font-display text-2xl text-white leading-tight">{exp.name}</h4>
-                      <p className="text-text-2 text-sm mt-1">{village.name}</p>
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-[#1A2E1C]/65 mb-1">{village.region}</p>
+                      <h4 className="font-display text-2xl text-[#1A2E1C] leading-tight">{exp.name}</h4>
+                      <p className="text-[#1A2E1C]/70 text-sm mt-1">{village.name}</p>
                     </div>
-                    <span className="bg-accent/20 text-accent px-3 py-1 rounded-pill text-xs font-semibold">{pct}% fit</span>
+                    <span className="bg-[#0B6E2A]/15 text-[#0B6E2A] px-3 py-1 rounded-pill text-xs font-semibold">{pct}% fit</span>
                   </div>
 
-                  <p className="text-text-2 text-sm line-clamp-3">{exp.description}</p>
+                  <p className="text-[#1A2E1C]/70 text-sm line-clamp-3">{exp.description}</p>
 
-                  <div className="flex items-center justify-between text-xs text-text-2">
-                    <span className="capitalize px-2.5 py-1 rounded-pill border border-[#344350]">{exp.type}</span>
+                  <div className="flex items-center justify-between text-xs text-[#1A2E1C]/70">
+                    <span className="capitalize px-2.5 py-1 rounded-pill border border-[#D6DCCD]">{exp.type}</span>
                     <span>EUR {exp.price} · {exp.duration}</span>
                     <span style={{ color: cwsColor(village.cws) }}>CWS {village.cws}</span>
                   </div>
@@ -294,7 +294,7 @@ export default function DiscoverPage() {
                   <div className="flex justify-end">
                     <Link
                       href={`/experience/${exp.id}`}
-                      className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
+                      className="bg-[#0B6E2A] text-white font-semibold px-4 py-2 rounded-pill hover:bg-[#095A22] transition-colors"
                     >
                       View route
                     </Link>
@@ -305,7 +305,7 @@ export default function DiscoverPage() {
           </div>
 
           {filteredMatches.length === 0 && (
-            <div className="text-center py-10 text-text-2">No experiences found for the current globe node and filter.</div>
+            <div className="text-center py-10 text-[#1A2E1C]/70">No experiences found for the current globe node and filter.</div>
           )}
         </section>
       </div>

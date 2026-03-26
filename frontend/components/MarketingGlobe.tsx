@@ -58,7 +58,7 @@ export default function MarketingGlobe({ destinations, onSelect }: MarketingGlob
   if (windowSize.width === 0) return null;
   
   return (
-    <div className="absolute inset-0 flex items-center justify-center -z-10 overflow-visible touch-none">
+    <div className="absolute inset-0 z-0 flex items-center justify-center overflow-visible touch-none">
       <div className="opacity-90 transition-opacity duration-1000 ease-in-out">
         <Globe
           ref={globeRef}

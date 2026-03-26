@@ -34,12 +34,12 @@ export function SwipeCard({
 
   return (
     <div className="flex flex-col items-center w-full max-w-md mx-auto">
-      <p className="text-text-2 text-sm mb-6">Which scene calls to you?</p>
+      <p className="text-[#1A2E1C]/70 text-sm mb-6">Which scene calls to you?</p>
       <div className="flex gap-4 w-full justify-center">
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('left')}
-          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'left' ? 'border-accent' : 'border-[#222] hover:border-accent'} overflow-hidden cursor-pointer relative transition-colors`}
+          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#F4EDE2] overflow-hidden cursor-pointer relative transition-colors`}
         >
           <div className="h-[210px] w-full" style={{ backgroundColor: leftColor }}>
             <img
@@ -50,8 +50,8 @@ export function SwipeCard({
             />
           </div>
           <div className="h-[110px] p-3 flex flex-col items-center justify-center text-center">
-            <span className="font-sans text-sm font-medium text-text-1">{leftLabel}</span>
-            <span className="font-sans text-[11px] text-text-3 mt-2 leading-snug">{leftDescription}</span>
+            <span className="font-sans text-sm font-medium text-[#1A2E1C]">{leftLabel}</span>
+            <span className="font-sans text-[11px] text-[#1A2E1C]/65 mt-2 leading-snug">{leftDescription}</span>
           </div>
           {chosen === 'left' && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -63,7 +63,7 @@ export function SwipeCard({
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('right')}
-          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'right' ? 'border-accent' : 'border-[#222] hover:border-accent'} overflow-hidden cursor-pointer relative transition-colors`}
+          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#F4EDE2] overflow-hidden cursor-pointer relative transition-colors`}
         >
           <div className="h-[210px] w-full" style={{ backgroundColor: rightColor }}>
             <img
@@ -74,8 +74,8 @@ export function SwipeCard({
             />
           </div>
           <div className="h-[110px] p-3 flex flex-col items-center justify-center text-center">
-            <span className="font-sans text-sm font-medium text-text-1">{rightLabel}</span>
-            <span className="font-sans text-[11px] text-text-3 mt-2 leading-snug">{rightDescription}</span>
+            <span className="font-sans text-sm font-medium text-[#1A2E1C]">{rightLabel}</span>
+            <span className="font-sans text-[11px] text-[#1A2E1C]/65 mt-2 leading-snug">{rightDescription}</span>
           </div>
           {chosen === 'right' && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">

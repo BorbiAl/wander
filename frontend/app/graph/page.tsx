@@ -202,13 +202,13 @@ export default function GraphPage() {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
-      className="flex flex-col h-[calc(100vh-3.5rem)]"
+      className="page-standard flex min-h-screen flex-col"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#222] shrink-0">
+      <div className="page-shell flex items-center justify-between border-b border-[#D6DCCD] py-4 shrink-0">
         <div>
-          <h1 className="font-display text-2xl text-white">Knowledge Graph</h1>
-          <p className="text-text-3 text-xs mt-0.5">
+          <h1 className="font-display text-2xl text-[#1A2E1C]">Knowledge Graph</h1>
+          <p className="text-[#1A2E1C]/65 text-xs mt-0.5">
             {nodes.filter(n => n.type === 'village').length} villages · {nodes.filter(n => n.type === 'experience').length} experiences · {edges.length} relationships
           </p>
         </div>
@@ -217,7 +217,7 @@ export default function GraphPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`text-xs px-3 py-1.5 rounded-pill border transition-colors ${filter === f ? 'bg-accent text-black border-accent' : 'border-[#333] text-text-2 hover:border-[#555]'}`}
+              className={`text-xs px-3 py-1.5 rounded-pill border transition-colors ${filter === f ? 'bg-[#0B6E2A] text-white border-[#0B6E2A]' : 'border-[#D6DCCD] text-[#1A2E1C]/70 hover:border-[#A8B09F]'}`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
@@ -226,10 +226,10 @@ export default function GraphPage() {
       </div>
 
       {/* Graph + Sidebar */}
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 relative bg-[#050505]">
+      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
+        <div className="flex-1 relative bg-[#E5E9DF] min-h-[420px]">
           {!settled && (
-            <div className="absolute top-3 left-1/2 -translate-x-1/2 text-[10px] text-text-3 bg-[#111] px-3 py-1 rounded-pill border border-[#222] z-10">
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 text-[10px] text-[#1A2E1C]/65 bg-[#F4EDE2] px-3 py-1 rounded-pill border border-[#D6DCCD] z-10">
               Simulating layout…
             </div>
           )}
@@ -255,7 +255,7 @@ export default function GraphPage() {
                 <line
                   key={i}
                   x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                  stroke={isCross ? '#2a2a2a' : '#1e1e1e'}
+                  stroke="#000000"
                   strokeWidth={isCross ? 1 : 1.5}
                   strokeDasharray={isCross ? '3 3' : undefined}
                 />
@@ -294,7 +294,7 @@ export default function GraphPage() {
                       dy={-r - 5}
                       textAnchor="middle"
                       fontSize={9}
-                      fill="#aaa"
+                      fill="#4B5B4D"
                       style={{ pointerEvents: 'none', userSelect: 'none' }}
                     >
                       {node.name}
@@ -307,26 +307,26 @@ export default function GraphPage() {
         </div>
 
         {/* Info sidebar */}
-        <div className="w-64 shrink-0 border-l border-[#222] bg-bg p-5 overflow-y-auto flex flex-col gap-5">
+        <div className="w-full lg:w-64 shrink-0 border-t lg:border-t-0 lg:border-l border-[#D6DCCD] bg-[#F4EDE2] p-5 overflow-y-auto flex flex-col gap-5">
           {/* Legend */}
           <div>
-            <div className="text-[10px] uppercase text-text-3 mb-3">Node types</div>
+            <div className="text-[10px] uppercase text-[#1A2E1C]/65 mb-3">Node types</div>
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-xs text-text-2">
+              <div className="flex items-center gap-2 text-xs text-[#1A2E1C]/75">
                 <div className="w-3.5 h-3.5 rounded-full bg-accent opacity-90" />
                 Village (high CWS)
               </div>
-              <div className="flex items-center gap-2 text-xs text-text-2">
+              <div className="flex items-center gap-2 text-xs text-[#1A2E1C]/75">
                 <div className="w-3.5 h-3.5 rounded-full bg-[#F5A623] opacity-90" />
                 Village (medium CWS)
               </div>
-              <div className="flex items-center gap-2 text-xs text-text-2">
+              <div className="flex items-center gap-2 text-xs text-[#1A2E1C]/75">
                 <div className="w-3.5 h-3.5 rounded-full bg-[#FF4444] opacity-90" />
                 Village (pioneer)
               </div>
-              <div className="border-t border-[#1e1e1e] my-1" />
+              <div className="border-t border-[#D6DCCD] my-1" />
               {Object.entries(EXP_TYPE_COLOR).map(([type, color]) => (
-                <div key={type} className="flex items-center gap-2 text-xs text-text-2">
+                <div key={type} className="flex items-center gap-2 text-xs text-[#1A2E1C]/75">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
                   {type}
                 </div>
@@ -336,22 +336,22 @@ export default function GraphPage() {
 
           {/* Selected node info */}
           {selected ? (
-            <div className="bg-surface border border-[#222] rounded-card p-4">
-              <div className="text-[10px] uppercase text-text-3 mb-2">{selected.type}</div>
-              <div className="font-display text-lg text-white leading-tight mb-3">{selected.name}</div>
+            <div className="bg-[#E2E7DA] border border-[#D6DCCD] rounded-card p-4">
+              <div className="text-[10px] uppercase text-[#1A2E1C]/65 mb-2">{selected.type}</div>
+              <div className="font-display text-lg text-[#1A2E1C] leading-tight mb-3">{selected.name}</div>
               {selected.type === 'village' && (
                 <>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-text-2">Region</span>
-                    <span className="text-white">{selected.region}</span>
+                    <span className="text-[#1A2E1C]/75">Region</span>
+                    <span className="text-[#1A2E1C]">{selected.region}</span>
                   </div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-text-2">CWS</span>
+                    <span className="text-[#1A2E1C]/75">CWS</span>
                     <span className="font-bold" style={{ color: cwsColor(selected.cws ?? 50) }}>
                       {selected.cws}
                     </span>
                   </div>
-                  <div className="w-full h-1.5 bg-[#222] rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-[#D6DCCD] rounded-full overflow-hidden">
                     <div
                       className="h-full"
                       style={{ width: `${selected.cws}%`, backgroundColor: cwsColor(selected.cws ?? 50) }}

@@ -65,9 +65,9 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-bg z-50 flex flex-col items-center justify-center">
-        <div className="w-16 h-16 border-4 border-[#333] border-t-accent rounded-full animate-spin mb-6" />
-        <p className="text-white font-display text-xl">
+      <div className="fixed inset-0 bg-[#E5E9DF] z-50 flex flex-col items-center justify-center">
+        <div className="w-16 h-16 border-4 border-[#D6DCCD] border-t-[#0B6E2A] rounded-full animate-spin mb-6" />
+        <p className="text-[#1A2E1C] font-display text-xl">
           {seedStatus === 'loading' ? `Discovering villages in ${destination}…` : 'Analyzing your personality...'}
         </p>
       </div>
@@ -75,26 +75,26 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] flex flex-col">
+    <div className="page-standard min-h-[calc(100vh-3.5rem)] flex flex-col font-sans">
       {/* Header */}
-      <div className="px-4 py-4 flex items-center justify-between border-b border-[#222]">
+      <div className="px-4 py-4 flex items-center justify-between border-b border-[#D6DCCD]">
         <div className="flex items-center gap-2">
           {step > 0 && (
-            <button onClick={() => setStep(s => s - 1)} className="text-text-2 hover:text-white">←</button>
+            <button onClick={() => setStep(s => s - 1)} className="text-[#1A2E1C]/70 hover:text-[#1A2E1C]">←</button>
           )}
-          <span className="text-sm font-medium">WanderGraph</span>
+          <span className="text-sm font-medium text-[#1A2E1C]">WanderGraph</span>
           {destination && (
-            <span className="text-text-3 text-xs">· {destination}</span>
+            <span className="text-[#1A2E1C]/65 text-xs">· {destination}</span>
           )}
         </div>
-        <div className="text-text-3 text-xs">Step {step + 1} of 15</div>
+        <div className="text-[#1A2E1C]/65 text-xs">Step {step + 1} of 15</div>
       </div>
-      <div className="w-full h-[2px] bg-[#222]">
-        <div className="h-full bg-accent transition-all duration-300" style={{ width: `${((step + 1) / 15) * 100}%` }} />
+      <div className="w-full h-[2px] bg-[#D6DCCD]">
+        <div className="h-full bg-[#0B6E2A] transition-all duration-300" style={{ width: `${((step + 1) / 15) * 100}%` }} />
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden bg-[#E5E9DF]">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}

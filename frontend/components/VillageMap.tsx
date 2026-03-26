@@ -57,12 +57,12 @@ export default function VillageMap({
       <MapContainer
         center={[initLat, initLng]}
         zoom={7}
-        style={{ width: '100%', height: '100%', background: '#080808' }}
+        style={{ width: '100%', height: '100%', background: '#E5E9DF' }}
         zoomControl={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <AutoCenter seedStatus={seedStatus} />
         {villagesToShow.map(village => (
@@ -81,16 +81,16 @@ export default function VillageMap({
             }}
           >
             <Popup className="custom-popup">
-              <div className="bg-surface border border-[#333] rounded-card p-3 text-white min-w-[200px]">
-                <h3 className="font-display text-lg mb-1">{village.name}</h3>
-                <div className="text-[10px] uppercase text-text-2 mb-3 bg-surface-2 inline-block px-2 py-0.5 rounded-pill border border-[#333]">
+              <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-3 text-[#1A2E1C] min-w-[200px]">
+                <h3 className="font-display text-lg mb-1 text-[#1A2E1C]">{village.name}</h3>
+                <div className="text-[10px] uppercase text-[#1A2E1C]/70 mb-3 bg-[#E2E7DA] inline-block px-2 py-0.5 rounded-pill border border-[#D6DCCD]">
                   {village.region}
                 </div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs text-text-2">CWS Score</span>
+                  <span className="text-xs text-[#1A2E1C]/70">CWS Score</span>
                   <span className="font-bold" style={{ color: cwsColor(village.cws) }}>{village.cws}</span>
                 </div>
-                <div className="w-full h-1.5 bg-[#222] rounded-full mb-4 overflow-hidden">
+                <div className="w-full h-1.5 bg-[#D6DCCD] rounded-full mb-4 overflow-hidden">
                   <div className="h-full" style={{ width: `${village.cws}%`, backgroundColor: cwsColor(village.cws) }} />
                 </div>
                 {onSelectVillage && (
@@ -107,7 +107,7 @@ export default function VillageMap({
         ))}
       </MapContainer>
 
-      <div className="absolute top-4 left-4 bg-surface/90 backdrop-blur border border-[#333] rounded-card p-3 z-[400] text-[10px] flex flex-col gap-2">
+      <div className="absolute top-4 left-4 bg-[#F4EDE2E6] backdrop-blur border border-[#D6DCCD] rounded-card p-3 z-[400] text-[10px] text-[#1A2E1C] flex flex-col gap-2">
         <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-accent" /> High CWS</div>
         <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-amber" /> Medium</div>
         <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full" style={{background:'#FF4444'}} /> Pioneer territory</div>

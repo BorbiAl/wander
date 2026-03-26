@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppProvider>
           <DataProvider>
             <Navbar />
-            <main className="flex-1 pb-20">
+            <main className="flex-1 pt-14 pb-20 md:pb-0">
               {children}
             </main>
           </DataProvider>

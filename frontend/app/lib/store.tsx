@@ -77,7 +77,7 @@ type AppContextType = AppState & {
   // Auth actions
   loginWithEmail: (email: string, userId: string, savedState: Record<string, unknown> | null) => void;
   logout: () => void;
-  saveToAccount: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  saveToAccount: (email: string, userId: string) => Promise<{ ok: boolean; error?: string }>;
 };
 
 const defaultState: AppState = {
@@ -311,7 +311,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('wandergraph_state', JSON.stringify(fresh));
   };
 
-  const saveToAccount = async (email: string, password: string): Promise<{ ok: boolean; error?: string }> => {
+  const saveToAccount = async (email: string, userId: string): Promise<{ ok: boolean; error?: string }> => {
     try {
       // Strip transient/non-serialisable fields before saving
       const { seedStatus: _s, ...stateToSave } = state;
@@ -319,7 +319,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save', email, password, state: stateToSave }),
+        body: JSON.stringify({ action: 'save', email, userId, state: stateToSave }),
       });
       const data = await res.json();
       if (!res.ok) return { ok: false, error: (data.error as string) ?? 'Failed to save' };

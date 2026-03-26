@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFile, writeFile, access } from 'node:fs/promises';
 import path from 'node:path';
-import { createHash } from 'node:crypto';
 
 const DATA_PATHS = [
   path.resolve(process.cwd(), 'data', 'users.json'),
@@ -46,36 +45,12 @@ async function writeUsers(users: StoredUser[]): Promise<void> {
   await writeFile(p, JSON.stringify(users, null, 2), 'utf-8');
 }
 
-function hashPassword(password: string): string {
-  return createHash('sha256').update(password).digest('hex');
-}
-
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function classifyBookingDate(b: Record<string, unknown>): Record<string, unknown> {
-  const scheduledAt = b.scheduledAt as string | undefined;
-  if (!scheduledAt) return { eventsBefore: [], eventsAfter: [], ...b };
-  const isPast = new Date(scheduledAt).getTime() < Date.now();
-  return {
-    ...b,
-    eventsBefore: isPast ? [scheduledAt] : [],
-    eventsAfter: isPast ? [] : [scheduledAt],
-  };
-}
-
-function migrateState(state: Record<string, unknown> | null): Record<string, unknown> | null {
-  if (!state) return null;
-  const bookings = state.bookings as Record<string, unknown>[] | undefined;
-  if (!Array.isArray(bookings)) return state;
-  return {
-    ...state,
-    bookings: bookings.map(classifyBookingDate),
-  };
-}
-
-// POST /api/auth  body: { action: 'register'|'login'|'save', email, password, state? }
+// POST /api/auth  body: { action: 'save'|'autosave', email, userId, state? }
+// Login/register is now handled by /api/auth/otp (email OTP flow).
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;
   try {
@@ -84,14 +59,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { action, email, password, state } = body as {
+  const { action, email, userId, state } = body as {
     action: string;
     email: string;
-    password: string;
+    userId: string;
     state?: Record<string, unknown>;
   };
 
-  if (!action || !email || !password) {
+  if (!action || !email || !userId) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
   }
 
@@ -99,55 +74,10 @@ export async function POST(req: NextRequest) {
   if (!isValidEmail(emailLower)) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
   }
-  if (String(password).length < 6) {
-    return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
-  }
 
   const users = await readUsers();
-  const passwordHash = hashPassword(String(password));
 
-  if (action === 'register') {
-    if (users.find(u => u.email === emailLower)) {
-      return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
-    }
-    const userId = 'user_' + Math.random().toString(36).slice(2, 8);
-    const newUser: StoredUser = {
-      email: emailLower,
-      passwordHash,
-      userId,
-      state: null,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      eventsBefore: [],
-      eventsAfter: [],
-    };
-    users.push(newUser);
-    await writeUsers(users);
-    return NextResponse.json({ userId, state: null });
-  }
-
-  if (action === 'login') {
-    const user = users.find(u => u.email === emailLower);
-    if (!user || user.passwordHash !== passwordHash) {
-      return NextResponse.json({ error: 'Incorrect email or password' }, { status: 401 });
-    }
-    return NextResponse.json({ userId: user.userId, state: migrateState(user.state) });
-  }
-
-  if (action === 'save') {
-    const user = users.find(u => u.email === emailLower);
-    if (!user || user.passwordHash !== passwordHash) {
-      return NextResponse.json({ error: 'Incorrect email or password' }, { status: 401 });
-    }
-    user.state = state ?? null;
-    user.updatedAt = Date.now();
-    await writeUsers(users);
-    return NextResponse.json({ ok: true });
-  }
-
-  if (action === 'autosave') {
-    const { userId } = body as { userId?: string };
-    if (!userId) return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+  if (action === 'save' || action === 'autosave') {
     const user = users.find(u => u.email === emailLower && u.userId === String(userId));
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     user.state = state ?? null;

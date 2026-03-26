@@ -60,13 +60,6 @@ export function Navbar() {
           </div>
 
           <div className="absolute right-0 flex items-center gap-4">
-            {!personality ? (
-              <Link href="/onboarding" className="bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide px-5 py-2.5 rounded-full hover:bg-[#095A22] transition-colors shadow-md hover:shadow-lg active:scale-95 shadow-[#0B6E2A]/20">
-                Start journey
-              </Link>
-            ) : (
-              <div className="hidden sm:block" />
-            )}
             {email ? (
               <button
                 onClick={logout}

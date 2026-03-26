@@ -1,12 +1,489 @@
 [
   {
+    "eventsBefore": [],
+    "eventsAfter": [],
     "email": "boyan.b.georgiev@gmail.com",
     "passwordHash": "bc1861260f139b23fd144b3ebffee77a569b14fbaafb716fd8538c86a9f01381",
     "userId": "user_wdemww",
-    "state": null,
+    "state": {
+      "observations": [
+        1,
+        2,
+        5,
+        6,
+        8,
+        11,
+        14,
+        15,
+        19,
+        18,
+        19,
+        19,
+        23,
+        21,
+        22,
+        1,
+        2,
+        5,
+        6,
+        9,
+        10,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        21,
+        23,
+        22
+      ],
+      "personality": {
+        "vector": [
+          0.31999999999999995,
+          0.039999999999999994,
+          0.15999999999999998,
+          0.4,
+          0.07999999999999999
+        ],
+        "dominantIndex": 3,
+        "dominant": "Achiever"
+      },
+      "matches": [
+        {
+          "id": "exp-ecuador_tunsalao-pulingui-culture",
+          "villageId": "ecuador_tunsalao-pulingui",
+          "name": "Tunsalao Pulingui: local music session studio",
+          "type": "craft",
+          "price": 29,
+          "duration": "3h",
+          "hostId": "host-ecuador_tunsalao-pulingui-a",
+          "description": "Hands-on local music session session led by local practitioners in Tunsalao Pulingui, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7476
+        },
+        {
+          "id": "exp-ecuador_gaushi-chico-culture",
+          "villageId": "ecuador_gaushi-chico",
+          "name": "Gaushi Chico: traditional weaving studio",
+          "type": "craft",
+          "price": 32,
+          "duration": "4h",
+          "hostId": "host-ecuador_gaushi-chico-a",
+          "description": "Hands-on traditional weaving session led by local practitioners in Gaushi Chico, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7476
+        },
+        {
+          "id": "exp-ecuador_luisa-corona-real-culture",
+          "villageId": "ecuador_luisa-corona-real",
+          "name": "Luisa Corona Real: traditional weaving studio",
+          "type": "craft",
+          "price": 32,
+          "duration": "2h",
+          "hostId": "host-ecuador_luisa-corona-real-a",
+          "description": "Hands-on traditional weaving session led by local practitioners in Luisa Corona Real, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7476
+        },
+        {
+          "id": "exp-ecuador_nitiluisa-centro-culture",
+          "villageId": "ecuador_nitiluisa-centro",
+          "name": "Nitiluisa Centro: traditional weaving studio",
+          "type": "craft",
+          "price": 28,
+          "duration": "4h",
+          "hostId": "host-ecuador_nitiluisa-centro-a",
+          "description": "Hands-on traditional weaving session led by local practitioners in Nitiluisa Centro, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7476
+        },
+        {
+          "id": "exp-ecuador_san-vicente-de-luisa-culture",
+          "villageId": "ecuador_san-vicente-de-luisa",
+          "name": "San Vicente de Luisa: village storytelling studio",
+          "type": "craft",
+          "price": 22,
+          "duration": "3h",
+          "hostId": "host-ecuador_san-vicente-de-luisa-a",
+          "description": "Hands-on village storytelling session led by local practitioners in San Vicente de Luisa, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7476
+        },
+        {
+          "id": "exp-ecuador_tunsalao-pulingui-landscape",
+          "villageId": "ecuador_tunsalao-pulingui",
+          "name": "Tunsalao Pulingui: village storytelling and ridge walk",
+          "type": "hike",
+          "price": 13,
+          "duration": "6h",
+          "hostId": "host-ecuador_tunsalao-pulingui-b",
+          "description": "Guided landscape walk around Tunsalao Pulingui combining village storytelling, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "exp-ecuador_gaushi-chico-landscape",
+          "villageId": "ecuador_gaushi-chico",
+          "name": "Gaushi Chico: local music session and ridge walk",
+          "type": "hike",
+          "price": 20,
+          "duration": "5h",
+          "hostId": "host-ecuador_gaushi-chico-b",
+          "description": "Guided landscape walk around Gaushi Chico combining local music session, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "exp-ecuador_luisa-corona-real-landscape",
+          "villageId": "ecuador_luisa-corona-real",
+          "name": "Luisa Corona Real: local music session and ridge walk",
+          "type": "hike",
+          "price": 22,
+          "duration": "5h",
+          "hostId": "host-ecuador_luisa-corona-real-b",
+          "description": "Guided landscape walk around Luisa Corona Real combining local music session, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "exp-ecuador_nitiluisa-centro-landscape",
+          "villageId": "ecuador_nitiluisa-centro",
+          "name": "Nitiluisa Centro: local music session and ridge walk",
+          "type": "hike",
+          "price": 22,
+          "duration": "5h",
+          "hostId": "host-ecuador_nitiluisa-centro-b",
+          "description": "Guided landscape walk around Nitiluisa Centro combining local music session, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "exp-ecuador_san-vicente-de-luisa-landscape",
+          "villageId": "ecuador_san-vicente-de-luisa",
+          "name": "San Vicente de Luisa: farm-to-table cooking and ridge walk",
+          "type": "hike",
+          "price": 24,
+          "duration": "3h",
+          "hostId": "host-ecuador_san-vicente-de-luisa-b",
+          "description": "Guided landscape walk around San Vicente de Luisa combining farm-to-table cooking, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_gaushi-chico-to-ecuador_tunsalao-pulingui",
+          "villageId": "ecuador_gaushi-chico",
+          "name": "Gaushi Chico to Tunsalao Pulingui community route",
+          "type": "sightseeing",
+          "price": 27,
+          "duration": "4h",
+          "hostId": "host-edge-ecuador_gaushi-chico",
+          "description": "Cross-village route between Gaushi Chico and Tunsalao Pulingui focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_san-vicente-de-luisa-to-ecuador_tunsalao-pulingui",
+          "villageId": "ecuador_san-vicente-de-luisa",
+          "name": "San Vicente de Luisa to Tunsalao Pulingui community route",
+          "type": "sightseeing",
+          "price": 13,
+          "duration": "5h",
+          "hostId": "host-edge-ecuador_san-vicente-de-luisa",
+          "description": "Cross-village route between San Vicente de Luisa and Tunsalao Pulingui focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_nitiluisa-centro-to-ecuador_tunsalao-pulingui",
+          "villageId": "ecuador_nitiluisa-centro",
+          "name": "Nitiluisa Centro to Tunsalao Pulingui community route",
+          "type": "sightseeing",
+          "price": 15,
+          "duration": "4h",
+          "hostId": "host-edge-ecuador_nitiluisa-centro",
+          "description": "Cross-village route between Nitiluisa Centro and Tunsalao Pulingui focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_luisa-corona-real-to-ecuador_luisa-rumipamba",
+          "villageId": "ecuador_luisa-corona-real",
+          "name": "Luisa Corona Real to Luisa Rumipamba community route",
+          "type": "sightseeing",
+          "price": 15,
+          "duration": "5h",
+          "hostId": "host-edge-ecuador_luisa-corona-real",
+          "description": "Cross-village route between Luisa Corona Real and Luisa Rumipamba focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_gaushi-chico-to-ecuador_san-vicente-de-luisa",
+          "villageId": "ecuador_gaushi-chico",
+          "name": "Gaushi Chico to San Vicente de Luisa community route",
+          "type": "sightseeing",
+          "price": 20,
+          "duration": "5h",
+          "hostId": "host-edge-ecuador_gaushi-chico",
+          "description": "Cross-village route between Gaushi Chico and San Vicente de Luisa focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_gaushi-chico-to-ecuador_san-jose-de-gaushi",
+          "villageId": "ecuador_gaushi-chico",
+          "name": "Gaushi Chico to San Jose de Gaushi community route",
+          "type": "sightseeing",
+          "price": 22,
+          "duration": "3h",
+          "hostId": "host-edge-ecuador_gaushi-chico",
+          "description": "Cross-village route between Gaushi Chico and San Jose de Gaushi focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_luisa-corona-real-to-ecuador_nitiluisa-centro",
+          "villageId": "ecuador_luisa-corona-real",
+          "name": "Luisa Corona Real to Nitiluisa Centro community route",
+          "type": "sightseeing",
+          "price": 18,
+          "duration": "6h",
+          "hostId": "host-edge-ecuador_luisa-corona-real",
+          "description": "Cross-village route between Luisa Corona Real and Nitiluisa Centro focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_luisa-corona-real-to-ecuador_san-vicente-de-luisa",
+          "villageId": "ecuador_luisa-corona-real",
+          "name": "Luisa Corona Real to San Vicente de Luisa community route",
+          "type": "sightseeing",
+          "price": 14,
+          "duration": "5h",
+          "hostId": "host-edge-ecuador_luisa-corona-real",
+          "description": "Cross-village route between Luisa Corona Real and San Vicente de Luisa focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        },
+        {
+          "id": "edge-ecuador_nitiluisa-centro-to-ecuador_san-vicente-de-luisa",
+          "villageId": "ecuador_nitiluisa-centro",
+          "name": "Nitiluisa Centro to San Vicente de Luisa community route",
+          "type": "sightseeing",
+          "price": 16,
+          "duration": "2h",
+          "hostId": "host-edge-ecuador_nitiluisa-centro",
+          "description": "Cross-village route between Nitiluisa Centro and San Vicente de Luisa focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7195999999999999
+        }
+      ],
+      "bookings": [
+        {
+          "id": "bkg_e2ml1h",
+          "experienceId": "edge-ecuador_nitiluisa-centro-to-ecuador_tunsalao-pulingui",
+          "villageName": "Nitiluisa Centro",
+          "experienceName": "Nitiluisa Centro to Tunsalao Pulingui community route",
+          "hostName": "Nitiluisa Centro Route Team",
+          "amount": 15,
+          "split": {
+            "host": 10.5,
+            "community": 2.25,
+            "culture": 1.5,
+            "platform": 0.75
+          },
+          "timestamp": 1774564228303,
+          "cwsDelta": 5,
+          "eventsBefore": [],
+          "eventsAfter": []
+        },
+        {
+          "id": "bkg_rqyvrq",
+          "experienceId": "exp-ecuador_tunsalao-pulingui-culture",
+          "villageName": "Tunsalao Pulingui",
+          "experienceName": "Tunsalao Pulingui: local music session studio",
+          "hostName": "Tunsalao Pulingui Culture Collective",
+          "amount": 29,
+          "split": {
+            "host": 20.299999999999997,
+            "community": 4.35,
+            "culture": 2.9000000000000004,
+            "platform": 1.4500000000000002
+          },
+          "timestamp": 1774564197528,
+          "cwsDelta": 9,
+          "eventsBefore": [],
+          "eventsAfter": []
+        },
+        {
+          "id": "bkg_164zle",
+          "experienceId": "exp-ecuador_tunsalao-pulingui-culture",
+          "villageName": "Tunsalao Pulingui",
+          "experienceName": "Tunsalao Pulingui: local music session studio",
+          "hostName": "Tunsalao Pulingui Culture Collective",
+          "amount": 29,
+          "split": {
+            "host": 20.299999999999997,
+            "community": 4.35,
+            "culture": 2.9000000000000004,
+            "platform": 1.4500000000000002
+          },
+          "timestamp": 1774564177475,
+          "cwsDelta": 9,
+          "eventsBefore": [],
+          "eventsAfter": []
+        },
+        {
+          "id": "bkg_hycaep",
+          "experienceId": "exp-ecuador_gaushi-chico-culture",
+          "villageName": "Gaushi Chico",
+          "experienceName": "Gaushi Chico: traditional weaving studio",
+          "hostName": "Gaushi Chico Culture Collective",
+          "amount": 32,
+          "split": {
+            "host": 22.4,
+            "community": 4.8,
+            "culture": 3.2,
+            "platform": 1.6
+          },
+          "timestamp": 1774564128668,
+          "cwsDelta": 10,
+          "eventsBefore": [],
+          "eventsAfter": []
+        }
+      ],
+      "userId": "user_wdemww",
+      "points": 208,
+      "badges": [
+        "Pioneer"
+      ],
+      "totalImpact": 105,
+      "villagesVisited": [
+        "Gaushi Chico",
+        "Tunsalao Pulingui",
+        "Nitiluisa Centro"
+      ],
+      "destination": "Quito, Ecuador",
+      "friends": [],
+      "activeGroupId": "grp_mn7qxd5c3v8",
+      "email": "boyan.b.georgiev@gmail.com"
+    },
     "createdAt": 1774559734224,
-    "updatedAt": 1774559734224,
-    "eventsBefore": [],
-    "eventsAfter": []
+    "updatedAt": 1774565116716
   }
 ]

@@ -158,7 +158,7 @@ export default function GroupDiscoverPage() {
   if (loadingGroup) {
     return (
       <div className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 flex min-h-screen items-center justify-center">
-        <div className="text-[#1A2E1C]/40 text-sm">Зарежда се групата…</div>
+        <div className="text-[#1A2E1C]/40 text-sm">Loading group…</div>
       </div>
     );
   }
@@ -166,15 +166,15 @@ export default function GroupDiscoverPage() {
   if (!group) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#E5E9DF] text-[#1A2E1C] font-sans px-4 text-center">
-        <p className="text-muted mb-4">Групата не е намерена.</p>
+        <p className="text-muted mb-4">Group not found.</p>
         <button onClick={() => router.push('/friends')}
-          className="rounded-full bg-[#0B6E2A] text-white px-6 py-2 shadow-md">Обратно</button>
+          className="rounded-full bg-[#0B6E2A] text-white px-6 py-2 shadow-md">Back</button>
       </div>
     );
   }
 
   const radarMembers = group.members.map(m => ({
-    displayName: m.userId === userId ? 'Ти' : m.displayName,
+    displayName: m.userId === userId ? 'You' : m.displayName,
     vector: m.vector,
     dominant: m.dominant,
   }));
@@ -189,53 +189,53 @@ export default function GroupDiscoverPage() {
           <div className="flex-1">
             <button onClick={handleBack}
               className="text-xs text-[#1A2E1C]/40 hover:text-[#1A2E1C] transition-colors mb-3 flex items-center gap-1">
-              ← Обратно към индивидуален режим
+              ← Back to individual mode
             </button>
             <h1 className="text-4xl font-bold tracking-tighter leading-tight text-[#1A2E1C] mb-1">{group.name}</h1>
             <p className="text-[#1A2E1C]/65 text-sm mb-4">
-              {group.members.length} пътешественик{group.members.length !== 1 ? 'а' : ''}
-              {group.destination ? ` · 📍 ${group.destination}` : ' · без дестинация'}
+              {group.members.length} traveler{group.members.length !== 1 ? 's' : ''}
+              {group.destination ? ` · 📍 ${group.destination}` : ' · no destination'}
             </p>
 
             <button onClick={handleCopyInvite}
               className="text-xs border border-[#D6DCCD] text-[#1A2E1C]/65 px-3 py-1.5 rounded-full hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors mb-6">
-              {copiedInvite ? 'Линкът е копиран!' : '🔗 Копирай invite линк'}
+              {copiedInvite ? 'Link copied!' : '🔗 Copy invite link'}
             </button>
 
             {/* Stats */}
             <div className="flex flex-wrap gap-3 mb-6">
               <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] px-4 py-3 text-center">
                 <div className="text-2xl font-bold text-[#F5A623]">{avgGroupFit}%</div>
-                <div className="text-[10px] text-[#1A2E1C]/40">Средна група</div>
+                <div className="text-[10px] text-[#1A2E1C]/40">Avg group fit</div>
               </div>
               <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] px-4 py-3 text-center">
                 <div className="text-2xl font-bold text-[#0B6E2A]">{worstFit}%</div>
-                <div className="text-[10px] text-[#1A2E1C]/40">Минимален fit</div>
+                <div className="text-[10px] text-[#1A2E1C]/40">Min fit</div>
               </div>
               <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] px-4 py-3 text-center">
                 <div className="text-2xl font-bold text-[#1A2E1C]">{group.members.length}</div>
-                <div className="text-[10px] text-[#1A2E1C]/40">Членове</div>
+                <div className="text-[10px] text-[#1A2E1C]/40">Members</div>
               </div>
             </div>
 
             {/* Destination setter */}
             <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 flex flex-col gap-2 mb-2">
               <p className="text-xs text-[#1A2E1C]/65 font-medium">
-                {group.destination ? `Промени дестинацията (сега: ${group.destination})` : 'Избери дестинация за групата'}
+                {group.destination ? `Change destination (current: ${group.destination})` : 'Set a destination for the group'}
               </p>
               <div className="flex gap-2">
                 <input type="text" value={destInput}
                   onChange={e => setDestInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSetDestination()}
-                  placeholder={group.destination || 'напр. Sofia, Bulgaria'}
+                  placeholder={group.destination || 'e.g. Sofia, Bulgaria'}
                   className="flex-1 bg-[#E5E9DF] border border-[#D6DCCD] rounded-lg px-3 py-2 text-sm text-[#1A2E1C] placeholder:text-[#1A2E1C]/30 outline-none focus:border-[#0B6E2A]" />
                 <button onClick={handleSetDestination} disabled={settingDest || (!destInput.trim() && !group.destination)}
                   className="bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#095A22] transition-colors disabled:opacity-50 whitespace-nowrap">
-                  {settingDest ? (seedStatus === 'loading' ? 'Зарежда…' : '…') : 'Задай'}
+                  {settingDest ? (seedStatus === 'loading' ? 'Loading…' : '…') : 'Set'}
                 </button>
               </div>
               <p className="text-[11px] text-[#1A2E1C]/40">
-                Всеки член може да зададе дестинация — преживяванията се зареждат за цялата група.
+                Any member can set the destination — experiences load for the whole group.
               </p>
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function GroupDiscoverPage() {
         {/* Compatibility matrix */}
         {group.members.length >= 2 && (
           <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] p-6 transition-all hover:bg-white/80 mb-8">
-            <h2 className="text-sm font-medium text-[#1A2E1C] mb-4">Compatibility между членовете</h2>
+            <h2 className="text-sm font-medium text-[#1A2E1C] mb-4">Compatibility between members</h2>
             <div className="overflow-x-auto">
               <table className="text-xs w-full">
                 <thead>
@@ -256,7 +256,7 @@ export default function GroupDiscoverPage() {
                     <th className="text-[#1A2E1C]/40 text-left pb-2 pr-3"></th>
                     {group.members.map(m => (
                       <th key={m.userId} className="text-[#1A2E1C]/40 pb-2 px-2 font-normal text-center">
-                        {m.userId === userId ? 'Ти' : m.displayName.split(' ')[0]}
+                        {m.userId === userId ? 'You' : m.displayName.split(' ')[0]}
                       </th>
                     ))}
                   </tr>
@@ -266,7 +266,7 @@ export default function GroupDiscoverPage() {
                     <tr key={rowMember.userId}>
                       <td className="text-[#1A2E1C]/65 pr-3 py-1 whitespace-nowrap">
                         {PERSONALITY_INFO[rowMember.dominant as keyof typeof PERSONALITY_INFO]?.emoji}{' '}
-                        {rowMember.userId === userId ? 'Ти' : rowMember.displayName.split(' ')[0]}
+                        {rowMember.userId === userId ? 'You' : rowMember.displayName.split(' ')[0]}
                       </td>
                       {group.members.map((colMember, ci) => {
                         const pct = compatMatrix[ri]?.[ci] ?? 0;
@@ -292,9 +292,9 @@ export default function GroupDiscoverPage() {
         {/* Waiting state */}
         {!group.destination && (
           <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] p-6 transition-all hover:bg-white/80 mb-8 text-center">
-            <p className="text-[#1A2E1C]/65 text-sm mb-2">Изчакваш приятелите ти да се присъединят?</p>
+            <p className="text-[#1A2E1C]/65 text-sm mb-2">Waiting for friends to join?</p>
             <p className="text-[#1A2E1C]/40 text-xs">
-              Копирай invite линка горе и им го прати. Страницата се обновява автоматично.
+              Copy the invite link above and send it to them. The page updates automatically.
             </p>
             <div className="flex justify-center gap-1 mt-4">
               {[0, 1, 2].map(i => (
@@ -314,7 +314,7 @@ export default function GroupDiscoverPage() {
                   ? 'bg-amber-500 border-amber-500 text-[#1A2E1C] font-medium'
                   : 'border-[#D6DCCD] text-[#1A2E1C]/65 hover:border-[#A8B09F]'
               }`}>
-              Най-добро за групата
+              Best for the group
             </button>
             <button onClick={() => setSortMode('allSatisfied')}
               className={`text-xs px-4 py-1.5 rounded-full border transition-colors ${
@@ -322,7 +322,7 @@ export default function GroupDiscoverPage() {
                   ? 'bg-[#0B6E2A] border-[#0B6E2A] text-[#1A2E1C] font-medium'
                   : 'border-[#D6DCCD] text-[#1A2E1C]/65 hover:border-[#A8B09F]'
               }`}>
-              Всички доволни
+              Everyone satisfied
             </button>
           </div>
         )}
@@ -335,7 +335,7 @@ export default function GroupDiscoverPage() {
             ))}
           </div>
         ) : sorted.length === 0 && group.destination ? (
-          <p className="text-[#1A2E1C]/40 text-sm">Няма намерени преживявания. Опитай с различна дестинация.</p>
+          <p className="text-[#1A2E1C]/40 text-sm">No experiences found. Try a different destination.</p>
         ) : (
           <div className="flex flex-col gap-3">
             {sorted.map(exp => (

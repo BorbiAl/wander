@@ -7,16 +7,21 @@ import { useRouter } from 'next/navigation';
 import { useApp } from '@/app/lib/store';
 import { PersonalityRadar } from '@/components/PersonalityRadar';
 import { BadgeGrid } from '@/components/BadgeGrid';
+import { AuthModal } from '@/components/AuthModal';
 import { PERSONALITIES, PERSONALITY_INFO, VILLAGES } from '@/app/lib/data';
 import { getExperience, getVillage, cwsColor } from '@/app/lib/utils';
 import { buildShareUrl } from '@/app/lib/friendUtils';
+import { Cloud, CloudOff, Loader2 } from 'lucide-react';
 
 const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { userId, personality, badges, bookings, totalImpact, villagesVisited } = useApp();
+  const { userId, personality, badges, bookings, totalImpact, villagesVisited, email, loginWithEmail, saveToAccount } = useApp();
   const [copied, setCopied] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
 
   function handleShare() {
     if (!personality) return;
@@ -73,7 +78,43 @@ export default function ProfilePage() {
             >
               Manage companions →
             </button>
+            {email ? (
+              <button
+                disabled={saving}
+                onClick={async () => {
+                  const pwd = prompt('Enter your password to save your progress:');
+                  if (!pwd) return;
+                  setSaving(true);
+                  setSaveMsg('');
+                  const res = await saveToAccount(email, pwd);
+                  setSaving(false);
+                  setSaveMsg(res.ok ? 'Saved to account!' : (res.error ?? 'Save failed'));
+                  if (res.ok) setTimeout(() => setSaveMsg(''), 3000);
+                }}
+                className="flex items-center gap-2 bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[14px] font-semibold tracking-wide px-6 py-3 rounded-full hover:bg-white transition-all shadow-sm active:scale-95 disabled:opacity-60"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Cloud className="w-4 h-4" />}
+                {saveMsg || `Save to ${email.split('@')[0]}`}
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowAuth(true)}
+                className="flex items-center gap-2 bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[14px] font-semibold tracking-wide px-6 py-3 rounded-full hover:bg-white transition-all shadow-sm active:scale-95"
+              >
+                <CloudOff className="w-4 h-4 text-[#1A2E1C]/40" />
+                Save to account
+              </button>
+            )}
           </div>
+          {showAuth && (
+            <AuthModal
+              onClose={() => setShowAuth(false)}
+              onSuccess={({ email: e, userId: uid, state }) => {
+                loginWithEmail(e, uid, state);
+                setShowAuth(false);
+              }}
+            />
+          )}
         </div>
         <div className="h-[280px] w-[280px] shrink-0 drop-shadow-xl flex items-center justify-center">
           <PersonalityRadar vector={personality.vector} size={280} />

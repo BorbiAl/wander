@@ -49,6 +49,8 @@ export type AppState = {
   seedStatus: SeedStatus;
   friends: FriendProfile[];
   activeGroupId: string | null;
+  // Auth
+  email: string | null;
 }
 
 type AppContextType = AppState & {
@@ -66,6 +68,10 @@ type AppContextType = AppState & {
   createGroup: (name: string, destination: string) => Promise<StoredGroup | null>;
   joinGroup: (groupId: string) => Promise<StoredGroup | null>;
   setActiveGroup: (groupId: string | null) => void;
+  // Auth actions
+  loginWithEmail: (email: string, userId: string, savedState: Record<string, unknown> | null) => void;
+  logout: () => void;
+  saveToAccount: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
 };
 
 const defaultState: AppState = {
@@ -82,6 +88,7 @@ const defaultState: AppState = {
   seedStatus: 'idle',
   friends: [],
   activeGroupId: null,
+  email: null,
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -247,6 +254,55 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const setActiveGroup = (groupId: string | null) => setState(prev => ({ ...prev, activeGroupId: groupId }));
 
+  // Auth: restore saved server state on login
+  const loginWithEmail = (email: string, userId: string, savedState: Record<string, unknown> | null) => {
+    if (savedState) {
+      const { groups: _groups, ...rest } = savedState as Record<string, unknown> & { groups?: unknown };
+      void _groups;
+      if ((rest.seedStatus as string) === 'loading' || (rest.seedStatus as string) === 'error') rest.seedStatus = 'idle';
+      const merged = { ...defaultState, ...(rest as Partial<AppState>), email, userId };
+      setState(merged);
+      localStorage.setItem('wandergraph_state', JSON.stringify(merged));
+      if (merged.destination && merged.seedStatus === 'done') {
+        fetch(`/api/seed?location=${encodeURIComponent(merged.destination)}`)
+          .then(r => r.json())
+          .then(data => patchDataArrays(data))
+          .catch(() => {});
+      }
+    } else {
+      // New account — keep current local state but stamp it with the account
+      setState(prev => {
+        const next = { ...prev, email, userId };
+        localStorage.setItem('wandergraph_state', JSON.stringify(next));
+        return next;
+      });
+    }
+  };
+
+  const logout = () => {
+    const fresh = { ...defaultState, userId: 'user_' + Math.random().toString(36).slice(2, 8) };
+    setState(fresh);
+    localStorage.setItem('wandergraph_state', JSON.stringify(fresh));
+  };
+
+  const saveToAccount = async (email: string, password: string): Promise<{ ok: boolean; error?: string }> => {
+    try {
+      // Strip transient/non-serialisable fields before saving
+      const { seedStatus: _s, ...stateToSave } = state;
+      void _s;
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save', email, password, state: stateToSave }),
+      });
+      const data = await res.json();
+      if (!res.ok) return { ok: false, error: (data.error as string) ?? 'Failed to save' };
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Network error' };
+    }
+  };
+
   async function parseResponseBody(res: Response): Promise<Record<string, unknown>> {
     // Some responses are empty or return HTML/text on server errors; parse defensively.
     if (res.status === 204 || res.status === 205) return {};
@@ -301,6 +357,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...state, setObservations, setPersonality, setMatches,
       addBooking, addPoints, addBadge, resetOnboarding, seedLocation,
       addFriend, removeFriend, createGroup, joinGroup, setActiveGroup,
+      loginWithEmail, logout, saveToAccount,
     }}>
       {children}
     </AppContext.Provider>

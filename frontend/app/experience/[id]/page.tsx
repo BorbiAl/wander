@@ -255,7 +255,7 @@ export default function ExperiencePage() {
 
       {/* Host Card */}
       <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[28px] p-6 flex gap-5 mb-12 items-center transition-transform hover:scale-[1.02]">
-        <div className="w-12 h-12 rounded-full bg-[#0B6E2A] text-[#1A2E1C] shadow-md flex items-center justify-center text-lg font-bold shrink-0">
+        <div className="w-12 h-12 rounded-full bg-[#0B6E2A] text-white shadow-md flex items-center justify-center text-lg font-bold shrink-0">
           {host.name.split(' ').map(n => n[0]).join('')}
         </div>
         <div>
@@ -285,7 +285,7 @@ export default function ExperiencePage() {
                 <div className="w-24 text-xs text-[#1A2E1C]/60 flex items-center gap-2">
                   <span>{PERSONALITY_INFO[p].emoji}</span> {p}
                 </div>
-                <div className="flex-1 h-2 bg-white/90 backdrop-blur-xl-2 rounded-full relative overflow-hidden">
+                <div className="flex-1 h-2 bg-white/90 backdrop-blur-md rounded-full relative overflow-hidden">
                   <div className="absolute top-0 left-0 bottom-0 opacity-30" style={{ width: `${expWeight * 100}%`, backgroundColor: color }} />
                   <div className="absolute top-0 bottom-0 w-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)] z-10" style={{ left: `calc(${userWeight * 100}% - 3px)`, backgroundColor: color }} />
                 </div>
@@ -322,7 +322,7 @@ export default function ExperiencePage() {
         </div>
         <button 
           onClick={() => setShowModal(true)}
-          className="bg-[#0B6E2A] text-[#1A2E1C] shadow-md font-semibold px-8 py-3.5 rounded-full hover:bg-[#0B6E2A]-dim active:scale-[0.97] transition-all"
+          className="bg-[#0B6E2A] text-white shadow-md font-semibold px-8 py-3.5 rounded-full hover:bg-[#0B6E2A]-dim active:scale-[0.97] transition-all"
         >
           Book this experience
         </button>
@@ -344,7 +344,7 @@ export default function ExperiencePage() {
                   <h2 className="font-display text-2xl text-[#1A2E1C] mb-2">Confirm booking</h2>
                   <p className="text-[#1A2E1C]/60 text-[15px] font-medium tracking-tight mb-8">{exp.name} in {village.name}</p>
                   
-                  <div className="bg-white/90 backdrop-blur-xl-2 rounded-lg p-4 mb-6">
+                  <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 mb-6">
                     <div className="text-xs text-text-3 uppercase mb-3">Your €{exp.price} will be distributed:</div>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-[#1A2E1C]/60">Host (70%)</span>
@@ -366,7 +366,7 @@ export default function ExperiencePage() {
 
                   <div className="flex gap-3">
                     <button onClick={() => setShowModal(false)} className="flex-1 border border-[#D6DCCD]/40 text-[#1A2E1C]/60 rounded-full py-3 hover:text-[#1A2E1C] transition-colors">Cancel</button>
-                    <button onClick={handleBook} className="flex-1 bg-[#0B6E2A] text-[#1A2E1C] shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">Confirm →</button>
+                    <button onClick={handleBook} className="flex-1 bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">Confirm →</button>
                   </div>
                 </>
               )}
@@ -383,7 +383,7 @@ export default function ExperiencePage() {
                   <div className="w-16 h-16 rounded-full bg-[#0B6E2A]/20 text-[#0B6E2A] flex items-center justify-center text-3xl mb-4">✓</div>
                   <h2 className="font-display text-2xl text-[#1A2E1C] mb-2">Booked! You made an impact.</h2>
                   <p className="text-[#0B6E2A] font-medium mb-8">+{bookingResult.cwsDelta} CWS for {village.name}</p>
-                  <div className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-xl-2 p-4 mb-4 text-left">
+                  <div className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md p-4 mb-4 text-left">
                     <p className="text-sm text-[#1A2E1C] font-bold mb-3">Add this booking to your calendar?</p>
                     <button
                       onClick={openDatePicker}
@@ -392,7 +392,7 @@ export default function ExperiencePage() {
                       {getCalendarLabel()}
                     </button>
                   </div>
-                  <button onClick={() => router.push('/impact')} className="w-full bg-[#0B6E2A] text-[#1A2E1C] shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">
+                  <button onClick={() => router.push('/impact')} className="w-full bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">
                     View impact →
                   </button>
                 </div>
@@ -420,7 +420,7 @@ export default function ExperiencePage() {
                 onChange={(e) => setScheduledAt(e.target.value)}
                 aria-label="Experience date and time"
                 title="Experience date and time"
-                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-xl-2 px-3 py-2 text-sm text-[#1A2E1C]"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C]"
               />
               <div className="mt-4 flex gap-2">
                 <button
@@ -458,7 +458,7 @@ export default function ExperiencePage() {
               <textarea
                 value={reflectionQ1}
                 onChange={(e) => setReflectionQ1(e.target.value)}
-                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-xl-2 px-3 py-2 text-sm text-[#1A2E1C] mb-3"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C] mb-3"
                 rows={3}
                 placeholder="Share your experience"
               />
@@ -469,7 +469,7 @@ export default function ExperiencePage() {
                 onChange={(e) => setReflectionQ2(e.target.value as 'yes' | 'maybe' | 'no')}
                 aria-label="Would you recommend this experience"
                 title="Would you recommend this experience"
-                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-xl-2 px-3 py-2 text-sm text-[#1A2E1C] mb-3"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C] mb-3"
               >
                 <option value="yes">Yes</option>
                 <option value="maybe">Maybe</option>
@@ -480,7 +480,7 @@ export default function ExperiencePage() {
               <textarea
                 value={reflectionQ3}
                 onChange={(e) => setReflectionQ3(e.target.value)}
-                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-xl-2 px-3 py-2 text-sm text-[#1A2E1C]"
+                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C]"
                 rows={2}
                 placeholder="What should they know?"
               />

@@ -161,7 +161,7 @@ int main() {
 
       // Keep alive: read until the client disconnects
       std::string payload;
-      while (ws.read(payload) != httplib::ReadResult::Fail) {
+      while (ws.read(payload) != httplib::ws::ReadResult::Fail) {
         // ping/pong handled by httplib; ignore other messages
       }
 

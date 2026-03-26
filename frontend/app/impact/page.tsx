@@ -11,6 +11,7 @@ import { getVillage, getExperience } from '@/app/lib/utils';
 import { VILLAGES } from '@/app/lib/data';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useImpactStream } from '@/hooks/useImpactStream';
+import { Leaderboard } from '@/components/Leaderboard';
 
 export default function ImpactPage() {
   const router = useRouter();
@@ -148,7 +149,10 @@ export default function ImpactPage() {
         </div>
       </div>
 
-      <ImpactFeed bookings={bookings} totalImpact={totalImpact} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <ImpactFeed bookings={bookings} totalImpact={totalImpact} />
+        <Leaderboard />
+      </div>
     </motion.div>
   );
 }

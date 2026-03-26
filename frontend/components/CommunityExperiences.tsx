@@ -6,7 +6,7 @@ import type { CommunityExperience } from '@/app/api/community/route';
 
 const TYPE_EMOJI: Record<string, string> = {
   craft: '🪵', hike: '🥾', homestay: '🏡', ceremony: '🔥',
-  cooking: '🍲', volunteer: '🌱', folklore: '🎵',
+  cooking: '🍲', volunteer: '🌱', folklore: '🎵', sightseeing: '👁️',
 };
 
 function CommunityCard({ exp, index }: { exp: CommunityExperience; index: number }) {

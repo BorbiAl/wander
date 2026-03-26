@@ -33,7 +33,7 @@ export default function DiscoverPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personality?.dominant, EXPERIENCES.length]);
 
-  const types = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore'];
+  const types = ['All', 'craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore', 'sightseeing'];
 
   const filteredMatches = useMemo(() => {
     let res = matches;

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
+import VillageMap from '@/components/VillageMap';
 import { useApp } from '@/app/lib/store';
 import { Experience, Village, EXPERIENCES, VILLAGES } from '@/app/lib/data';
 import { cwsColor, cwsLabel } from '@/app/lib/utils';
@@ -37,10 +38,20 @@ function projectToGlobe(lat: number, lng: number, spinDeg: number) {
 }
 
 export default function DiscoverPage() {
-  const { personality, matches, setMatches } = useApp();
+  const { personality, matches, setMatches, destination } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
-  const [sortBy, setSortBy] = useState<'match'|'price'|'cws'>('match');
+  const [sortBy, setSortBy] = useState<'match' | 'price' | 'cws'>('match');
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
+  const [villages, setVillages] = useState<Village[]>(VILLAGES);
+  const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
+  const [spinDeg, setSpinDeg] = useState(0);
+
+  useEffect(() => {
+    const ticker = setInterval(() => {
+      setSpinDeg(prev => (prev + 0.2) % 360);
+    }, 40);
+    return () => clearInterval(ticker);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -74,14 +85,33 @@ export default function DiscoverPage() {
 
   useEffect(() => {
     if (!personality) return;
-    const scored = EXPERIENCES.map(exp => ({
-      ...exp,
-      score: matchScore(personality.vector, exp.personalityWeights),
-    })).sort((a, b) => b.score - a.score);
+    const scored = experiences
+      .map(exp => ({
+        ...exp,
+        score: matchScore(personality.vector, exp.personalityWeights),
+      }))
+      .sort((a, b) => b.score - a.score);
     if (scored.length > 0) setMatches(scored);
-  // Only run when dominant personality or EXPERIENCES array length changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personality?.dominant, EXPERIENCES.length]);
+  }, [personality, experiences, setMatches]);
+
+  const villageById = useMemo(() => {
+    return new Map(villages.map(v => [v.id, v]));
+  }, [villages]);
+
+  const scoredMatches = useMemo<ScoredExperience[]>(() => {
+    if (personality) {
+      return experiences
+        .map(exp => ({
+          ...exp,
+          score: matchScore(personality.vector, exp.personalityWeights),
+        }))
+        .sort((a, b) => b.score - a.score);
+    }
+    if (matches.length > 0) {
+      return matches;
+    }
+    return experiences.map(exp => ({ ...exp, score: 0 }));
+  }, [personality, matches, experiences]);
 
   const selectedVillage = selectedVillageId ? villageById.get(selectedVillageId) ?? null : null;
 
@@ -96,7 +126,6 @@ export default function DiscoverPage() {
     if (sortBy === 'price') {
       res = [...res].sort((a, b) => a.price - b.price);
     } else if (sortBy === 'cws') {
-      // Sort by CWS impact (lower CWS = higher impact)
       res = [...res].sort((a, b) => {
         const vA = villageById.get(a.villageId)?.cws || 100;
         const vB = villageById.get(b.villageId)?.cws || 100;
@@ -133,17 +162,15 @@ export default function DiscoverPage() {
   }, [villages]);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 12 }} 
-      animate={{ opacity: 1, y: 0 }} 
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
       className="min-h-[calc(100vh-3.5rem)] bg-[radial-gradient(circle_at_18%_8%,#18312B_0%,transparent_26%),radial-gradient(circle_at_90%_14%,#35240F_0%,transparent_28%),#080808]"
     >
-      {/* Map Section */}
-      <div className="w-full md:w-[55%] h-[250px] md:h-full relative border-b md:border-b-0 md:border-r border-[#222]">
-        <VillageMap onSelectVillage={setSelectedVillage} />
-      </div>
-
+      <div className="mx-auto w-full max-w-[1320px] px-4 md:px-6 py-6 md:py-8">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+          <section className="xl:col-span-7 bg-[#11161B] border border-[#2C3945] rounded-[22px] p-4 md:p-6 flex flex-col gap-5">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="bg-[#121A16] border border-[#253129] rounded-[14px] p-4">
                 <p className="text-text-3 text-xs uppercase mb-1">Villages loaded</p>
@@ -158,6 +185,28 @@ export default function DiscoverPage() {
                 <p className="font-display text-3xl text-white">{avgCws}</p>
               </div>
             </div>
+
+            <div className="h-[280px] md:h-[420px] overflow-hidden rounded-[18px] border border-[#2A3946]">
+              <VillageMap onSelectVillage={v => setSelectedVillageId(v.id)} />
+            </div>
+
+            {luckyChoice && (
+              <div className="bg-[#0F151C] border border-[#2A3742] rounded-[16px] p-4">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-text-3 mb-2">Lucky route</p>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-display text-2xl text-white leading-tight">{luckyChoice.name}</h3>
+                    <p className="text-text-2 text-sm mt-1">{villageById.get(luckyChoice.villageId)?.name || 'Unknown village'}</p>
+                  </div>
+                  <Link
+                    href={`/experience/${luckyChoice.id}`}
+                    className="bg-accent text-black font-semibold px-4 py-2 rounded-pill hover:bg-accent-dim transition-colors"
+                  >
+                    Open route
+                  </Link>
+                </div>
+              </div>
+            )}
           </section>
 
           <section className="xl:col-span-5 bg-[#11161B] border border-[#2C3945] rounded-[22px] p-4 md:p-6 flex flex-col">
@@ -276,7 +325,7 @@ export default function DiscoverPage() {
 
                   <div className="flex items-center justify-between text-xs text-text-2">
                     <span className="capitalize px-2.5 py-1 rounded-pill border border-[#344350]">{exp.type}</span>
-                    <span>€{exp.price} · {exp.duration}</span>
+                    <span>EUR {exp.price} · {exp.duration}</span>
                     <span style={{ color: cwsColor(village.cws) }}>CWS {village.cws}</span>
                   </div>
 

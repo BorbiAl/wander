@@ -39,11 +39,7 @@ type SeedHost = {
   experienceIds: string[];
 };
 
-const OVERPASS_ENDPOINTS = [
-  'https://overpass-api.de/api/interpreter',
-  'https://overpass.kumi.systems/api/interpreter',
-  'https://lz4.overpass-api.de/api/interpreter',
-];
+const NOMINATIM_SEARCH_URL = 'https://nominatim.openstreetmap.org/search';
 
 const COUNTRY_TRADITIONS: Record<string, string[]> = {
   Bulgaria: ['folk singing', 'wood carving', 'seasonal village feasts'],
@@ -124,7 +120,7 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
 
 async function geocodeHub(city: string, country: string): Promise<HubCoords | null> {
   const q = encodeURIComponent(`${city}, ${country}`);
-  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${q}`;
+  const url = `${NOMINATIM_SEARCH_URL}?format=jsonv2&limit=1&q=${q}`;
   const res = await fetch(url, {
     headers: {
       'User-Agent': 'WanderGraph/1.0',
@@ -141,49 +137,88 @@ async function geocodeHub(city: string, country: string): Promise<HubCoords | nu
   return { lat, lng };
 }
 
-async function fetchNearbyVillages(lat: number, lng: number): Promise<OsmVillage[]> {
-  const query = `
-[out:json][timeout:30];
-(
-  node["place"~"village|hamlet"](around:90000,${lat},${lng});
-);
-out body 30;
-`.trim();
+function getCountryCode(country: string): string {
+  const map: Record<string, string> = {
+    Bulgaria: 'bg', Romania: 'ro', Albania: 'al', 'Bosnia and Herzegovina': 'ba', 'North Macedonia': 'mk',
+    Serbia: 'rs', Montenegro: 'me', Moldova: 'md', Ukraine: 'ua', Georgia: 'ge', Turkey: 'tr', Lebanon: 'lb',
+    Jordan: 'jo', Nepal: 'np', Bhutan: 'bt', Myanmar: 'mm', Laos: 'la', Vietnam: 'vn', Morocco: 'ma',
+    Tunisia: 'tn', Ethiopia: 'et', Tanzania: 'tz', Senegal: 'sn', Mali: 'ml', Peru: 'pe', Bolivia: 'bo',
+    Ecuador: 'ec', Colombia: 'co', Paraguay: 'py', Guatemala: 'gt', Mexico: 'mx', Canada: 'ca', Fiji: 'fj',
+    'Papua New Guinea': 'pg',
+  };
+  return map[country] ?? '';
+}
 
-  for (const endpoint of OVERPASS_ENDPOINTS) {
+async function fetchNearbyVillagesByNominatim(lat: number, lng: number, country: string): Promise<OsmVillage[]> {
+  const km = 120;
+  const latDelta = km / 111;
+  const lngDelta = km / (111 * Math.max(0.2, Math.cos((lat * Math.PI) / 180)));
+  const west = lng - lngDelta;
+  const east = lng + lngDelta;
+  const south = lat - latDelta;
+  const north = lat + latDelta;
+  const countryCode = getCountryCode(country);
+
+  const unique = new Map<string, OsmVillage>();
+  const terms = ['village', 'hamlet'];
+
+  for (const term of terms) {
     try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
+      const params = new URLSearchParams({
+        q: term,
+        format: 'jsonv2',
+        addressdetails: '1',
+        bounded: '1',
+        viewbox: `${west},${north},${east},${south}`,
+        limit: '40',
+      });
+      if (countryCode) params.set('countrycodes', countryCode);
+
+      const res = await fetch(`${NOMINATIM_SEARCH_URL}?${params.toString()}`, {
         headers: {
-          'Content-Type': 'text/plain;charset=UTF-8',
           'User-Agent': 'WanderGraph/1.0',
+          'Accept-Language': 'en',
         },
-        body: query,
         signal: AbortSignal.timeout(12000),
       });
       if (!res.ok) continue;
 
-      const json = await res.json() as { elements?: Array<{ id: number; lat: number; lon: number; tags?: Record<string, string> }> };
-      const elements = json.elements ?? [];
-      const unique = new Map<string, OsmVillage>();
-      for (const el of elements) {
-        const name = el.tags?.name?.trim();
-        if (!name) continue;
-        if (!Number.isFinite(el.lat) || !Number.isFinite(el.lon)) continue;
-        const id = `osm-${el.id}`;
+      const rows = (await res.json()) as Array<{
+        place_id?: number;
+        osm_id?: number;
+        lat?: string;
+        lon?: string;
+        type?: string;
+        name?: string;
+        display_name?: string;
+        address?: Record<string, string>;
+      }>;
+
+      for (const row of rows) {
+        const type = row.type ?? '';
+        if (!['village', 'hamlet', 'isolated_dwelling'].includes(type)) continue;
+        const latNum = Number(row.lat);
+        const lngNum = Number(row.lon);
+        if (!Number.isFinite(latNum) || !Number.isFinite(lngNum)) continue;
+
+        const name = row.address?.village
+          ?? row.address?.hamlet
+          ?? row.name
+          ?? row.display_name?.split(',')[0]
+          ?? '';
+        if (!name.trim()) continue;
+
+        const id = `osm-${row.osm_id ?? row.place_id ?? `${name}-${latNum}`}`;
         if (!unique.has(id)) {
-          unique.set(id, { id, name, lat: el.lat, lng: el.lon });
+          unique.set(id, { id, name: name.trim(), lat: latNum, lng: lngNum });
         }
       }
-      if (unique.size > 0) {
-        return Array.from(unique.values()).slice(0, 10);
-      }
     } catch {
-      // Try next endpoint
+      // Continue with other term
     }
   }
 
-  return [];
+  return Array.from(unique.values()).slice(0, 10);
 }
 
 function buildFallbackVillages(country: string, center: HubCoords): OsmVillage[] {
@@ -286,7 +321,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: `Unable to locate hub for ${city}, ${country}` }, { status: 404 });
     }
 
-    const osmVillages = await fetchNearbyVillages(center.lat, center.lng);
+    const osmVillages = await fetchNearbyVillagesByNominatim(center.lat, center.lng, country);
     const villages = osmVillages.length > 0 ? osmVillages : buildFallbackVillages(country, center);
 
     if (villages.length === 0) {

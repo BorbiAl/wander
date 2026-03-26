@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
 import MarketingGlobe, { type DestinationNode } from '../components/MarketingGlobe';
-import { MapPin, ChevronDown, Play, Dices, Globe2 } from 'lucide-react';
+import { MapPin, ChevronDown, Play, Dices, Globe2, X } from 'lucide-react';
 import Link from 'next/link';
 
 type ApiVillage = {
@@ -290,6 +290,9 @@ export default function LandingPage() {
               onClick={e => e.stopPropagation()}
             >
               <button
+                type="button"
+                aria-label="Close how it works dialog"
+                title="Close"
                 onClick={() => setShowHowItWorks(false)}
                 className="absolute top-5 right-5 text-black/30 hover:text-black/60 transition-colors"
               >

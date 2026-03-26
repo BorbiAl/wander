@@ -19,7 +19,7 @@ export function BudgetSlider({
   ];
 
   return (
-    <div className="w-full max-w-sm mx-auto bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-6 flex flex-col items-center">
+    <div className="w-full max-w-sm mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-card p-6 flex flex-col items-center">
       <h2 className="font-display text-2xl text-[#1A2E1C] mb-2">{question.question}</h2>
       <p className="font-sans text-sm text-[#1A2E1C]/70 mb-2">This shapes which experiences we show you</p>
       <p className="font-sans text-xs text-[#1A2E1C]/65 mb-8 text-center">{question.signal}</p>

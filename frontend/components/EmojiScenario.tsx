@@ -11,7 +11,7 @@ export function EmojiScenario({
   onChoice: (index: 0|1|2|3|4|5) => void
 }) {
   return (
-    <div className="w-full max-w-sm mx-auto bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-6 flex flex-col items-center">
+    <div className="w-full max-w-sm mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-card p-6 flex flex-col items-center">
       <div className="text-[#1A2E1C]/65 text-[12px] mb-4">You&apos;re traveling. This happens:</div>
       <h3 className="font-display italic text-[22px] text-[#1A2E1C] text-center p-6">{scenario}</h3>
       

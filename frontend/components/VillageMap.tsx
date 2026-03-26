@@ -81,7 +81,7 @@ export default function VillageMap({
             }}
           >
             <Popup className="custom-popup">
-              <div className="bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-3 text-[#1A2E1C] min-w-[200px]">
+              <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-card p-3 text-[#1A2E1C] min-w-[200px]">
                 <h3 className="font-display text-lg mb-1 text-[#1A2E1C]">{village.name}</h3>
                 <div className="text-[10px] uppercase text-[#1A2E1C]/70 mb-3 bg-[#E2E7DA] inline-block px-2 py-0.5 rounded-pill border border-[#D6DCCD]">
                   {village.region}

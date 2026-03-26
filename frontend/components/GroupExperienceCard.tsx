@@ -35,9 +35,9 @@ export function GroupExperienceCard({
   return (
     <div
       onClick={() => router.push(`/experience/${exp.id}`)}
-      className="w-full bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-4 hover:border-[#A8B09F] transition-all cursor-pointer flex items-center gap-4"
+      className="w-full bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[28px] p-5 hover:bg-white hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-5"
     >
-      <div className="w-12 h-12 rounded-lg bg-[#0B6E2A]/10 flex items-center justify-center text-2xl shrink-0">
+      <div className="w-[52px] h-[52px] rounded-[18px] bg-white border border-[#D6DCCD]/40 shadow-sm flex items-center justify-center text-2xl shrink-0">
         {TYPE_EMOJIS[exp.type] ?? '🌍'}
       </div>
 

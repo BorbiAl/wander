@@ -12,8 +12,8 @@ import { PersonalityRadar } from '@/components/PersonalityRadar';
 
 // Light-theme input used throughout this page
 const inputCls = "flex-1 bg-[#E5E9DF] border border-[#D6DCCD] rounded-lg px-3 py-2 text-sm text-[#1A2E1C] placeholder:text-[#1A2E1C]/30 outline-none focus:border-[#0B6E2A]";
-const secondaryBtnCls = "border border-[#D6DCCD] text-[#1A2E1C]/70 text-sm px-4 py-2 rounded-pill hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors";
-const primaryBtnCls = "bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-pill hover:bg-[#095A22] transition-colors whitespace-nowrap disabled:opacity-50";
+const secondaryBtnCls = "border border-[#D6DCCD] text-[#1A2E1C]/70 text-sm px-4 py-2 rounded-full hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors";
+const primaryBtnCls = "bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-full hover:bg-[#095A22] transition-colors whitespace-nowrap disabled:opacity-50";
 
 export default function FriendsPage() {
   const router = useRouter();
@@ -137,9 +137,9 @@ export default function FriendsPage() {
 
   if (!personality) {
     return (
-      <div className="page-standard flex min-h-screen flex-col items-center justify-center px-4 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#E5E9DF] text-[#1A2E1C] font-sans px-4 text-center">
         <p className="text-muted mb-4">Завърши своя профил първо, за да споделяш и създаваш групи.</p>
-        <button onClick={() => router.push('/onboarding')} className="rounded-pill bg-[#0B6E2A] px-6 py-2 text-white">
+        <button onClick={() => router.push('/onboarding')} className="rounded-full bg-[#0B6E2A] text-white px-6 py-2 shadow-md">
           Започни Onboarding
         </button>
       </div>
@@ -151,16 +151,16 @@ export default function FriendsPage() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-      className="page-standard"
+      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20"
     >
-      <div className="page-shell pb-24 flex flex-col gap-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 pb-24 flex flex-col gap-12">
 
         {/* ── Section 1: Твоят профил ── */}
         <section>
-          <h1 className="text-3xl font-display mb-1" style={{ color: dominantColor }}>Твоят профил</h1>
+          <h1 className="text-3xl font-bold tracking-tighter leading-tight mb-1" style={{ color: dominantColor }}>Твоят профил</h1>
           <p className="text-[#1A2E1C]/65 text-sm mb-6">Сподели своя код, за да те добавят като спътник.</p>
 
-          <div className="surface-card rounded-card p-6 flex flex-col gap-4">
+          <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-6 flex flex-col gap-4">
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <div className="text-xs text-[#1A2E1C]/40 mb-1">Твоят ID</div>
@@ -175,7 +175,7 @@ export default function FriendsPage() {
             </div>
             <div className="flex gap-3 flex-wrap">
               <button onClick={handleCopyProfile}
-                className="flex-1 min-w-[140px] bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-pill hover:bg-[#095A22] transition-colors">
+                className="flex-1 min-w-[140px] bg-[#0B6E2A] text-white text-sm px-4 py-2 rounded-full hover:bg-[#095A22] transition-colors">
                 {profileCopied ? 'Копирано!' : 'Копирай профил линк'}
               </button>
               <button onClick={() => setShowProfileQR(v => !v)} className={`flex-1 min-w-[120px] ${secondaryBtnCls}`}>
@@ -199,7 +199,7 @@ export default function FriendsPage() {
         {/* ── Section 2: Спътници ── */}
         <section>
           <h2 className="text-xl mb-4">Спътници</h2>
-          <div className="surface-card rounded-card p-4 mb-4 flex flex-col gap-3">
+          <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 mb-4 flex flex-col gap-3">
             <p className="text-xs text-[#1A2E1C]/65">Постави профил линк или base64 код на приятел:</p>
             <div className="flex gap-2">
               <input type="text" value={addInput}
@@ -226,7 +226,7 @@ export default function FriendsPage() {
                   <motion.div key={friend.userId}
                     initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 16 }} transition={{ duration: 0.2 }}
-                    className="surface-card rounded-card p-4 mb-3 flex items-center gap-4">
+                    className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 mb-3 flex items-center gap-4">
                     <div className="shrink-0">
                       <PersonalityRadar vector={friend.vector} size={72} />
                     </div>
@@ -249,7 +249,7 @@ export default function FriendsPage() {
           <h2 className="text-xl mb-4">Групи за пътуване</h2>
 
           {/* Join group */}
-          <div className="surface-card rounded-card p-4 mb-4 flex flex-col gap-3">
+          <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 mb-4 flex flex-col gap-3">
             <p className="text-xs text-[#1A2E1C]/65 font-medium">Присъедини се към съществуваща група:</p>
             <div className="flex gap-2">
               <input type="text" value={joinInput}
@@ -265,7 +265,7 @@ export default function FriendsPage() {
           </div>
 
           {/* Create group */}
-          <div className="surface-card rounded-card p-4 mb-6 flex flex-col gap-3">
+          <div className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 mb-6 flex flex-col gap-3">
             <p className="text-xs text-[#1A2E1C]/65 font-medium">Създай нова група:</p>
             <div className="flex gap-2">
               <input type="text" value={newGroupName}
@@ -284,13 +284,13 @@ export default function FriendsPage() {
 
           {/* My groups list */}
           {groupsLoading ? (
-            <div className="h-20 bg-[#D6DCCD] rounded-card animate-pulse" />
+            <div className="h-20 bg-[#D6DCCD] rounded-[24px] animate-pulse" />
           ) : myGroups.length === 0 ? (
             <p className="text-[#1A2E1C]/40 text-sm">Не си в никоя група все още.</p>
           ) : (
             <div className="flex flex-col gap-4">
               {myGroups.map(group => (
-                <div key={group.id} className="surface-card rounded-card p-5 flex flex-col gap-3">
+                <div key={group.id} className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] p-6 transition-all hover:bg-white/80 flex flex-col gap-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="font-medium text-[#1A2E1C]">{group.name}</h3>
@@ -314,7 +314,7 @@ export default function FriendsPage() {
                         const color = PERSONALITY_INFO[m.dominant as keyof typeof PERSONALITY_INFO]?.color ?? '#888';
                         const emoji = PERSONALITY_INFO[m.dominant as keyof typeof PERSONALITY_INFO]?.emoji ?? '●';
                         return (
-                          <div key={m.userId} className="flex items-center gap-1.5 bg-[#E5E9DF] border border-[#D6DCCD] rounded-pill px-2 py-1">
+                          <div key={m.userId} className="flex items-center gap-1.5 bg-[#E5E9DF] border border-[#D6DCCD] rounded-full px-2 py-1">
                             <span className="text-xs">{emoji}</span>
                             <span className="text-xs text-[#1A2E1C]">{m.displayName}</span>
                             <span className="text-[10px]" style={{ color }}>{m.dominant}</span>
@@ -329,7 +329,7 @@ export default function FriendsPage() {
                       {copiedGroupId === group.id ? 'Копирано!' : 'Копирай invite линк'}
                     </button>
                     <button onClick={() => handlePlanTrip(group)}
-                      className="flex-1 bg-[#0B6E2A] text-white text-sm px-3 py-2 rounded-pill hover:bg-[#095A22] transition-colors">
+                      className="flex-1 bg-[#0B6E2A] text-white text-sm px-3 py-2 rounded-full hover:bg-[#095A22] transition-colors">
                       Планирай заедно →
                     </button>
                   </div>

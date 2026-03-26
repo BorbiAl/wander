@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preload" as="image" href="https://unpkg.com/three-globe/example/img/earth-day.jpg" />
       </head>
-      <body suppressHydrationWarning className="bg-bg text-text-1 font-sans min-h-screen flex flex-col">
+      <body suppressHydrationWarning className="bg-[#E5E9DF] text-[#1A2E1C] font-sans antialiased min-h-screen flex flex-col selection:bg-[#0B6E2A]/20">
         <AppProvider>
           <DataProvider>
             <Navbar />

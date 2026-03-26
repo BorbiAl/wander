@@ -153,7 +153,7 @@ export function AudioReactor({
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto bg-[#F4EDE2] border border-[#D6DCCD] rounded-card p-6 flex flex-col items-center text-center">
+    <div className="w-full max-w-sm mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-card p-6 flex flex-col items-center text-center">
       <div className="text-5xl mb-4">🎵</div>
       <h3 className="font-display text-xl text-[#1A2E1C] mb-2">{clipTitle}</h3>
       <p className="font-sans text-sm text-[#1A2E1C]/70 italic mb-6">{clipDescription}</p>

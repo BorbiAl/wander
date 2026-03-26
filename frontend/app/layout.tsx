@@ -13,9 +13,17 @@ export const metadata: Metadata = {
   description: 'Travel with purpose.',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`}>
+      <head>
+        <link rel="preload" as="image" href="https://unpkg.com/three-globe/example/img/earth-day.jpg" />
+      </head>
       <body suppressHydrationWarning className="bg-bg text-text-1 font-sans min-h-screen flex flex-col">
         <AppProvider>
           <DataProvider>

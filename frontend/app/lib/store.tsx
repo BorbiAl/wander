@@ -167,8 +167,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }
 
-  const setObservations = (obs: number[]) => setState(prev => ({ ...prev, observations: obs }));
-  const setPersonality = (p: PersonalityResult | null) => setState(prev => ({ ...prev, personality: p }));
+  const setObservations = (obs: number[]) => setState(prev => ({ ...prev, observations: [...prev.observations, ...obs] }));
+  const setPersonality = (p: PersonalityResult | null) => setState(prev => {
+    if (!p || !prev.personality) return { ...prev, personality: p };
+    // Weighted average: weight old vector by prior observation count, new by latest batch (15)
+    const oldWeight = prev.observations.length;
+    const newWeight = 15;
+    const total = oldWeight + newWeight;
+    const blended = prev.personality.vector.map(
+      (v, i) => (v * oldWeight + p.vector[i] * newWeight) / total
+    ) as [number, number, number, number, number];
+    const dominantIndex = blended.indexOf(Math.max(...blended));
+    return {
+      ...prev,
+      personality: {
+        vector: blended,
+        dominantIndex,
+        dominant: ['Explorer', 'Connector', 'Restorer', 'Achiever', 'Guardian'][dominantIndex],
+      },
+    };
+  });
   const setMatches = (m: (Experience & { score: number })[]) => setState(prev => ({ ...prev, matches: m }));
   const addBooking = (b: Booking) => setState(prev => {
     const newBookings = [b, ...prev.bookings];
@@ -178,7 +196,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   });
   const addPoints = (p: number) => setState(prev => ({ ...prev, points: prev.points + p }));
   const addBadge = (b: string) => setState(prev => ({ ...prev, badges: Array.from(new Set([...prev.badges, b])) }));
-  const resetOnboarding = () => setState(prev => ({ ...prev, observations: [], personality: null, matches: [] }));
+  const resetOnboarding = () => setState(prev => ({ ...prev, observations: [], personality: null, matches: [] })); // full reset (clears history)
 
   const addFriend = (f: FriendProfile) => setState(prev => {
     const filtered = prev.friends.filter(fr => fr.userId !== f.userId);

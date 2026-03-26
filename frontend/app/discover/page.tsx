@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import VillageMap from '@/components/VillageMap';
+import dynamic from 'next/dynamic';
+
+const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 import { useApp } from '@/app/lib/store';
 import { StoredGroup } from '@/app/lib/store';
 import { Experience, Village, EXPERIENCES, VILLAGES } from '@/app/lib/data';

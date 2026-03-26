@@ -34,7 +34,7 @@ export function BudgetSlider({
             {choice === i && (
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#0B6E2A]" />
             )}
-            <div className="font-medium text-[#1A2E1C] mb-1" style={{ color: choice === i ? opt.color : '#1A2E1C' }}>{opt.label}</div>
+            <div className="font-medium text-[#1A2E1C] mb-1">{opt.label}</div>
             <div className="text-xs text-[#1A2E1C]/70">{opt.desc}</div>
           </div>
         ))}

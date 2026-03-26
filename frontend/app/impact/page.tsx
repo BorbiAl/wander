@@ -3,15 +3,22 @@
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { useApp } from '@/app/lib/store';
-import { SankeyDiagram } from '@/components/SankeyDiagram';
 import { CWSCounter } from '@/components/CWSCounter';
 import { ImpactFeed } from '@/components/ImpactFeed';
 import { getVillage, getExperience } from '@/app/lib/utils';
 import { VILLAGES } from '@/app/lib/data';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useImpactStream } from '@/hooks/useImpactStream';
-import { Leaderboard } from '@/components/Leaderboard';
+
+const SankeyDiagram = dynamic(() => import('@/components/SankeyDiagram').then(m => ({ default: m.SankeyDiagram })), { ssr: false });
+const Leaderboard = dynamic(() => import('@/components/Leaderboard').then(m => ({ default: m.Leaderboard })), { ssr: false });
+const LineChart = dynamic(() => import('recharts').then(m => ({ default: m.LineChart })), { ssr: false });
+const Line = dynamic(() => import('recharts').then(m => ({ default: m.Line })), { ssr: false });
+const XAxis = dynamic(() => import('recharts').then(m => ({ default: m.XAxis })), { ssr: false });
+const YAxis = dynamic(() => import('recharts').then(m => ({ default: m.YAxis })), { ssr: false });
+const Tooltip = dynamic(() => import('recharts').then(m => ({ default: m.Tooltip })), { ssr: false });
+const ResponsiveContainer = dynamic(() => import('recharts').then(m => ({ default: m.ResponsiveContainer })), { ssr: false });
 
 export default function ImpactPage() {
   const router = useRouter();

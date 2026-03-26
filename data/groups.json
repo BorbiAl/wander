@@ -16,6 +16,19 @@
         ],
         "dominant": "Achiever",
         "joinedAt": 1774546093776
+      },
+      {
+        "userId": "user_0qlly6",
+        "displayName": "Traveler #lly6",
+        "vector": [
+          0.07142857142857142,
+          0.25,
+          0.3214285714285714,
+          0.03571428571428571,
+          0.3214285714285714
+        ],
+        "dominant": "Restorer",
+        "joinedAt": 1774553363364
       }
     ],
     "createdAt": 1774546093776

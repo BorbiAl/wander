@@ -3,6 +3,7 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: process.cwd(),
+  compress: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -16,9 +17,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
-        pathname: '/**', // This allows any path under the hostname
+        pathname: '/**',
       },
     ],
+    formats: ['image/avif', 'image/webp'],
+  },
+  // Tree-shake icon and chart libraries to only include what's imported
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'recharts', 'motion/react'],
   },
   output: 'standalone',
   transpilePackages: ['motion'],

@@ -65,6 +65,10 @@ async function loadSeedExperiences() {
   return [];
 }
 
+const CACHE_HEADERS = {
+  'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+};
+
 export async function GET() {
   const seedExperiences = await loadSeedExperiences();
 
@@ -79,13 +83,13 @@ export async function GET() {
       const merged = new Map<string, (typeof EXPERIENCES)[number]>();
       for (const e of seedExperiences) merged.set(String(e.id), e as (typeof EXPERIENCES)[number]);
       for (const e of cppExperiences) merged.set(String(e.id), e as (typeof EXPERIENCES)[number]);
-      return NextResponse.json(Array.from(merged.values()));
+      return NextResponse.json(Array.from(merged.values()), { headers: CACHE_HEADERS });
     }
     throw new Error('empty response');
   } catch {
     if (seedExperiences.length > 0) {
-      return NextResponse.json(seedExperiences);
+      return NextResponse.json(seedExperiences, { headers: CACHE_HEADERS });
     }
-    return NextResponse.json(EXPERIENCES);
+    return NextResponse.json(EXPERIENCES, { headers: CACHE_HEADERS });
   }
 }

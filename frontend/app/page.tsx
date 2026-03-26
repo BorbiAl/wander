@@ -52,7 +52,43 @@ const MAIN_CITY_BY_COUNTRY: Record<string, { city: string; lat: number; lng: num
   'Papua New Guinea': { city: 'Port Moresby', lat: -9.4438, lng: 147.1803 },
 };
 
-function buildCityHubNodes(villageCounts?: Map<string, number>): DestinationNode[] {
+type CountryHubStats = {
+  count: number;
+  sampleCity: string;
+  sampleLat: number;
+  sampleLng: number;
+};
+
+function buildCityHubNodes(villageStats?: Map<string, CountryHubStats>): DestinationNode[] {
+  if (villageStats && villageStats.size > 0) {
+    return Array.from(villageStats.entries())
+      .filter(([, stats]) => stats.count > 0)
+      .map(([country, stats]) => {
+        const hub = MAIN_CITY_BY_COUNTRY[country];
+        if (hub) {
+          return {
+            name: `${hub.city}, ${country}`,
+            city: hub.city,
+            country,
+            lat: hub.lat,
+            lng: hub.lng,
+            villages: stats.count,
+          };
+        }
+
+        // Country exists in villages API but has no curated hub city in the static table yet.
+        return {
+          name: `${stats.sampleCity}, ${country}`,
+          city: stats.sampleCity,
+          country,
+          lat: stats.sampleLat,
+          lng: stats.sampleLng,
+          villages: stats.count,
+        };
+      })
+      .sort((a, b) => a.country.localeCompare(b.country));
+  }
+
   return Object.entries(MAIN_CITY_BY_COUNTRY)
     .map(([country, hub]) => ({
       name: `${hub.city}, ${country}`,
@@ -60,7 +96,7 @@ function buildCityHubNodes(villageCounts?: Map<string, number>): DestinationNode
       country,
       lat: hub.lat,
       lng: hub.lng,
-      villages: villageCounts?.get(country) ?? 0,
+      villages: 0,
     }))
     .sort((a, b) => a.country.localeCompare(b.country));
 }
@@ -72,7 +108,7 @@ export default function LandingPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [destinations, setDestinations] = useState<DestinationNode[]>(buildCityHubNodes());
+  const [destinations, setDestinations] = useState<DestinationNode[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -80,21 +116,38 @@ export default function LandingPage() {
 
     async function loadDestinations() {
       try {
-        const res = await fetch('/api/villages');
-        if (!res.ok) return;
+        const res = await fetch(`/api/villages?ts=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) {
+          setDestinations([]);
+          return;
+        }
         const villages: ApiVillage[] = await res.json();
-        if (!Array.isArray(villages) || villages.length === 0) return;
+        if (!Array.isArray(villages) || villages.length === 0) {
+          setDestinations([]);
+          return;
+        }
 
-        const byCountry = new Map<string, number>();
+        const byCountry = new Map<string, CountryHubStats>();
         for (const v of villages) {
           const country = v.country?.trim() || 'Bulgaria';
-          byCountry.set(country, (byCountry.get(country) ?? 0) + 1);
+          const prev = byCountry.get(country);
+          if (!prev) {
+            byCountry.set(country, {
+              count: 1,
+              sampleCity: v.name,
+              sampleLat: v.lat,
+              sampleLng: v.lng,
+            });
+          } else {
+            prev.count += 1;
+          }
         }
 
         const nodes = buildCityHubNodes(byCountry);
         if (nodes.length > 0) setDestinations(nodes);
+        else setDestinations([]);
       } catch {
-        setDestinations(buildCityHubNodes());
+        setDestinations([]);
       }
     }
 
@@ -195,7 +248,7 @@ export default function LandingPage() {
                     className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-xl"
                   >
                     <div className="max-h-60 overflow-y-auto p-2">
-                      {filtered.slice(0, 8).map((s) => (
+                      {filtered.map((s) => (
                         <button
                           key={s.name}
                           onMouseDown={() => void handleSubmit(s.name)}

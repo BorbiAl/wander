@@ -15,7 +15,7 @@ type ScoredExperience = Experience & { score: number };
 
 
 export default function DiscoverPage() {
-  const { personality, matches, setMatches, seedStatus } = useApp();
+  const { personality, matches, setMatches, seedStatus, destination } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'match' | 'price' | 'cws'>('match');
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
@@ -23,6 +23,14 @@ export default function DiscoverPage() {
   const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
 
   useEffect(() => {
+    // If user picked a destination but seeding did not succeed,
+    // avoid showing unrelated global fallback content.
+    if (destination && seedStatus !== 'done') {
+      setVillages([]);
+      setExperiences([]);
+      return;
+    }
+
     // If the store already seeded location-specific data, use those in-memory arrays directly.
     // The /api/villages route falls back to static Bulgarian data when the C++ backend is down,
     // which would overwrite the seeded data with the wrong country.
@@ -59,7 +67,7 @@ export default function DiscoverPage() {
     return () => {
       mounted = false;
     };
-  }, [seedStatus]);
+  }, [seedStatus, destination]);
 
   useEffect(() => {
     if (!personality) return;
@@ -253,6 +261,12 @@ export default function DiscoverPage() {
               ))}
             </div>
           </div>
+
+          {destination && seedStatus !== 'done' && experiences.length === 0 && (
+            <div className="mb-4 rounded-[14px] border border-[#D9C8B2] bg-[#FFF5E9] p-4 text-sm text-[#7A3E00]">
+              No local dataset found for {destination}. Add villages/experiences for this country or choose a location covered by the current JSON files.
+            </div>
+          )}
 
           <div className="flex overflow-x-auto gap-2 pb-3 mb-4">
             {FILTERS.map(t => (

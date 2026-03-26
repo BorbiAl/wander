@@ -8569,5 +8569,201 @@
     "settlement_type": "village",
     "cws": 15,
     "nearby": []
+  },
+  {
+    "id": "albania_nivice",
+    "name": "Nivicë",
+    "name_bg": "Nivicë",
+    "country": "Albania",
+    "country_code": "AL",
+    "lat": 40.1766,
+    "lng": 19.9893,
+    "population": null,
+    "osm_id": null,
+    "wikidata_id": null,
+    "description": "Stone-built Kurvelesh mountain village with transhumance routes and oral polyphonic traditions.",
+    "altitude_m": 720,
+    "traditions": [
+      "iso-polyphony",
+      "stone shepherd shelters",
+      "mountain herb lore"
+    ],
+    "population_2011": null,
+    "heritage_sites_count": 1,
+    "region": "Kurvelesh Highlands",
+    "settlement_type": "village",
+    "cws": 23,
+    "nearby": [
+      "albania_progonat",
+      "albania_lekdures"
+    ]
+  },
+  {
+    "id": "albania_progonat",
+    "name": "Progonat",
+    "name_bg": "Progonat",
+    "country": "Albania",
+    "country_code": "AL",
+    "lat": 40.2141,
+    "lng": 19.9714,
+    "population": null,
+    "osm_id": null,
+    "wikidata_id": null,
+    "description": "Remote highland settlement known for dry-stone terraces, cedar smoke kitchens, and seasonal flocks.",
+    "altitude_m": 890,
+    "traditions": [
+      "dry-stone terracing",
+      "smokehouse cooking",
+      "pastoral migration"
+    ],
+    "population_2011": null,
+    "heritage_sites_count": 0,
+    "region": "Kurvelesh Highlands",
+    "settlement_type": "village",
+    "cws": 24,
+    "nearby": [
+      "albania_nivice",
+      "albania_borsh"
+    ]
+  },
+  {
+    "id": "albania_lekdures",
+    "name": "Lekdush",
+    "name_bg": "Lekdush",
+    "country": "Albania",
+    "country_code": "AL",
+    "lat": 40.1588,
+    "lng": 20.0511,
+    "population": null,
+    "osm_id": null,
+    "wikidata_id": null,
+    "description": "Small inland hamlet where villagers preserve chestnut drying and hand-built irrigation channels.",
+    "altitude_m": 640,
+    "traditions": [
+      "chestnut drying",
+      "gravity-channel irrigation",
+      "woodland foraging"
+    ],
+    "population_2011": null,
+    "heritage_sites_count": 0,
+    "region": "Laberia Interior",
+    "settlement_type": "village",
+    "cws": 21,
+    "nearby": [
+      "albania_nivice",
+      "albania_borsh"
+    ]
+  },
+  {
+    "id": "albania_borsh",
+    "name": "Borsh i Sipërm",
+    "name_bg": "Borsh i Sipërm",
+    "country": "Albania",
+    "country_code": "AL",
+    "lat": 40.0644,
+    "lng": 19.8606,
+    "population": null,
+    "osm_id": null,
+    "wikidata_id": null,
+    "description": "Upper Borsh hillside quarter with olive terraces, old mills, and less-visited family farm routes.",
+    "altitude_m": 420,
+    "traditions": [
+      "olive press work",
+      "water-mill maintenance",
+      "terrace grafting"
+    ],
+    "population_2011": null,
+    "heritage_sites_count": 1,
+    "region": "Ionian Hinterland",
+    "settlement_type": "village",
+    "cws": 22,
+    "nearby": [
+      "albania_progonat",
+      "albania_lekdures"
+    ]
+  },
+  {
+    "id": "albania_buben",
+    "name": "Bubën",
+    "name_bg": "Bubën",
+    "country": "Albania",
+    "country_code": "AL",
+    "lat": 41.6032,
+    "lng": 19.9044,
+    "population": null,
+    "osm_id": null,
+    "wikidata_id": null,
+    "description": "Low-profile village near old floodplain farms, known for reed craft and riverbank seed saving.",
+    "altitude_m": 42,
+    "traditions": [
+      "reed weaving",
+      "seed saving",
+      "wetland bird lore"
+    ],
+    "population_2011": null,
+    "heritage_sites_count": 0,
+    "region": "Shkoder Plain",
+    "settlement_type": "village",
+    "cws": 20,
+    "nearby": [
+      "albania_shirq",
+      "albania_zogaj-shkoder"
+    ]
+  },
+  {
+    "id": "albania_shirq",
+    "name": "Shirq",
+    "name_bg": "Shirq",
+    "country": "Albania",
+    "country_code": "AL",
+    "lat": 41.7343,
+    "lng": 19.5441,
+    "population": null,
+    "osm_id": null,
+    "wikidata_id": null,
+    "description": "Historic riverside settlement around old abbey ruins, with fishing knots and net-mending knowledge.",
+    "altitude_m": 9,
+    "traditions": [
+      "net mending",
+      "estuary fishing",
+      "river shrine stewardship"
+    ],
+    "population_2011": null,
+    "heritage_sites_count": 1,
+    "region": "Buna Delta Fringe",
+    "settlement_type": "village",
+    "cws": 22,
+    "nearby": [
+      "albania_buben",
+      "albania_zogaj-shkoder"
+    ]
+  },
+  {
+    "id": "albania_zogaj-shkoder",
+    "name": "Zogaj",
+    "name_bg": "Zogaj",
+    "country": "Albania",
+    "country_code": "AL",
+    "lat": 42.1042,
+    "lng": 19.4248,
+    "population": null,
+    "osm_id": null,
+    "wikidata_id": null,
+    "description": "Lake-edge village with chestnut smokehouses, wooden boat upkeep, and borderland culinary memory.",
+    "altitude_m": 17,
+    "traditions": [
+      "wooden skiff upkeep",
+      "smoked fish curing",
+      "lake herb infusions"
+    ],
+    "population_2011": null,
+    "heritage_sites_count": 0,
+    "region": "Shkoder Lake Edge",
+    "settlement_type": "village",
+    "cws": 25,
+    "nearby": [
+      "albania_shirq",
+      "albania_buben"
+    ]
   }
 ]

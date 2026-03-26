@@ -40,6 +40,22 @@ function normaliseSeedVillage(v: Record<string, unknown>) {
   };
 }
 
+function mergeVillagePreferSeed(
+  seedVillage: (typeof VILLAGES)[number] | undefined,
+  cppVillage: (typeof VILLAGES)[number],
+) {
+  if (!seedVillage) return cppVillage;
+  return {
+    ...cppVillage,
+    country: cppVillage.country || seedVillage.country,
+    region: cppVillage.region || seedVillage.region,
+    description: cppVillage.description || seedVillage.description,
+    nearby: cppVillage.nearby.length > 0 ? cppVillage.nearby : seedVillage.nearby,
+    cws: cppVillage.cws > 0 ? cppVillage.cws : seedVillage.cws,
+    population: cppVillage.population > 0 ? cppVillage.population : seedVillage.population,
+  };
+}
+
 async function loadSeedVillages() {
   const candidatePaths = [
     path.resolve(process.cwd(), 'data', 'villages.json'),
@@ -76,7 +92,11 @@ export async function GET() {
       const cppVillages = data.map(normalise);
       const merged = new Map<string, (typeof VILLAGES)[number]>();
       for (const v of seedVillages) merged.set(String(v.id), v as (typeof VILLAGES)[number]);
-      for (const v of cppVillages) merged.set(String(v.id), v as (typeof VILLAGES)[number]);
+      for (const v of cppVillages) {
+        const id = String(v.id);
+        const seedVillage = merged.get(id);
+        merged.set(id, mergeVillagePreferSeed(seedVillage, v as (typeof VILLAGES)[number]));
+      }
       return NextResponse.json(Array.from(merged.values()));
     }
     throw new Error('empty response');

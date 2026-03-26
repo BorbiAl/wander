@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { access, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-type HubCoords = { lat: number; lng: number };
+type HubCoords = { lat: number; lng: number; country?: string };
 
 type SourceVillage = {
   id: string;
@@ -200,7 +200,7 @@ async function persistGeneratedExperiences(generated: SourceExperience[]): Promi
 async function geocodeHub(city: string, country?: string): Promise<HubCoords | null> {
   const query = country?.trim() ? `${city}, ${country}` : city;
   const q = encodeURIComponent(query);
-  const url = `${NOMINATIM_SEARCH_URL}?format=jsonv2&limit=1&q=${q}`;
+  const url = `${NOMINATIM_SEARCH_URL}?format=jsonv2&addressdetails=1&limit=1&q=${q}`;
   const res = await fetch(url, {
     headers: {
       'User-Agent': 'WanderGraph/1.0',
@@ -209,20 +209,15 @@ async function geocodeHub(city: string, country?: string): Promise<HubCoords | n
     signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) return null;
-  const data = (await res.json()) as Array<{ lat: string; lon: string }>;
+  const data = (await res.json()) as Array<{ lat: string; lon: string; address?: { country?: string } }>;
   if (!Array.isArray(data) || data.length === 0) return null;
 
   const lat = toFiniteNumber(data[0].lat);
   const lng = toFiniteNumber(data[0].lon);
   if (lat === null || lng === null) return null;
 
-  return { lat, lng };
-}
-
-function inferCountryFromNearestHub(villages: SourceVillage[], center: HubCoords): string {
-  const nearest = [...villages]
-    .sort((a, b) => haversineKm(center.lat, center.lng, a.lat, a.lng) - haversineKm(center.lat, center.lng, b.lat, b.lng))[0];
-  return String(nearest?.country ?? '').trim();
+  const geoCountry = String(data[0].address?.country ?? '').trim();
+  return { lat, lng, country: geoCountry };
 }
 
 function pickVillages(villages: SourceVillage[], center: HubCoords | null, requestedCountry: string): SourceVillage[] {
@@ -231,15 +226,14 @@ function pickVillages(villages: SourceVillage[], center: HubCoords | null, reque
     return t === 'village' || t === 'hamlet' || t === 'isolated_dwelling';
   };
 
-  let country = requestedCountry.trim();
-
-  if (!country && center) {
-    country = inferCountryFromNearestHub(villages, center);
-  }
+  const country = requestedCountry.trim() || String(center?.country ?? '').trim();
 
   let scoped = villages.filter((v) => isEligibleType(v) && (!country || String(v.country ?? '').trim() === country));
 
   if (scoped.length === 0) {
+    if (country) {
+      return [];
+    }
     scoped = villages.filter(isEligibleType);
   }
 
@@ -441,7 +435,14 @@ export async function GET(req: Request) {
     const center = await geocodeHub(city, requestedCountry).catch(() => null);
 
     const selectedVillages = pickVillages(villagesData, center, requestedCountry);
-    const effectiveCountry = requestedCountry || String(selectedVillages[0]?.country ?? '');
+    const effectiveCountry = requestedCountry || String(center?.country ?? selectedVillages[0]?.country ?? '');
+
+    if (selectedVillages.length === 0) {
+      return NextResponse.json(
+        { error: `No villages available for ${effectiveCountry || city} in local JSON data.` },
+        { status: 404 },
+      );
+    }
     let selectedExperiences = pickExperiences(experiencesData, selectedVillages);
     let decision = 'Loaded villages and experiences from local JSON datasets.';
 

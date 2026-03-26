@@ -143,8 +143,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(prev => ({ ...prev, destination: location, seedStatus: 'loading' }));
     try {
       const res = await fetch(`/api/seed?location=${encodeURIComponent(location)}`);
-      if (!res.ok) throw new Error(`Seed failed: ${res.status}`);
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const message = typeof data?.error === 'string' ? data.error : `Seed failed: ${res.status}`;
+        console.error('Seed error:', message);
+        setState(prev => ({ ...prev, seedStatus: 'idle' }));
+        return;
+      }
       patchDataArrays(data);
       setState(prev => ({
         ...prev,

@@ -33898,5 +33898,523 @@
       "wikipedia-culture-pages",
       "r-travel-planning-guides"
     ]
+  },
+  {
+    "id": "exp-albania_nivice-polyphony-archive",
+    "village_id": "albania_nivice",
+    "title": "Nivicë iso-polyphony field archive walk",
+    "type": "folklore",
+    "price_eur": 29,
+    "duration_h": 4,
+    "description": "Document and learn multipart village song fragments with local elders who maintain non-stage oral performance.",
+    "personality_weights": [
+      0.2,
+      0.33,
+      0.17,
+      0.14,
+      0.16
+    ],
+    "host_id": "host-albania_nivice-a",
+    "host_name": "Nivicë Local Circle",
+    "host_bio": "Small host collective maintaining kurvelesh highlands practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Nivicë",
+    "main_city_lat": 40.1766,
+    "main_city_lng": 19.9893,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_nivice-shepherd-stone-huts",
+    "village_id": "albania_nivice",
+    "title": "Nivicë shepherd stone-hut repair day",
+    "type": "volunteer",
+    "price_eur": 18,
+    "duration_h": 6,
+    "description": "Hands-on dry-stone hut maintenance along old grazing routes with practical mountain weather knowledge.",
+    "personality_weights": [
+      0.16,
+      0.18,
+      0.24,
+      0.14,
+      0.28
+    ],
+    "host_id": "host-albania_nivice-b",
+    "host_name": "Nivicë Local Circle",
+    "host_bio": "Small host collective maintaining kurvelesh highlands practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Nivicë",
+    "main_city_lat": 40.1766,
+    "main_city_lng": 19.9893,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_progonat-smoke-kitchen",
+    "village_id": "albania_progonat",
+    "title": "Progonat cedar smoke-kitchen session",
+    "type": "cooking",
+    "price_eur": 24,
+    "duration_h": 3,
+    "description": "Learn highland smoke-curing and pantry sequencing in an old black-kitchen setup still used in winter.",
+    "personality_weights": [
+      0.12,
+      0.22,
+      0.26,
+      0.18,
+      0.22
+    ],
+    "host_id": "host-albania_progonat-a",
+    "host_name": "Progonat Local Circle",
+    "host_bio": "Small host collective maintaining kurvelesh highlands practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Progonat",
+    "main_city_lat": 40.2141,
+    "main_city_lng": 19.9714,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_progonat-terrace-lines",
+    "village_id": "albania_progonat",
+    "title": "Progonat dry-terrace line restoration",
+    "type": "volunteer",
+    "price_eur": 15,
+    "duration_h": 5,
+    "description": "Restore collapsed terrace edges and map runoff paths used for storm control in steep plots.",
+    "personality_weights": [
+      0.14,
+      0.16,
+      0.24,
+      0.14,
+      0.32
+    ],
+    "host_id": "host-albania_progonat-b",
+    "host_name": "Progonat Local Circle",
+    "host_bio": "Small host collective maintaining kurvelesh highlands practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Progonat",
+    "main_city_lat": 40.2141,
+    "main_city_lng": 19.9714,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_lekdures-chestnut-yard",
+    "village_id": "albania_lekdures",
+    "title": "Lekdush chestnut-yard smokehouse craft",
+    "type": "craft",
+    "price_eur": 21,
+    "duration_h": 3,
+    "description": "Prepare and rotate chestnut drying racks with controlled smoke and humidity steps.",
+    "personality_weights": [
+      0.18,
+      0.2,
+      0.23,
+      0.16,
+      0.23
+    ],
+    "host_id": "host-albania_lekdures-a",
+    "host_name": "Lekdush Local Circle",
+    "host_bio": "Small host collective maintaining laberia interior practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Lekdush",
+    "main_city_lat": 40.1588,
+    "main_city_lng": 20.0511,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_lekdures-spring-channels",
+    "village_id": "albania_lekdures",
+    "title": "Lekdush gravity-channel spring trail",
+    "type": "hike",
+    "price_eur": 17,
+    "duration_h": 4,
+    "description": "Trace hand-cut water channels and learn maintenance routines that sustain household plots.",
+    "personality_weights": [
+      0.26,
+      0.18,
+      0.24,
+      0.14,
+      0.18
+    ],
+    "host_id": "host-albania_lekdures-b",
+    "host_name": "Lekdush Local Circle",
+    "host_bio": "Small host collective maintaining laberia interior practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Lekdush",
+    "main_city_lat": 40.1588,
+    "main_city_lng": 20.0511,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_borsh-olive-graft",
+    "village_id": "albania_borsh",
+    "title": "Borsh upper-terrace olive graft workshop",
+    "type": "craft",
+    "price_eur": 27,
+    "duration_h": 4,
+    "description": "Practice scion selection and graft binding on old hillside olive trees outside the beach corridor.",
+    "personality_weights": [
+      0.18,
+      0.2,
+      0.2,
+      0.22,
+      0.2
+    ],
+    "host_id": "host-albania_borsh-a",
+    "host_name": "Borsh i Sipërm Local Circle",
+    "host_bio": "Small host collective maintaining ionian hinterland practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Borsh i Sipërm",
+    "main_city_lat": 40.0644,
+    "main_city_lng": 19.8606,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_borsh-mill-keepers",
+    "village_id": "albania_borsh",
+    "title": "Borsh forgotten mill keepers trail",
+    "type": "sightseeing",
+    "price_eur": 19,
+    "duration_h": 5,
+    "description": "Walk between neglected water mills while collecting maintenance stories from families nearby.",
+    "personality_weights": [
+      0.24,
+      0.22,
+      0.2,
+      0.16,
+      0.18
+    ],
+    "host_id": "host-albania_borsh-b",
+    "host_name": "Borsh i Sipërm Local Circle",
+    "host_bio": "Small host collective maintaining ionian hinterland practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Borsh i Sipërm",
+    "main_city_lat": 40.0644,
+    "main_city_lng": 19.8606,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_buben-reed-work",
+    "village_id": "albania_buben",
+    "title": "Bubën wetland reed craft circle",
+    "type": "craft",
+    "price_eur": 16,
+    "duration_h": 3,
+    "description": "Cut, sort, and weave river reeds into practical storage forms used in floodplain households.",
+    "personality_weights": [
+      0.15,
+      0.24,
+      0.2,
+      0.14,
+      0.27
+    ],
+    "host_id": "host-albania_buben-a",
+    "host_name": "Bubën Local Circle",
+    "host_bio": "Small host collective maintaining shkoder plain practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Bubën",
+    "main_city_lat": 41.6032,
+    "main_city_lng": 19.9044,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_buben-seed-keepers",
+    "village_id": "albania_buben",
+    "title": "Bubën floodplain seed-keeper exchange",
+    "type": "folklore",
+    "price_eur": 14,
+    "duration_h": 2,
+    "description": "Participate in a local seed swap and planting calendar exchange tied to river behavior.",
+    "personality_weights": [
+      0.12,
+      0.3,
+      0.24,
+      0.1,
+      0.24
+    ],
+    "host_id": "host-albania_buben-b",
+    "host_name": "Bubën Local Circle",
+    "host_bio": "Small host collective maintaining shkoder plain practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Bubën",
+    "main_city_lat": 41.6032,
+    "main_city_lng": 19.9044,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_shirq-abbey-river",
+    "village_id": "albania_shirq",
+    "title": "Shirq abbey river-memory walk",
+    "type": "sightseeing",
+    "price_eur": 22,
+    "duration_h": 3,
+    "description": "Follow little-used paths linking riverside ruins and active fish-net repair points.",
+    "personality_weights": [
+      0.23,
+      0.24,
+      0.2,
+      0.15,
+      0.18
+    ],
+    "host_id": "host-albania_shirq-a",
+    "host_name": "Shirq Local Circle",
+    "host_bio": "Small host collective maintaining buna delta fringe practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Shirq",
+    "main_city_lat": 41.7343,
+    "main_city_lng": 19.5441,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_shirq-knot-lab",
+    "village_id": "albania_shirq",
+    "title": "Shirq estuary knot and net-mend lab",
+    "type": "craft",
+    "price_eur": 18,
+    "duration_h": 3,
+    "description": "Learn durable estuary net knots and patching methods adapted for mixed salinity waters.",
+    "personality_weights": [
+      0.14,
+      0.24,
+      0.2,
+      0.12,
+      0.3
+    ],
+    "host_id": "host-albania_shirq-b",
+    "host_name": "Shirq Local Circle",
+    "host_bio": "Small host collective maintaining buna delta fringe practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Shirq",
+    "main_city_lat": 41.7343,
+    "main_city_lng": 19.5441,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_zogaj-shkoder-skiff-upkeep",
+    "village_id": "albania_zogaj-shkoder",
+    "title": "Zogaj wooden skiff upkeep shift",
+    "type": "volunteer",
+    "price_eur": 20,
+    "duration_h": 4,
+    "description": "Assist with scraping, sealing, and balancing small lake skiffs used for nearshore work.",
+    "personality_weights": [
+      0.18,
+      0.2,
+      0.22,
+      0.14,
+      0.26
+    ],
+    "host_id": "host-albania_zogaj-shkoder-a",
+    "host_name": "Zogaj Local Circle",
+    "host_bio": "Small host collective maintaining shkoder lake edge practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Zogaj",
+    "main_city_lat": 42.1042,
+    "main_city_lng": 19.4248,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "exp-albania_zogaj-shkoder-smoke-fish",
+    "village_id": "albania_zogaj-shkoder",
+    "title": "Zogaj smoked fish and herb infusion set",
+    "type": "cooking",
+    "price_eur": 23,
+    "duration_h": 3,
+    "description": "Prepare lake fish smoke-curing and mountain-lake herb infusions with local hosts.",
+    "personality_weights": [
+      0.12,
+      0.26,
+      0.24,
+      0.14,
+      0.24
+    ],
+    "host_id": "host-albania_zogaj-shkoder-b",
+    "host_name": "Zogaj Local Circle",
+    "host_bio": "Small host collective maintaining shkoder lake edge practices.",
+    "host_rating": 4.7,
+    "country": "Albania",
+    "main_city": "Zogaj",
+    "main_city_lat": 42.1042,
+    "main_city_lng": 19.4248,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "edge-albania_nivice-to-albania_progonat",
+    "village_id": "albania_nivice",
+    "target_village_id": "albania_progonat",
+    "title": "Nivicë to Progonat ridge commons route",
+    "type": "sightseeing",
+    "price_eur": 21,
+    "duration_h": 5,
+    "description": "Cross-village route between Nivicë and Progonat focused on local water systems, pantry craft, and oral place memory.",
+    "personality_weights": [
+      0.24,
+      0.22,
+      0.2,
+      0.18,
+      0.16
+    ],
+    "host_id": "host-albania_nivice-edge",
+    "host_name": "Nivicë Route Hosts",
+    "host_bio": "Community route coordinators connecting households across Kurvelesh Highlands.",
+    "host_rating": 4.8,
+    "country": "Albania",
+    "main_city": "Nivicë",
+    "main_city_lat": 40.1766,
+    "main_city_lng": 19.9893,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "edge-albania_nivice-to-albania_lekdures",
+    "village_id": "albania_nivice",
+    "target_village_id": "albania_lekdures",
+    "title": "Nivicë to Lekdush ridge commons route",
+    "type": "sightseeing",
+    "price_eur": 19,
+    "duration_h": 4,
+    "description": "Cross-village route between Nivicë and Lekdush focused on local water systems, pantry craft, and oral place memory.",
+    "personality_weights": [
+      0.24,
+      0.22,
+      0.2,
+      0.18,
+      0.16
+    ],
+    "host_id": "host-albania_nivice-edge",
+    "host_name": "Nivicë Route Hosts",
+    "host_bio": "Community route coordinators connecting households across Kurvelesh Highlands.",
+    "host_rating": 4.8,
+    "country": "Albania",
+    "main_city": "Nivicë",
+    "main_city_lat": 40.1766,
+    "main_city_lng": 19.9893,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "edge-albania_progonat-to-albania_borsh",
+    "village_id": "albania_progonat",
+    "target_village_id": "albania_borsh",
+    "title": "Progonat to Borsh i Sipërm ridge commons route",
+    "type": "sightseeing",
+    "price_eur": 24,
+    "duration_h": 6,
+    "description": "Cross-village route between Progonat and Borsh i Sipërm focused on local water systems, pantry craft, and oral place memory.",
+    "personality_weights": [
+      0.24,
+      0.22,
+      0.2,
+      0.18,
+      0.16
+    ],
+    "host_id": "host-albania_progonat-edge",
+    "host_name": "Progonat Route Hosts",
+    "host_bio": "Community route coordinators connecting households across Kurvelesh Highlands.",
+    "host_rating": 4.8,
+    "country": "Albania",
+    "main_city": "Progonat",
+    "main_city_lat": 40.2141,
+    "main_city_lng": 19.9714,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "edge-albania_buben-to-albania_shirq",
+    "village_id": "albania_buben",
+    "target_village_id": "albania_shirq",
+    "title": "Bubën to Shirq ridge commons route",
+    "type": "sightseeing",
+    "price_eur": 17,
+    "duration_h": 3,
+    "description": "Cross-village route between Bubën and Shirq focused on local water systems, pantry craft, and oral place memory.",
+    "personality_weights": [
+      0.24,
+      0.22,
+      0.2,
+      0.18,
+      0.16
+    ],
+    "host_id": "host-albania_buben-edge",
+    "host_name": "Bubën Route Hosts",
+    "host_bio": "Community route coordinators connecting households across Shkoder Plain.",
+    "host_rating": 4.8,
+    "country": "Albania",
+    "main_city": "Bubën",
+    "main_city_lat": 41.6032,
+    "main_city_lng": 19.9044,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
+  },
+  {
+    "id": "edge-albania_shirq-to-albania_zogaj-shkoder",
+    "village_id": "albania_shirq",
+    "target_village_id": "albania_zogaj-shkoder",
+    "title": "Shirq to Zogaj ridge commons route",
+    "type": "sightseeing",
+    "price_eur": 20,
+    "duration_h": 4,
+    "description": "Cross-village route between Shirq and Zogaj focused on local water systems, pantry craft, and oral place memory.",
+    "personality_weights": [
+      0.24,
+      0.22,
+      0.2,
+      0.18,
+      0.16
+    ],
+    "host_id": "host-albania_shirq-edge",
+    "host_name": "Shirq Route Hosts",
+    "host_bio": "Community route coordinators connecting households across Buna Delta Fringe.",
+    "host_rating": 4.8,
+    "country": "Albania",
+    "main_city": "Shirq",
+    "main_city_lat": 41.7343,
+    "main_city_lng": 19.5441,
+    "source_tags": [
+      "niche-albania-manual-curation"
+    ]
   }
 ]

@@ -77,7 +77,6 @@ type AppContextType = AppState & {
   // Auth actions
   loginWithEmail: (email: string, userId: string, savedState: Record<string, unknown> | null) => void;
   logout: () => void;
-  saveToAccount: (email: string, userId: string) => Promise<{ ok: boolean; error?: string }>;
 };
 
 const defaultState: AppState = {
@@ -311,23 +310,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('Wander_state', JSON.stringify(fresh));
   };
 
-  const saveToAccount = async (email: string, userId: string): Promise<{ ok: boolean; error?: string }> => {
-    try {
-      // Strip transient/non-serialisable fields before saving
-      const { seedStatus: _s, ...stateToSave } = state;
-      void _s;
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save', email, userId, state: stateToSave }),
-      });
-      const data = await res.json();
-      if (!res.ok) return { ok: false, error: (data.error as string) ?? 'Failed to save' };
-      return { ok: true };
-    } catch {
-      return { ok: false, error: 'Network error' };
-    }
-  };
 
   async function parseResponseBody(res: Response): Promise<Record<string, unknown>> {
     // Some responses are empty or return HTML/text on server errors; parse defensively.
@@ -383,7 +365,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...state, setObservations, setPersonality, setMatches,
       addBooking, updateBooking, addPoints, addBadge, resetOnboarding, seedLocation,
       addFriend, removeFriend, createGroup, joinGroup, setActiveGroup,
-      loginWithEmail, logout, saveToAccount,
+      loginWithEmail, logout,
     }}>
       {children}
     </AppContext.Provider>

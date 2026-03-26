@@ -47,8 +47,8 @@ export default function OnboardingPage() {
           body: JSON.stringify({ observations: newObs })
         });
         const data = await res.json();
-        setObservations(newObs);
         setPersonality(data.personality);
+        setObservations(newObs);
         setMatches(data.matches);
         // If seed is still running, let the useEffect navigate once it finishes
         if (seedStatus === 'loading') {

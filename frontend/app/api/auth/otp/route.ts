@@ -58,7 +58,6 @@ const USER_PATHS = [
 
 type StoredUser = {
   email: string;
-  passwordHash: string;
   userId: string;
   state: Record<string, unknown> | null;
   createdAt: number;
@@ -202,7 +201,6 @@ export async function POST(req: NextRequest) {
       isNew = true;
       user = {
         email: emailLower,
-        passwordHash: '',
         userId: 'user_' + Math.random().toString(36).slice(2, 8),
         state: null,
         createdAt: Date.now(),

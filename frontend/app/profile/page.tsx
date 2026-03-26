@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ import { PERSONALITIES, PERSONALITY_INFO, VILLAGES } from '@/app/lib/data';
 import { getExperience, cwsColor } from '@/app/lib/utils';
 import { buildShareUrl } from '@/app/lib/friendUtils';
 import { CloudOff } from 'lucide-react';
+import { EventBeforeAfter } from '@/components/EventBeforeAfter';
 
 const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 
@@ -20,6 +21,46 @@ export default function ProfilePage() {
   const { userId, personality, badges, bookings, totalImpact, villagesVisited, email, loginWithEmail } = useApp();
   const [copied, setCopied] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
+  const [userEventsBefore, setUserEventsBefore] = useState<string[] | null>(null);
+  const [userEventsAfter, setUserEventsAfter] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (!email || !userId) {
+      setUserEventsBefore(null);
+      setUserEventsAfter(null);
+      return;
+    }
+
+    let mounted = true;
+    fetch(`/api/auth?email=${encodeURIComponent(email)}&userId=${encodeURIComponent(userId)}`, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!mounted || !data) return;
+        setUserEventsBefore(Array.isArray(data.eventsBefore) ? data.eventsBefore : []);
+        setUserEventsAfter(Array.isArray(data.eventsAfter) ? data.eventsAfter : []);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setUserEventsBefore(null);
+        setUserEventsAfter(null);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [email, userId]);
+
+  const fallbackEventsBefore = useMemo(
+    () => bookings.flatMap((b) => (Array.isArray(b.eventsBefore) ? b.eventsBefore : [])),
+    [bookings],
+  );
+  const fallbackEventsAfter = useMemo(
+    () => bookings.flatMap((b) => (Array.isArray(b.eventsAfter) ? b.eventsAfter : [])),
+    [bookings],
+  );
+
+  const displayEventsBefore = userEventsBefore ?? fallbackEventsBefore;
+  const displayEventsAfter = userEventsAfter ?? fallbackEventsAfter;
 
   function handleShare() {
     if (!personality) return;
@@ -158,6 +199,14 @@ export default function ProfilePage() {
           <span className="text-[12px] font-bold uppercase tracking-widest text-[#1A2E1C]/50 mb-2">Total spent</span>
           <span className="text-[#F5A623] font-bold tracking-tighter text-5xl">€{totalImpact.toFixed(0)}</span>
         </div>
+      </div>
+
+      <div className="mb-12">
+        <EventBeforeAfter
+          title="Your events: before vs after"
+          before={displayEventsBefore}
+          after={displayEventsAfter}
+        />
       </div>
 
       {/* Visit History */}

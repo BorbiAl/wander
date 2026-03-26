@@ -18,6 +18,44 @@ type StoredUser = {
   eventsAfter: string[];
 };
 
+function extractEventsFromState(state: Record<string, unknown> | null): { eventsBefore: string[]; eventsAfter: string[] } {
+  if (!state) return { eventsBefore: [], eventsAfter: [] };
+
+  const bookingsUnknown = state.bookings;
+  if (!Array.isArray(bookingsUnknown)) {
+    return { eventsBefore: [], eventsAfter: [] };
+  }
+
+  const eventsBefore: string[] = [];
+  const eventsAfter: string[] = [];
+
+  for (const booking of bookingsUnknown) {
+    if (!booking || typeof booking !== 'object') continue;
+    const record = booking as Record<string, unknown>;
+
+    if (Array.isArray(record.eventsBefore)) {
+      for (const event of record.eventsBefore) {
+        if (typeof event === 'string' && event.trim()) eventsBefore.push(event);
+      }
+    }
+    if (Array.isArray(record.eventsAfter)) {
+      for (const event of record.eventsAfter) {
+        if (typeof event === 'string' && event.trim()) eventsAfter.push(event);
+      }
+    }
+
+    if ((!Array.isArray(record.eventsBefore) || !Array.isArray(record.eventsAfter)) && typeof record.scheduledAt === 'string') {
+      const dateMs = Date.parse(record.scheduledAt);
+      if (!Number.isNaN(dateMs)) {
+        if (dateMs < Date.now()) eventsBefore.push(record.scheduledAt);
+        else eventsAfter.push(record.scheduledAt);
+      }
+    }
+  }
+
+  return { eventsBefore, eventsAfter };
+}
+
 async function getUsersPath(): Promise<string> {
   for (const p of DATA_PATHS) {
     try { await access(path.dirname(p)); return p; } catch { /* try next */ }
@@ -43,6 +81,27 @@ async function readUsers(): Promise<StoredUser[]> {
 async function writeUsers(users: StoredUser[]): Promise<void> {
   const p = await getUsersPath();
   await writeFile(p, JSON.stringify(users, null, 2), 'utf-8');
+}
+
+// GET /api/auth?email=...&userId=... -> current user's before/after events from users.json
+export async function GET(req: NextRequest) {
+  const email = (req.nextUrl.searchParams.get('email') || '').toLowerCase().trim();
+  const userId = (req.nextUrl.searchParams.get('userId') || '').trim();
+
+  if (!email || !userId) {
+    return NextResponse.json({ error: 'Missing email or userId' }, { status: 400 });
+  }
+
+  const users = await readUsers();
+  const user = users.find((u) => u.email === email && u.userId === userId);
+  if (!user) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    eventsBefore: user.eventsBefore ?? [],
+    eventsAfter: user.eventsAfter ?? [],
+  });
 }
 
 function isValidEmail(email: string): boolean {
@@ -80,7 +139,11 @@ export async function POST(req: NextRequest) {
   if (action === 'save' || action === 'autosave') {
     const user = users.find(u => u.email === emailLower && u.userId === String(userId));
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    user.state = state ?? null;
+    const nextState = state ?? null;
+    user.state = nextState;
+    const extracted = extractEventsFromState(nextState);
+    user.eventsBefore = extracted.eventsBefore;
+    user.eventsAfter = extracted.eventsAfter;
     user.updatedAt = Date.now();
     await writeUsers(users);
     return NextResponse.json({ ok: true });

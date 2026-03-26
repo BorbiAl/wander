@@ -72,7 +72,7 @@ export default function MarketingGlobe({
       const controls = globeRef.current.controls();
       controls.autoRotate = true;
       controls.autoRotateSpeed = 0.5;
-      controls.enableZoom = false; // Disable zooming so it doesn't mess with the layout
+      controls.enableZoom = true;
 
       // Bring camera closer so the sphere appears larger within the same canvas.
       globeRef.current.pointOfView(

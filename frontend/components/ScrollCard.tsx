@@ -32,8 +32,8 @@ export function ScrollCard({
       <div className="w-full h-[1px] bg-[#D6DCCD] mb-6" />
       
       <div className="flex flex-col items-center mb-6">
-        <span className="text-[#1A2E1C]/70 text-xs mb-2">Time spent reading</span>
-        <span className="text-4xl font-bold text-[#0B6E2A] mb-4">{elapsed}s</span>
+        <span className="hidden text-[#1A2E1C]/70 text-xs mb-2">Time spent reading</span>
+        <span className="hidden text-4xl font-bold text-[#0B6E2A] mb-4">{elapsed}s</span>
         
         <div className="flex gap-2 w-full justify-between">
           <div className={`text-xs px-3 py-1 rounded-pill border ${elapsed < 3 ? 'bg-[#0B6E2A]/15 border-[#0B6E2A] text-[#0B6E2A]' : 'bg-[#E2E7DA] border-[#D6DCCD] text-[#1A2E1C]/65'}`}>Just glanced</div>

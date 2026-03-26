@@ -10,6 +10,7 @@ import { GroupScoredExperience } from '@/app/lib/data';
 import { computeGroupVector } from '@/app/lib/hmm';
 import { GroupRadarOverlay } from '@/components/GroupRadarOverlay';
 import { GroupExperienceCard } from '@/components/GroupExperienceCard';
+import { EventBeforeAfter } from '@/components/EventBeforeAfter';
 
 function compatibilityPct(a: number[], b: number[]): number {
   const dot = a.reduce((s, v, i) => s + v * b[i], 0);
@@ -288,6 +289,14 @@ export default function GroupDiscoverPage() {
             </div>
           </div>
         )}
+
+        <div className="mb-8">
+          <EventBeforeAfter
+            title="Group events: before vs after"
+            before={group.eventsBefore ?? []}
+            after={group.eventsAfter ?? []}
+          />
+        </div>
 
         {/* Waiting state */}
         {!group.destination && (

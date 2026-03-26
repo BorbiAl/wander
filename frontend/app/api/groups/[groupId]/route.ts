@@ -21,6 +21,8 @@ type StoredGroup = {
   members: StoredMember[];
   destination: string;
   createdAt: number;
+  eventsBefore: string[];
+  eventsAfter: string[];
 };
 
 async function getGroupsPath(): Promise<string> {
@@ -67,6 +69,8 @@ export async function PATCH(
     const body = await req.json() as {
       member?: StoredMember;
       destination?: string;
+      eventsBefore?: string[];
+      eventsAfter?: string[];
     };
     const groups = await readGroups();
     const idx = groups.findIndex(g => g.id === groupId);
@@ -86,6 +90,13 @@ export async function PATCH(
 
     if (body.destination !== undefined) {
       group.destination = body.destination;
+    }
+
+    if (body.eventsBefore !== undefined) {
+      group.eventsBefore = body.eventsBefore;
+    }
+    if (body.eventsAfter !== undefined) {
+      group.eventsAfter = body.eventsAfter;
     }
 
     await writeGroups(groups);

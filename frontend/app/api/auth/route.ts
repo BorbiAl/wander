@@ -15,6 +15,8 @@ type StoredUser = {
   state: Record<string, unknown> | null;
   createdAt: number;
   updatedAt: number;
+  eventsBefore: string[];
+  eventsAfter: string[];
 };
 
 async function getUsersPath(): Promise<string> {
@@ -28,7 +30,12 @@ async function readUsers(): Promise<StoredUser[]> {
   const p = await getUsersPath();
   try {
     const raw = await readFile(p, 'utf-8');
-    return JSON.parse(raw) as StoredUser[];
+    const users = JSON.parse(raw) as StoredUser[];
+    return users.map(u => ({
+      eventsBefore: [],
+      eventsAfter: [],
+      ...u,
+    }));
   } catch {
     return [];
   }
@@ -45,6 +52,27 @@ function hashPassword(password: string): string {
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function classifyBookingDate(b: Record<string, unknown>): Record<string, unknown> {
+  const scheduledAt = b.scheduledAt as string | undefined;
+  if (!scheduledAt) return { eventsBefore: [], eventsAfter: [], ...b };
+  const isPast = new Date(scheduledAt).getTime() < Date.now();
+  return {
+    ...b,
+    eventsBefore: isPast ? [scheduledAt] : [],
+    eventsAfter: isPast ? [] : [scheduledAt],
+  };
+}
+
+function migrateState(state: Record<string, unknown> | null): Record<string, unknown> | null {
+  if (!state) return null;
+  const bookings = state.bookings as Record<string, unknown>[] | undefined;
+  if (!Array.isArray(bookings)) return state;
+  return {
+    ...state,
+    bookings: bookings.map(classifyBookingDate),
+  };
 }
 
 // POST /api/auth  body: { action: 'register'|'login'|'save', email, password, state? }
@@ -90,6 +118,8 @@ export async function POST(req: NextRequest) {
       state: null,
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      eventsBefore: [],
+      eventsAfter: [],
     };
     users.push(newUser);
     await writeUsers(users);
@@ -101,7 +131,7 @@ export async function POST(req: NextRequest) {
     if (!user || user.passwordHash !== passwordHash) {
       return NextResponse.json({ error: 'Incorrect email or password' }, { status: 401 });
     }
-    return NextResponse.json({ userId: user.userId, state: user.state });
+    return NextResponse.json({ userId: user.userId, state: migrateState(user.state) });
   }
 
   if (action === 'save') {

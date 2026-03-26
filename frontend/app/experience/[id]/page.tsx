@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '@/app/lib/store';
@@ -10,14 +10,23 @@ import { PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from '@/ap
 export default function ExperiencePage() {
   const { id } = useParams();
   const router = useRouter();
+<<<<<<< Updated upstream
   const { personality, addBooking, addPoints, addBadge, bookings, seedStatus, destination } = useApp();
 
+=======
+  const { personality, addBooking, updateBooking, addPoints, addBadge, bookings } = useApp();
+  
+>>>>>>> Stashed changes
   const [showModal, setShowModal] = useState(false);
-  const [bookingState, setBookingState] = useState<'idle'|'loading'|'success'>('idle');
+  const [bookingState, setBookingState] = useState<'date'|'confirm'|'loading'|'success'>('date');
   const [bookingResult, setBookingResult] = useState<any>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
   const [scheduledAt, setScheduledAt] = useState('');
+  const [dateMonth, setDateMonth] = useState('');
+  const [dateDay, setDateDay] = useState('');
+  const [dateYear, setDateYear] = useState('');
+  const dayRef = useRef<HTMLInputElement>(null);
+  const yearRef = useRef<HTMLInputElement>(null);
   const [reflectionQ1, setReflectionQ1] = useState('');
   const [reflectionQ2, setReflectionQ2] = useState<'yes' | 'maybe' | 'no'>('maybe');
   const [reflectionQ3, setReflectionQ3] = useState('');
@@ -64,11 +73,6 @@ export default function ExperiencePage() {
   }
 
   const matchPct = personality ? percentageMatch(personality.vector, exp.personalityWeights) : 0;
-
-  const toLocalInputValue = (d: Date) => {
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  };
 
   const getCalendarLabel = () => {
     const ua = navigator.userAgent.toLowerCase();
@@ -166,27 +170,54 @@ export default function ExperiencePage() {
     window.open(googleUrl.toString(), '_blank', 'noopener,noreferrer');
   };
 
-  const openDatePicker = () => {
-    const defaultStart = new Date();
-    defaultStart.setDate(defaultStart.getDate() + 1);
-    defaultStart.setHours(10, 0, 0, 0);
-    setScheduledAt(toLocalInputValue(defaultStart));
-    setShowDatePicker(true);
+  const openModal = () => {
+    setDateMonth('');
+    setDateDay('');
+    setDateYear('');
+    setScheduledAt('');
+    setBookingState('date');
+    setBookingResult(null);
+    setShowModal(true);
   };
 
-  const confirmCalendarDate = () => {
-    if (!scheduledAt) return;
-    const selected = new Date(scheduledAt);
-    if (Number.isNaN(selected.getTime())) return;
+  const maxDaysInMonth = (m: number, y: number) => new Date(y, m, 0).getDate();
 
-    if (selected.getTime() < Date.now()) {
-      setShowDatePicker(false);
-      setShowReflection(true);
-      return;
+  const buildScheduledAt = (m: string, d: string, y: string): string => {
+    const mm = parseInt(m), dd = parseInt(d), yyyy = parseInt(y);
+    if (!mm || !dd || !yyyy || yyyy < 2026) return '';
+    if (mm < 1 || mm > 12) return '';
+    if (dd < 1 || dd > maxDaysInMonth(mm, yyyy)) return '';
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const dateStr = `${yyyy}-${pad(mm)}-${pad(dd)}`;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    if (new Date(dateStr + 'T12:00') <= today) return '';
+    return dateStr;
+  };
+
+  const handleMonthChange = (val: string) => {
+    const digits = val.replace(/\D/g, '').slice(0, 2);
+    setDateMonth(digits);
+    const n = parseInt(digits);
+    if (digits.length === 2 || (digits.length === 1 && n > 1)) {
+      dayRef.current?.focus();
     }
+    setScheduledAt(buildScheduledAt(digits, dateDay, dateYear));
+  };
 
-    openCalendarEventForDate(selected);
-    setShowDatePicker(false);
+  const handleDayChange = (val: string) => {
+    const digits = val.replace(/\D/g, '').slice(0, 2);
+    setDateDay(digits);
+    const n = parseInt(digits);
+    if (digits.length === 2 || (digits.length === 1 && n > 3)) {
+      yearRef.current?.focus();
+    }
+    setScheduledAt(buildScheduledAt(dateMonth, digits, dateYear));
+  };
+
+  const handleYearChange = (val: string) => {
+    const digits = val.replace(/\D/g, '').slice(0, 4);
+    setDateYear(digits);
+    setScheduledAt(buildScheduledAt(dateMonth, dateDay, digits));
   };
 
   const submitReflection = () => {
@@ -211,13 +242,11 @@ export default function ExperiencePage() {
         body: JSON.stringify({ experienceId: exp.id, amount: exp.price })
       });
       const data = await res.json();
-      
+
       setBookingResult(data);
       setBookingState('success');
 
-      // eslint-disable-next-line react-hooks/purity
       const now = Date.now();
-      // Update global state
       addBooking({
         id: data.bookingId,
         experienceId: exp.id,
@@ -227,7 +256,10 @@ export default function ExperiencePage() {
         amount: exp.price,
         split: data.split,
         timestamp: now,
-        cwsDelta: data.cwsDelta
+        cwsDelta: data.cwsDelta,
+        scheduledAt: scheduledAt || undefined,
+        eventsBefore: [],
+        eventsAfter: [],
       });
       addPoints(data.points);
 
@@ -248,7 +280,7 @@ export default function ExperiencePage() {
 
     } catch (e) {
       console.error(e);
-      setBookingState('idle');
+      setBookingState('confirm');
     }
   };
 
@@ -355,8 +387,8 @@ export default function ExperiencePage() {
           <span className="text-2xl font-bold text-[#1A2E1C]">€{exp.price}</span>
           <span className="text-[#1A2E1C]/60 text-sm">/person</span>
         </div>
-        <button 
-          onClick={() => setShowModal(true)}
+        <button
+          onClick={openModal}
           className="bg-[#0B6E2A] text-white shadow-md font-semibold px-8 py-3.5 rounded-full hover:bg-[#0B6E2A]-dim active:scale-[0.97] transition-all"
         >
           Book this experience
@@ -366,19 +398,80 @@ export default function ExperiencePage() {
       {/* Booking Modal */}
       <AnimatePresence>
         {showModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
               className="bg-white/90 backdrop-blur-xl border border-[#D6DCCD]/40 rounded-[24px] p-6 w-full max-w-sm flex flex-col"
             >
-              {bookingState === 'idle' && (
+              {bookingState === 'date' && (
                 <>
-                  <h2 className="font-display text-2xl text-[#1A2E1C] mb-2">Confirm booking</h2>
-                  <p className="text-[#1A2E1C]/60 text-[15px] font-medium tracking-tight mb-8">{exp.name} in {village.name}</p>
-                  
+                  <h2 className="font-display text-2xl text-[#1A2E1C] mb-1">When do you want to go?</h2>
+                  <p className="text-[#1A2E1C]/50 text-sm mb-6">{exp.name} · {village.name}</p>
+                  <div className="flex gap-2 mb-2">
+                    <div className="flex flex-col gap-1 flex-1">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E1C]/40">Month</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="MM"
+                        value={dateMonth}
+                        onChange={e => handleMonthChange(e.target.value)}
+                        maxLength={2}
+                        className="w-full rounded-xl border border-[#D6DCCD]/60 bg-white px-3 py-3 text-lg font-bold text-center text-[#1A2E1C] focus:outline-none focus:ring-2 focus:ring-[#0B6E2A]/30 focus:border-[#0B6E2A] transition"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1 flex-1">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E1C]/40">Day</label>
+                      <input
+                        ref={dayRef}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="DD"
+                        value={dateDay}
+                        onChange={e => handleDayChange(e.target.value)}
+                        maxLength={2}
+                        className="w-full rounded-xl border border-[#D6DCCD]/60 bg-white px-3 py-3 text-lg font-bold text-center text-[#1A2E1C] focus:outline-none focus:ring-2 focus:ring-[#0B6E2A]/30 focus:border-[#0B6E2A] transition"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1 flex-[1.4]">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E1C]/40">Year</label>
+                      <input
+                        ref={yearRef}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="2026"
+                        value={dateYear}
+                        onChange={e => handleYearChange(e.target.value)}
+                        maxLength={4}
+                        className="w-full rounded-xl border border-[#D6DCCD]/60 bg-white px-3 py-3 text-lg font-bold text-center text-[#1A2E1C] focus:outline-none focus:ring-2 focus:ring-[#0B6E2A]/30 focus:border-[#0B6E2A] transition"
+                      />
+                    </div>
+                  </div>
+                  {scheduledAt && (
+                    <p className="text-[#0B6E2A] text-xs font-semibold text-center mb-4">
+                      {new Date(scheduledAt + 'T12:00').toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  )}
+                  <div className="flex gap-3 mt-2">
+                    <button type="button" onClick={() => { setScheduledAt(''); setBookingState('confirm'); }} className="flex-1 border border-[#D6DCCD]/40 text-[#1A2E1C]/50 rounded-full py-3 text-sm hover:text-[#1A2E1C] transition-colors">Skip</button>
+                    <button type="button" onClick={() => setBookingState('confirm')} disabled={!!dateMonth && !!dateDay && !!dateYear && !scheduledAt} className="flex-1 bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 text-sm transition-colors disabled:opacity-40">Next →</button>
+                  </div>
+                </>
+              )}
+
+              {bookingState === 'confirm' && (
+                <>
+                  <h2 className="font-display text-2xl text-[#1A2E1C] mb-1">Confirm booking</h2>
+                  <p className="text-[#1A2E1C]/60 text-[15px] font-medium tracking-tight mb-2">{exp.name} in {village.name}</p>
+                  {scheduledAt && (
+                    <p className="text-[#0B6E2A] text-xs font-semibold mb-6">
+                      📅 {new Date(scheduledAt + 'T12:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  )}
+
                   <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 mb-6">
                     <div className="text-xs text-text-3 uppercase mb-3">Your €{exp.price} will be distributed:</div>
                     <div className="flex justify-between text-sm mb-2">
@@ -400,8 +493,8 @@ export default function ExperiencePage() {
                   </div>
 
                   <div className="flex gap-3">
-                    <button onClick={() => setShowModal(false)} className="flex-1 border border-[#D6DCCD]/40 text-[#1A2E1C]/60 rounded-full py-3 hover:text-[#1A2E1C] transition-colors">Cancel</button>
-                    <button onClick={handleBook} className="flex-1 bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">Confirm →</button>
+                    <button type="button" onClick={() => setBookingState('date')} className="flex-1 border border-[#D6DCCD]/40 text-[#1A2E1C]/60 rounded-full py-3 hover:text-[#1A2E1C] transition-colors">← Back</button>
+                    <button type="button" onClick={handleBook} className="flex-1 bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#095A22] transition-colors">Confirm →</button>
                   </div>
                 </>
               )}
@@ -417,60 +510,29 @@ export default function ExperiencePage() {
                 <div className="py-6 flex flex-col items-center text-center">
                   <div className="w-16 h-16 rounded-full bg-[#0B6E2A]/20 text-[#0B6E2A] flex items-center justify-center text-3xl mb-4">✓</div>
                   <h2 className="font-display text-2xl text-[#1A2E1C] mb-2">Booked! You made an impact.</h2>
-                  <p className="text-[#0B6E2A] font-medium mb-8">+{bookingResult.cwsDelta} CWS for {village.name}</p>
-                  <div className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md p-4 mb-4 text-left">
-                    <p className="text-sm text-[#1A2E1C] font-bold mb-3">Add this booking to your calendar?</p>
-                    <button
-                      onClick={openDatePicker}
-                      className="w-full rounded-full bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-[#1A2E1C] hover:bg-[#095A22] transition-colors"
-                    >
-                      {getCalendarLabel()}
-                    </button>
-                  </div>
-                  <button onClick={() => router.push('/impact')} className="w-full bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#0B6E2A]-dim transition-colors">
+                  <p className="text-[#0B6E2A] font-medium mb-2">+{bookingResult.cwsDelta} CWS for {village.name}</p>
+                  {scheduledAt && (
+                    <p className="text-[#1A2E1C]/50 text-xs mb-6">
+                      📅 {new Date(scheduledAt + 'T12:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  )}
+                  {scheduledAt && (
+                    <div className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md p-4 mb-4 text-left">
+                      <p className="text-sm text-[#1A2E1C] font-bold mb-3">Add to your calendar?</p>
+                      <button
+                        type="button"
+                        onClick={() => openCalendarEventForDate(new Date(scheduledAt + 'T12:00'))}
+                        className="w-full rounded-full bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-white hover:bg-[#095A22] transition-colors"
+                      >
+                        {getCalendarLabel()}
+                      </button>
+                    </div>
+                  )}
+                  <button type="button" onClick={() => router.push('/impact')} className="w-full bg-[#0B6E2A] text-white shadow-md font-medium rounded-full py-3 hover:bg-[#095A22] transition-colors">
                     View impact →
                   </button>
                 </div>
               )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showDatePicker && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.96, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 12 }}
-              className="bg-white/90 backdrop-blur-xl border border-[#D6DCCD]/40 rounded-[24px] p-6 w-full max-w-sm"
-            >
-              <h3 className="font-display text-2xl text-[#1A2E1C] mb-2">Choose experience date</h3>
-              <p className="text-sm text-[#1A2E1C]/60 mb-4">Pick when you plan to do this experience.</p>
-              <input
-                type="datetime-local"
-                value={scheduledAt}
-                onChange={(e) => setScheduledAt(e.target.value)}
-                aria-label="Experience date and time"
-                title="Experience date and time"
-                className="w-full rounded-lg border border-[#D6DCCD]/40 bg-white/90 backdrop-blur-md px-3 py-2 text-sm text-[#1A2E1C]"
-              />
-              <div className="mt-4 flex gap-2">
-                <button
-                  onClick={() => setShowDatePicker(false)}
-                  className="flex-1 rounded-full border border-[#3A3A3A] px-4 py-2 text-sm text-[#1A2E1C]/60 hover:text-[#1A2E1C] transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmCalendarDate}
-                  className="flex-1 rounded-full bg-[#0B6E2A] px-4 py-2 text-sm font-medium text-[#1A2E1C] hover:bg-[#095A22] transition-colors"
-                >
-                  Continue
-                </button>
-              </div>
             </motion.div>
           </motion.div>
         )}

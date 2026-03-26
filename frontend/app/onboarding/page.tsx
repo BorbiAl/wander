@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '@/app/lib/store';
@@ -14,10 +14,20 @@ import { generateQuestions } from '@/app/lib/questionBank';
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { setObservations, setPersonality, setMatches, destination } = useApp();
+
+  const { setObservations, setPersonality, setMatches, destination, seedStatus } = useApp();
   const [step, setStep] = useState(0);
   const [obs, setObs] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const seedResolveRef = useRef<(() => void) | null>(null);
+
+  // When seedStatus changes to done/idle, resolve any pending navigation wait
+  useEffect(() => {
+    if (seedStatus !== 'loading' && seedResolveRef.current) {
+      seedResolveRef.current();
+      seedResolveRef.current = null;
+    }
+  }, [seedStatus]);
 
   // Generate a random set of questions once per session
   const questions = useMemo(() => generateQuestions(), []);
@@ -53,7 +63,11 @@ export default function OnboardingPage() {
         setObservations(newObs);
         setPersonality(data.personality);
         setMatches(data.matches);
-        setTimeout(() => router.push('/discover'), 1500);
+        // Wait for destination seed to finish before navigating
+        if (seedStatus === 'loading') {
+          await new Promise<void>(resolve => { seedResolveRef.current = resolve; });
+        }
+        router.push('/discover');
       } catch (e) {
         console.error(e);
         setLoading(false);
@@ -65,7 +79,9 @@ export default function OnboardingPage() {
     return (
       <div className="fixed inset-0 bg-bg z-50 flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-[#333] border-t-accent rounded-full animate-spin mb-6" />
-        <p className="text-white font-display text-xl">Analyzing your personality...</p>
+        <p className="text-white font-display text-xl">
+          {seedStatus === 'loading' ? `Discovering villages in ${destination}…` : 'Analyzing your personality...'}
+        </p>
       </div>
     );
   }

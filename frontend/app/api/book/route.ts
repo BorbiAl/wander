@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       // Normalise C++ response → frontend shape
       const exp = getExperience(experienceId);
       const village = exp ? getVillage(exp.villageId) : null;
-      const cws_base = village?.cws ?? 50;
+      const cws_base = Number(village?.cws ?? 50) || 50;
       const points = 10 + Math.max(0, Math.floor((100 - cws_base) / 5));
 
       return NextResponse.json({
@@ -48,8 +48,9 @@ export async function POST(req: Request) {
         culture: amount * 0.10,
         platform: amount * 0.05,
       };
-      const cwsDelta = Math.round(amount * 0.3);
-      const points = Math.floor(10 + (100 - village.cws) * 0.5);
+      const cws = Number(village.cws) || 50;
+      const cwsDelta = Math.max(1, Math.round(Number(amount) * 0.3));
+      const points = Math.floor(10 + (100 - cws) * 0.5);
 
       return NextResponse.json({
         bookingId: 'bkg_' + Math.random().toString(36).slice(2, 8),

@@ -22,11 +22,12 @@ export function Leaderboard() {
   }, []);
 
   // Build display list: real leaderboard or synthetic with current user
+  const safePoints = Number(points) || 0;
   const display: LeaderboardEntry[] = entries.length > 0 ? entries : [
-    { user_id: userId, score: points, bookings: bookings.length, villages_count: villagesVisited.length },
-    { user_id: 'traveler_x9k', score: Math.max(0, points - 40), bookings: Math.max(0, bookings.length - 1), villages_count: Math.max(0, villagesVisited.length - 1) },
-    { user_id: 'wanderer_m2p', score: Math.max(0, points - 90), bookings: Math.max(0, bookings.length - 2), villages_count: 0 },
-  ].filter(e => e.score >= 0 || e.bookings >= 0).slice(0, 5);
+    { user_id: userId, score: safePoints, bookings: bookings.length, villages_count: villagesVisited.length },
+    { user_id: 'traveler_x9k', score: Math.max(0, safePoints - 40), bookings: Math.max(0, bookings.length - 1), villages_count: Math.max(0, villagesVisited.length - 1) },
+    { user_id: 'wanderer_m2p', score: Math.max(0, safePoints - 90), bookings: Math.max(0, bookings.length - 2), villages_count: 0 },
+  ].slice(0, 5);
 
   const medals = ['🥇', '🥈', '🥉'];
 
@@ -51,7 +52,7 @@ export function Leaderboard() {
                 </div>
               </div>
               <div className="text-right">
-                <div className={`font-display text-lg font-bold ${isMe ? 'text-accent' : 'text-white'}`}>{entry.score}</div>
+                <div className={`font-display text-lg font-bold ${isMe ? 'text-accent' : 'text-white'}`}>{Number(entry.score) || 0}</div>
                 <div className="text-text-3 text-[10px]">pts</div>
               </div>
             </div>

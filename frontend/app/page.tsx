@@ -34,9 +34,10 @@ export default function LandingPage() {
     if (!trimmed) return;
     setInput(trimmed);
     setShowSuggestions(false);
-    // Start seeding in background, navigate immediately
+    // Start seeding, navigate immediately — seed completes during onboarding
     seedLocation(trimmed);
     router.push('/onboarding');
+
   };
 
   const handleKey = (e: React.KeyboardEvent) => {

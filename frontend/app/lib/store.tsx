@@ -69,7 +69,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       try {
         const parsed = JSON.parse(saved);
         // Never restore a loading state — it means the previous session crashed mid-request
-        if (parsed.seedStatus === 'loading') parsed.seedStatus = 'idle';
+        if (parsed.seedStatus === 'loading' || parsed.seedStatus === 'error') parsed.seedStatus = 'idle';
         setState(parsed);
         // Re-patch data arrays if a destination was previously seeded
         if (parsed.destination && parsed.seedStatus === 'done') {
@@ -149,10 +149,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setState(prev => ({
         ...prev,
         seedStatus: 'done',
-        // Reset travel data when destination changes
-        observations: [],
-        personality: null,
-        matches: [],
+        // Only reset booking/impact data, not personality — user may be mid-onboarding
         bookings: [],
         points: 0,
         badges: [],
@@ -161,7 +158,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }));
     } catch (err) {
       console.error('Seed error:', err);
-      setState(prev => ({ ...prev, seedStatus: 'error' }));
+      // Don't persist error state — reset to idle so user can try again
+      setState(prev => ({ ...prev, seedStatus: 'idle' }));
     }
   };
 

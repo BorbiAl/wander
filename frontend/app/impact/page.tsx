@@ -92,7 +92,7 @@ export default function ImpactPage() {
           <div className="font-sans text-[13px] text-text-2">Villages Helped</div>
         </div>
         <div className="bg-surface border border-[#222] rounded-card p-5">
-          <div className="font-display text-3xl text-white mb-1">{points}</div>
+          <div className="font-display text-3xl text-white mb-1">{Number(points) || 0}</div>
           <div className="font-sans text-[13px] text-text-2">Points Earned</div>
         </div>
         <div className="bg-surface border border-[#222] rounded-card p-5">
@@ -116,16 +116,15 @@ export default function ImpactPage() {
           <h2 className="font-display text-2xl text-white mb-6">CWS Impact</h2>
           {Array.from(new Set(bookings.map(b => b.villageName))).map(vName => {
             const villageBookings = bookings.filter(b => b.villageName === vName);
-            const totalDelta = villageBookings.reduce((sum, b) => sum + b.cwsDelta, 0);
+            const totalDelta = villageBookings.reduce((sum, b) => sum + (Number(b.cwsDelta) || 0), 0);
             const village = VILLAGES.find(v => v.name === vName);
-            if (!village) return null;
             return (
-              <CWSCounter 
-                key={vName} 
-                villageName={vName} 
-                region={village.region} 
-                before={village.cws} 
-                delta={totalDelta} 
+              <CWSCounter
+                key={vName}
+                villageName={vName}
+                region={village?.region ?? ''}
+                before={Number(village?.cws) || 40}
+                delta={totalDelta}
               />
             );
           })}

@@ -128,3 +128,34 @@ export const EXPERIENCES: Experience[] = [
     hostId:'h10', description:'Witness (or participate in) the hereditary fire-walking ritual practiced by one family for 14 generations. Once-a-year event.',
     personalityWeights:[0.20, 0.30, 0.15, 0.25, 0.10] },
 ];
+
+export function patchDataArrays(data: Record<string, unknown>) {
+  if (Array.isArray(data.villages) && data.villages.length) {
+    VILLAGES.splice(0, VILLAGES.length, ...(data.villages as Village[]));
+  }
+  if (Array.isArray(data.experiences) && data.experiences.length) {
+    const exps = (data.experiences as Record<string, unknown>[]).map(e => ({
+      id: e.id,
+      villageId: e.village_id ?? e.villageId,
+      name: (e.title ?? e.name) as string,
+      type: e.type as Experience['type'],
+      price: (e.price_eur ?? e.price ?? 0) as number,
+      duration: e.duration_h ? `${e.duration_h}h` : (e.duration ?? ''),
+      hostId: (e.host_id ?? e.hostId ?? '') as string,
+      description: (e.description ?? '') as string,
+      personalityWeights: (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as [number,number,number,number,number],
+    })) as Experience[];
+    EXPERIENCES.splice(0, EXPERIENCES.length, ...exps);
+  }
+  if (Array.isArray(data.hosts) && data.hosts.length) {
+    const hosts = (data.hosts as Record<string, unknown>[]).map(h => ({
+      id: h.id,
+      villageId: (h.village_id ?? h.villageId) as string,
+      name: h.name as string,
+      bio: (h.bio ?? '') as string,
+      rating: (h.rating ?? 4.5) as number,
+      experienceIds: (h.experienceIds ?? h.experience_ids ?? []) as string[],
+    })) as Host[];
+    HOSTS.splice(0, HOSTS.length, ...hosts);
+  }
+}

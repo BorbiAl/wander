@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PersonalityResult } from './hmm';
-import { Experience, Village, Host, FriendProfile, VILLAGES, EXPERIENCES, HOSTS } from './data';
+import { Experience, FriendProfile, patchDataArrays } from './data';
 
 export type Booking = {
   id: string;
@@ -131,36 +131,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state, isLoaded]);
 
-  function patchDataArrays(data: { villages?: Village[]; experiences?: Experience[]; hosts?: Host[] }) {
-    if (data.villages?.length) {
-      VILLAGES.splice(0, VILLAGES.length, ...data.villages);
-    }
-    if (data.experiences?.length) {
-      const exps = data.experiences.map((e: Record<string, unknown>) => ({
-        id: e.id,
-        villageId: e.village_id ?? e.villageId,
-        name: (e.title ?? e.name) as string,
-        type: e.type as Experience['type'],
-        price: (e.price_eur ?? e.price ?? 0) as number,
-        duration: e.duration_h ? `${e.duration_h}h` : (e.duration ?? ''),
-        hostId: (e.host_id ?? e.hostId ?? '') as string,
-        description: (e.description ?? '') as string,
-        personalityWeights: (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as [number, number, number, number, number],
-      })) as Experience[];
-      EXPERIENCES.splice(0, EXPERIENCES.length, ...exps);
-    }
-    if (data.hosts?.length) {
-      const hosts = data.hosts.map((h: Record<string, unknown>) => ({
-        id: h.id,
-        villageId: (h.village_id ?? h.villageId) as string,
-        name: h.name as string,
-        bio: (h.bio ?? '') as string,
-        rating: (h.rating ?? 4.5) as number,
-        experienceIds: (h.experienceIds ?? h.experience_ids ?? []) as string[],
-      })) as Host[];
-      HOSTS.splice(0, HOSTS.length, ...hosts);
-    }
-  }
+  // Auto-save behavioural data to account when personality changes and user is logged in
+  useEffect(() => {
+    if (!isLoaded || !state.email || !state.personality) return;
+    const timer = setTimeout(() => {
+      const { seedStatus: _s, ...stateToSave } = state;
+      void _s;
+      fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'autosave', email: state.email, userId: state.userId, state: stateToSave }),
+      }).catch(() => {});
+    }, 2000);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.personality, state.observations, isLoaded]);
+
 
   // Build a StoredMember from current user state (requires personality to be set)
   function selfAsMember(currentState: AppState): StoredMember | null {

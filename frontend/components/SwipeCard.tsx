@@ -45,9 +45,9 @@ export function SwipeCard({
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('left')}
-          className={`relative h-[420px] w-[260px] cursor-pointer overflow-hidden rounded-[24px] border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
+          className={`relative flex h-[420px] w-[260px] cursor-pointer flex-col overflow-hidden rounded-[24px] border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
         >
-          <div className="h-full w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: leftColor }}>
+          <div className="h-[304px] w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: leftColor }}>
             <img
               src={leftSrc}
               alt={leftDescription}
@@ -61,9 +61,9 @@ export function SwipeCard({
           <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between px-3 pt-3">
             <span className="rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#1A2E1C]/60">Option A</span>
           </div>
-          <div className="absolute inset-x-0 bottom-0 z-10 min-h-[116px] border-t border-[#D6DCCD]/70 bg-[#E5E9DF]/95 p-4 text-center backdrop-blur-sm">
-            <p className="block text-center font-sans text-sm font-semibold leading-tight text-[#1A2E1C]">{leftLabel}</p>
-            <p className="mt-2 block text-center font-sans text-[11px] leading-snug text-[#1A2E1C]/65">{leftDescription}</p>
+          <div className="z-10 flex min-h-[116px] flex-1 flex-col items-center justify-center border-t border-[#D6DCCD]/70 bg-[#E5E9DF]/95 px-4 py-3 text-center backdrop-blur-sm">
+            <p className="w-full text-center font-sans text-sm font-semibold leading-tight text-[#1A2E1C]">{leftLabel}</p>
+            <p className="mt-2 w-full text-center font-sans text-[11px] leading-snug text-[#1A2E1C]/65">{leftDescription}</p>
           </div>
           {chosen === 'left' && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -75,9 +75,9 @@ export function SwipeCard({
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('right')}
-          className={`relative h-[420px] w-[260px] cursor-pointer overflow-hidden rounded-[24px] border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
+          className={`relative flex h-[420px] w-[260px] cursor-pointer flex-col overflow-hidden rounded-[24px] border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
         >
-          <div className="h-full w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: rightColor }}>
+          <div className="h-[304px] w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: rightColor }}>
             <img
               src={rightSrc}
               alt={rightDescription}
@@ -91,9 +91,9 @@ export function SwipeCard({
           <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-end px-3 pt-3">
             <span className="rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#1A2E1C]/60">Option B</span>
           </div>
-          <div className="absolute inset-x-0 bottom-0 z-10 min-h-[116px] border-t border-[#D6DCCD]/70 bg-[#E5E9DF]/95 p-4 text-center backdrop-blur-sm">
-            <p className="block text-center font-sans text-sm font-semibold leading-tight text-[#1A2E1C]">{rightLabel}</p>
-            <p className="mt-2 block text-center font-sans text-[11px] leading-snug text-[#1A2E1C]/65">{rightDescription}</p>
+          <div className="z-10 flex min-h-[116px] flex-1 flex-col items-center justify-center border-t border-[#D6DCCD]/70 bg-[#E5E9DF]/95 px-4 py-3 text-center backdrop-blur-sm">
+            <p className="w-full text-center font-sans text-sm font-semibold leading-tight text-[#1A2E1C]">{rightLabel}</p>
+            <p className="mt-2 w-full text-center font-sans text-[11px] leading-snug text-[#1A2E1C]/65">{rightDescription}</p>
           </div>
           {chosen === 'right' && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">

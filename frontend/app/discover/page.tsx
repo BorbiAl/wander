@@ -41,24 +41,19 @@ export default function DiscoverPage() {
       return;
     }
 
+    // If the store already seeded location-specific data, use those in-memory arrays directly.
+    // The /api/villages route falls back to static Bulgarian data when the C++ backend is down,
+    // which would overwrite the seeded data with the wrong country.
+    if (seedStatus === 'done') {
+      setVillages([...VILLAGES]);
+      setExperiences([...EXPERIENCES]);
+      return;
+    }
+
     let mounted = true;
 
     async function loadLiveData() {
       try {
-        // When a destination is seeded, fetch directly from the seed API so we
-        // get the persisted location-specific data even after a page reload
-        // (the in-memory VILLAGES/EXPERIENCES arrays are empty until patchDataArrays runs).
-        if (destination && seedStatus === 'done') {
-          const res = await fetch(`/api/seed?location=${encodeURIComponent(destination)}`, { cache: 'no-store' });
-          if (!mounted) return;
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data.villages) && data.villages.length > 0) setVillages(data.villages);
-            if (Array.isArray(data.experiences) && data.experiences.length > 0) setExperiences(data.experiences);
-          }
-          return;
-        }
-
         const [vRes, eRes] = await Promise.all([
           fetch('/api/villages', { cache: 'no-store' }),
           fetch('/api/experiences', { cache: 'no-store' }),

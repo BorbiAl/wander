@@ -24,18 +24,26 @@ type NormalisedExperience = {
   mainCity: string;
   mainCityLat: number;
   mainCityLng: number;
+  isFree?: boolean;
+  isActive?: boolean;
+  startDate?: string;
+  endDate?: string;
+  spotsTotal?: number;
+  spotsRemaining?: number;
 };
 
 // Normalise C++ experience shape → frontend Experience type
 function normalise(e: Record<string, unknown>): NormalisedExperience {
   const pw = (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as number[];
   while (pw.length < 5) pw.push(0.2);
+  const price = Number(e.price_eur ?? e.price ?? 0);
+  const type = String(e.type ?? 'craft');
   return {
     id: String(e.id ?? ''),
     villageId: String(e.village_id ?? ''),
     name: (e.title ?? e.name) as string,
-    type: (e.type ?? 'craft') as string,
-    price: (e.price_eur ?? e.price ?? 0) as number,
+    type,
+    price,
     duration: e.duration_h ? `${e.duration_h}h` : String(e.duration ?? ''),
     hostId: (e.host_id ?? e.hostId ?? '') as string,
     description: (e.description ?? '') as string,
@@ -43,18 +51,26 @@ function normalise(e: Record<string, unknown>): NormalisedExperience {
     mainCity: (e.main_city ?? e.mainCity ?? '') as string,
     mainCityLat: Number(e.main_city_lat ?? e.mainCityLat ?? 0),
     mainCityLng: Number(e.main_city_lng ?? e.mainCityLng ?? 0),
+    isFree: Boolean(e.isFree ?? (price === 0 && type === 'sightseeing')),
+    isActive: Boolean(e.isActive ?? false),
+    startDate: e.startDate as string | undefined,
+    endDate: e.endDate as string | undefined,
+    spotsTotal: e.spotsTotal !== undefined ? Number(e.spotsTotal) : undefined,
+    spotsRemaining: e.spotsRemaining !== undefined ? Number(e.spotsRemaining) : undefined,
   };
 }
 
 function normaliseSeedExperience(e: Record<string, unknown>): NormalisedExperience {
   const pw = (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as number[];
   while (pw.length < 5) pw.push(0.2);
+  const price = Number(e.price_eur ?? e.price ?? 0);
+  const type = String(e.type ?? 'craft');
   return {
     id: String(e.id ?? ''),
     villageId: String(e.villageId ?? e.village_id ?? ''),
     name: String(e.title ?? e.name ?? ''),
-    type: (e.type ?? 'craft') as string,
-    price: (e.price_eur ?? e.price ?? 0) as number,
+    type,
+    price,
     duration: e.duration_h ? `${e.duration_h}h` : String(e.duration ?? ''),
     hostId: (e.hostId ?? e.host_id ?? '') as string,
     description: (e.description ?? '') as string,
@@ -62,6 +78,12 @@ function normaliseSeedExperience(e: Record<string, unknown>): NormalisedExperien
     mainCity: (e.main_city ?? e.mainCity ?? '') as string,
     mainCityLat: Number(e.main_city_lat ?? e.mainCityLat ?? 0),
     mainCityLng: Number(e.main_city_lng ?? e.mainCityLng ?? 0),
+    isFree: Boolean(e.isFree ?? (price === 0 && type === 'sightseeing')),
+    isActive: Boolean(e.isActive ?? false),
+    startDate: e.startDate as string | undefined,
+    endDate: e.endDate as string | undefined,
+    spotsTotal: e.spotsTotal !== undefined ? Number(e.spotsTotal) : undefined,
+    spotsRemaining: e.spotsRemaining !== undefined ? Number(e.spotsRemaining) : undefined,
   };
 }
 
@@ -121,6 +143,9 @@ export async function GET(req: NextRequest) {
   const typeParam = searchParams.get('type');
   const limitParam = searchParams.get('limit');
   const offsetParam = searchParams.get('offset');
+  const isFreeParam = searchParams.get('isFree');
+  const isActiveParam = searchParams.get('isActive');
+  const hasAvailabilityParam = searchParams.get('hasAvailability');
 
   const idFilter = idParam?.trim() ?? null;
 
@@ -129,6 +154,9 @@ export async function GET(req: NextRequest) {
     : null;
 
   const typeFilter = typeParam?.trim().toLowerCase() ?? null;
+  const isFreeFilter = isFreeParam === 'true' ? true : isFreeParam === 'false' ? false : null;
+  const isActiveFilter = isActiveParam === 'true' ? true : isActiveParam === 'false' ? false : null;
+  const hasAvailabilityFilter = hasAvailabilityParam === 'true';
 
   const limit = limitParam !== null
     ? Math.min(Math.max(1, parseInt(limitParam, 10) || DEFAULT_PAGE_LIMIT), MAX_PAGE_LIMIT)
@@ -169,6 +197,15 @@ export async function GET(req: NextRequest) {
   }
   if (typeFilter) {
     filtered = filtered.filter(e => e.type.toLowerCase() === typeFilter);
+  }
+  if (isFreeFilter !== null) {
+    filtered = filtered.filter(e => Boolean(e.isFree) === isFreeFilter);
+  }
+  if (isActiveFilter !== null) {
+    filtered = filtered.filter(e => Boolean(e.isActive) === isActiveFilter);
+  }
+  if (hasAvailabilityFilter) {
+    filtered = filtered.filter(e => e.spotsRemaining === undefined || e.spotsRemaining > 0);
   }
 
   const total = filtered.length;

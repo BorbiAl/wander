@@ -119,7 +119,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setState({ ...defaultState, ...rest });
         // Re-patch data arrays if a destination was previously seeded
         if (parsed.destination && parsed.seedStatus === 'done') {
-          fetch(`/api/seed?location=${encodeURIComponent(parsed.destination)}`)
+          fetch(`/api/seed?location=${encodeURIComponent(parsed.destination)}&allowGenerate=1`)
             .then(r => r.json())
             .then(data => patchDataArrays(data))
             .catch(() => {});
@@ -333,28 +333,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const seedLocation = async (location: string) => {
     setState(prev => ({ ...prev, destination: location, seedStatus: 'loading' }));
-    try {
-      const res = await fetch(`/api/seed?location=${encodeURIComponent(location)}`);
-      const data = await parseResponseBody(res);
-      if (!res.ok) {
-        const message = typeof data?.error === 'string' ? data.error : `Seed failed: ${res.status}`;
-        console.error('Seed error:', message);
-        setState(prev => ({ ...prev, seedStatus: 'idle' }));
+    const url = `/api/seed?location=${encodeURIComponent(location)}&allowGenerate=1`;
+    // Retry once on 504 — first call for unknown countries triggers two sequential
+    // Gemini calls (village + experience generation) which can exceed the default timeout.
+    // The second call hits the freshly-persisted data and is fast.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch(url, { signal: AbortSignal.timeout(90_000) });
+        const data = await parseResponseBody(res);
+        if (res.status === 504 && attempt === 0) continue;
+        if (!res.ok) {
+          const message = typeof data?.error === 'string' ? data.error : `Seed failed: ${res.status}`;
+          console.error('Seed error:', message);
+          setState(prev => ({ ...prev, seedStatus: 'idle' }));
+          return;
+        }
+        patchDataArrays(data);
+        setState(prev => ({
+          ...prev,
+          seedStatus: 'done',
+          bookings: [],
+          points: 0,
+          badges: [],
+          totalImpact: 0,
+          villagesVisited: [],
+        }));
         return;
+      } catch (err) {
+        if (attempt === 0) continue;
+        console.error('Seed error:', err);
+        setState(prev => ({ ...prev, seedStatus: 'idle' }));
       }
-      patchDataArrays(data);
-      setState(prev => ({
-        ...prev,
-        seedStatus: 'done',
-        bookings: [],
-        points: 0,
-        badges: [],
-        totalImpact: 0,
-        villagesVisited: [],
-      }));
-    } catch (err) {
-      console.error('Seed error:', err);
-      setState(prev => ({ ...prev, seedStatus: 'idle' }));
     }
   };
 

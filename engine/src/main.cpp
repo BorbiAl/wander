@@ -209,6 +209,16 @@ int main() {
           item["tags"]                = src.contains("tags") ? src["tags"] : json::array();
           item["personality_weights"] = src.contains("personality_weights")
                                         ? src["personality_weights"] : json::array();
+          item["is_free"]             = src.value("isFree", src.value("is_free", false));
+          item["is_active"]           = src.value("isActive", src.value("is_active", false));
+          if (src.contains("startDate") && src["startDate"].is_string())
+            item["startDate"] = src["startDate"];
+          if (src.contains("endDate") && src["endDate"].is_string())
+            item["endDate"] = src["endDate"];
+          if (src.contains("spotsTotal") && src["spotsTotal"].is_number())
+            item["spotsTotal"] = src["spotsTotal"];
+          if (src.contains("spotsRemaining") && src["spotsRemaining"].is_number())
+            item["spotsRemaining"] = src["spotsRemaining"];
           out.push_back(item);
         }
         res.set_content(out.dump(), "application/json");
@@ -303,12 +313,92 @@ int main() {
       res.set_content(out.dump(), "application/json");
     });
 
-  // ---- GET /graph/experiences (all experiences) ---------------------------
+  // ---- GET /graph/experiences (all experiences, optional query filters) ---
+  // Query params: type, is_free, is_active, has_availability, village_id
   svr.Get("/graph/experiences",
-    [](const httplib::Request&, httplib::Response& res) {
+    [](const httplib::Request& req, httplib::Response& res) {
+      const std::string type_filter        = req.get_param_value("type");
+      const std::string village_filter     = req.get_param_value("village_id");
+      const std::string is_free_param      = req.get_param_value("is_free");
+      const std::string is_active_param    = req.get_param_value("is_active");
+      const std::string has_avail_param    = req.get_param_value("has_availability");
+
+      // tri-state: 1=must be true, -1=must be false, 0=no filter
+      int is_free_filter   = is_free_param   == "true" ? 1 : is_free_param   == "false" ? -1 : 0;
+      int is_active_filter = is_active_param == "true" ? 1 : is_active_param == "false" ? -1 : 0;
+      bool has_avail_filter = has_avail_param == "true";
+
       json out = json::array();
-      for (const auto& [eid, exp] : experience_lookup)
+      for (const auto& [eid, exp] : experience_lookup) {
+        if (!type_filter.empty() && exp.value("type", "") != type_filter) continue;
+        if (!village_filter.empty() && exp.value("village_id", "") != village_filter) continue;
+
+        bool exp_is_free   = exp.value("isFree",   exp.value("is_free",   false));
+        bool exp_is_active = exp.value("isActive",  exp.value("is_active", false));
+
+        if (is_free_filter == 1 && !exp_is_free)   continue;
+        if (is_free_filter == -1 && exp_is_free)    continue;
+        if (is_active_filter == 1 && !exp_is_active) continue;
+        if (is_active_filter == -1 && exp_is_active) continue;
+
+        if (has_avail_filter) {
+          if (exp.contains("spotsRemaining") && exp["spotsRemaining"].is_number()) {
+            if (exp["spotsRemaining"].get<int>() <= 0) continue;
+          }
+        }
+
         out.push_back(exp);
+      }
+      res.set_content(out.dump(), "application/json");
+    });
+
+  // ---- GET /graph/sightseeing (free sightseeing experiences only) ---------
+  svr.Get("/graph/sightseeing",
+    [](const httplib::Request& req, httplib::Response& res) {
+      const std::string village_filter = req.get_param_value("village_id");
+      json out = json::array();
+      for (const auto& [eid, exp] : experience_lookup) {
+        if (exp.value("type", "") != "sightseeing") continue;
+        bool is_free = exp.value("isFree", exp.value("is_free", false));
+        if (!is_free && exp.value("price_eur", 1.0) != 0.0) continue;
+        if (!village_filter.empty() && exp.value("village_id", "") != village_filter) continue;
+        out.push_back(exp);
+      }
+      res.set_content(out.dump(), "application/json");
+    });
+
+  // ---- GET /graph/volunteering (volunteer experiences, active ones first) -
+  svr.Get("/graph/volunteering",
+    [](const httplib::Request& req, httplib::Response& res) {
+      const std::string village_filter  = req.get_param_value("village_id");
+      const std::string active_only_str = req.get_param_value("active_only");
+      bool active_only = active_only_str == "true";
+
+      json active_arr   = json::array();
+      json inactive_arr = json::array();
+
+      for (const auto& [eid, exp] : experience_lookup) {
+        if (exp.value("type", "") != "volunteer") continue;
+        if (!village_filter.empty() && exp.value("village_id", "") != village_filter) continue;
+
+        bool is_active = exp.value("isActive", exp.value("is_active", false));
+        if (active_only && !is_active) continue;
+
+        // Check availability: include if no spots field, or spots > 0
+        bool has_spots = true;
+        if (exp.contains("spotsRemaining") && exp["spotsRemaining"].is_number()) {
+          has_spots = exp["spotsRemaining"].get<int>() > 0;
+        }
+
+        if (is_active) active_arr.push_back(exp);
+        else           inactive_arr.push_back(exp);
+        (void)has_spots; // availability surfaced per-item; caller filters
+      }
+
+      // Active events first, then inactive
+      json out = json::array();
+      for (const auto& e : active_arr)   out.push_back(e);
+      for (const auto& e : inactive_arr) out.push_back(e);
       res.set_content(out.dump(), "application/json");
     });
 

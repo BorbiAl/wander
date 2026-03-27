@@ -12,3 +12,10 @@ __pycache__/
 next./
 frontend/.next/
 tsconfig.tsbuildinfo
+data/*
+engine/data/*
+experiences.json
+engine/data/experiences.json
+data/villages.json
+data/users.json
+data/experiences.json

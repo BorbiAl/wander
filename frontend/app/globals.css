@@ -39,6 +39,7 @@
 }
 
 * { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: hidden; }
 body { background: #E5E9DF; color: #1A2E1C; font-family: var(--font-sans), sans-serif; }
 ::selection { background: rgba(11, 110, 42, 0.2); }
 ::-webkit-scrollbar { width: 6px; }
@@ -70,7 +71,13 @@ body { background: #E5E9DF; color: #1A2E1C; font-family: var(--font-sans), sans-
   width: 100%;
   max-width: 72rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .page-shell {
+    padding: 1.25rem;
+  }
 }
 
 @media (min-width: 1024px) {

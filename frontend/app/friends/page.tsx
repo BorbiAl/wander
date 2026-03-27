@@ -172,17 +172,17 @@ export default function FriendsPage() {
       initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, ease: 'easeOut' }}
       className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20"
     >
-      <div className="mx-auto w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-20 lg:px-10 pb-32 flex flex-col gap-16">
+      <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-10 lg:px-10 pb-28 flex flex-col gap-10 sm:gap-14">
 
         {/* ── Your profile ── */}
-        <section className="flex flex-col sm:flex-row items-start gap-8">
+        <section className="flex flex-col sm:flex-row items-start gap-6 sm:gap-8">
           <div className="flex-1">
             <div className="text-[12px] font-bold uppercase tracking-widest text-[#1A2E1C]/40 mb-3">Your profile</div>
-            <h1 className="mb-2 text-5xl sm:text-6xl font-bold tracking-[-0.04em] leading-[1.1]" style={{ color: dominantColor }}>
+            <h1 className="mb-2 text-4xl sm:text-5xl md:text-6xl font-bold tracking-[-0.04em] leading-[1.1]" style={{ color: dominantColor }}>
               {personality.dominant}
             </h1>
             <p className="text-[#1A2E1C]/40 text-sm mb-8 font-mono">{userId}</p>
-            <button onClick={handleCopyProfile} className="bg-[#0B6E2A] text-white text-[14px] font-semibold tracking-wide px-6 py-3 rounded-full hover:bg-[#095A22] transition-all shadow-md hover:shadow-lg active:scale-95 shadow-[#0B6E2A]/20">
+            <button onClick={handleCopyProfile} className="w-full sm:w-auto bg-[#0B6E2A] text-white text-[14px] font-semibold tracking-wide px-6 py-3 rounded-full hover:bg-[#095A22] transition-all shadow-md hover:shadow-lg active:scale-95 shadow-[#0B6E2A]/20">
               {profileCopied ? 'Link copied!' : 'Copy profile link'}
             </button>
           </div>
@@ -194,7 +194,7 @@ export default function FriendsPage() {
 
         {/* ── Suggested companions ── */}
         <section>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] mb-1">Suggested companions</h2>
+          <h2 className="text-xl sm:text-3xl font-bold tracking-[-0.02em] mb-1">Suggested companions</h2>
           <p className="text-[#1A2E1C]/50 text-sm mb-6">Other travelers matched to your personality.</p>
 
           {suggestionsLoading ? (
@@ -276,17 +276,17 @@ export default function FriendsPage() {
 
         {/* ── Companions ── */}
         <section>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] mb-1">Companions</h2>
+          <h2 className="text-xl sm:text-3xl font-bold tracking-[-0.02em] mb-1">Companions</h2>
           <p className="text-[#1A2E1C]/50 text-sm mb-6">Paste a friend's profile link to add them.</p>
 
-          <div className="flex gap-3 mb-4">
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
             <input type="text" value={addInput}
               onChange={e => { setAddInput(e.target.value); setAddError(''); }}
               onKeyDown={e => e.key === 'Enter' && handleAddFriend()}
               placeholder="https://… or base64 code"
               className={inputCls}
             />
-            <button onClick={handleAddFriend} className="bg-[#0B6E2A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#095A22] transition-colors whitespace-nowrap">
+            <button onClick={handleAddFriend} className="w-full sm:w-auto bg-[#0B6E2A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#095A22] transition-colors whitespace-nowrap">
               Add
             </button>
           </div>
@@ -323,19 +323,19 @@ export default function FriendsPage() {
 
         {/* ── Travel groups ── */}
         <section>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] mb-8">Travel groups</h2>
+          <h2 className="text-xl sm:text-3xl font-bold tracking-[-0.02em] mb-6 sm:mb-8">Travel groups</h2>
 
           <div className="flex flex-col gap-8 mb-10">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#1A2E1C]/40 mb-3">Join an existing group</p>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input type="text" value={joinInput}
                   onChange={e => { setJoinInput(e.target.value); setJoinError(''); }}
                   onKeyDown={e => e.key === 'Enter' && handleJoinById()}
                   placeholder="Group ID or invite link"
                   className={inputCls}
                 />
-                <button onClick={handleJoinById} disabled={joining} className="bg-[#0B6E2A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#095A22] transition-colors whitespace-nowrap disabled:opacity-50">
+                <button onClick={handleJoinById} disabled={joining} className="w-full sm:w-auto bg-[#0B6E2A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#095A22] transition-colors whitespace-nowrap disabled:opacity-50">
                   {joining ? '…' : 'Join'}
                 </button>
               </div>
@@ -344,14 +344,14 @@ export default function FriendsPage() {
 
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#1A2E1C]/40 mb-3">Create a new group</p>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input type="text" value={newGroupName}
                   onChange={e => setNewGroupName(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleCreateGroup()}
                   placeholder="Group name (e.g. Alps 2025)"
                   className={inputCls}
                 />
-                <button onClick={handleCreateGroup} disabled={creating || !newGroupName.trim()} className="bg-[#0B6E2A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#095A22] transition-colors whitespace-nowrap disabled:opacity-50">
+                <button onClick={handleCreateGroup} disabled={creating || !newGroupName.trim()} className="w-full sm:w-auto bg-[#0B6E2A] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#095A22] transition-colors whitespace-nowrap disabled:opacity-50">
                   {creating ? '…' : 'Create'}
                 </button>
               </div>
@@ -366,7 +366,7 @@ export default function FriendsPage() {
           ) : (
             <div className="flex flex-col gap-4">
               {myGroups.map(group => (
-                <div key={group.id} className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-6 flex flex-col gap-4">
+                <div key={group.id} className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-4 sm:p-6 flex flex-col gap-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="font-bold text-[#1A2E1C] text-lg tracking-tight">{group.name}</h3>
@@ -403,7 +403,7 @@ export default function FriendsPage() {
                     compact
                   />
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <button onClick={() => handleCopyGroupLink(group.id)} className="flex-1 bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[14px] font-semibold tracking-wide py-2.5 rounded-full hover:bg-white transition-all shadow-sm active:scale-95">
                       {copiedGroupId === group.id ? 'Copied!' : 'Copy invite link'}
                     </button>

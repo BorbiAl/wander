@@ -42,24 +42,24 @@ export default function MapPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 flex min-h-screen flex-col"
+      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 flex flex-col"
     >
       {/* Top bar */}
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 flex shrink-0 flex-col items-start justify-between gap-3 border-b border-[#D6DCCD] py-4 md:flex-row md:items-center">
+      <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-5 sm:py-6 lg:px-8 flex shrink-0 flex-col items-start justify-between gap-3 border-b border-[#D6DCCD] md:flex-row md:items-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl">Village Map</h1>
+          <h1 className="text-xl sm:text-3xl">Village Map</h1>
           <p className="text-muted text-xs">{stats.total} villages · avg CWS {stats.avgCws} · {stats.pioneering} pioneer territories</p>
         </div>
-        <div className="flex w-full flex-wrap items-center gap-2 sm:gap-3 md:w-auto md:justify-end">
+        <div className="flex w-full flex-col sm:flex-row flex-wrap items-center gap-2 sm:gap-3 md:w-auto md:justify-end">
           <button
             onClick={() => setShowVisited(v => !v)}
-            className={`rounded-full border bg-white px-4 py-2 text-sm text-black transition-colors ${showVisited ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#A8B09F]'}`}
+            className={`w-full sm:w-auto rounded-full border bg-white px-4 py-2 text-sm text-black transition-colors ${showVisited ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#A8B09F]'}`}
           >
             {showVisited ? 'Showing visited' : 'Show visited only'}
           </button>
           <Link
             href="/discover"
-            className="rounded-full bg-[#0B6E2A] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#095A22]"
+            className="w-full sm:w-auto text-center rounded-full bg-[#0B6E2A] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#095A22]"
           >
             Browse experiences →
           </Link>
@@ -67,27 +67,27 @@ export default function MapPage() {
       </div>
 
       {/* Main layout */}
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col overflow-hidden px-4 py-4 lg:max-w-6xl lg:items-center lg:justify-center lg:py-6">
-        <div className="flex w-full flex-1 flex-col overflow-hidden lg:h-[76vh] lg:flex-row lg:gap-4">
-        {/* Map */}
-        <div className="relative h-[46vh] min-h-[280px] w-full flex-1 overflow-hidden rounded-3xl lg:h-auto">
-          <VillageMap
-            onSelectVillage={v => setSelectedVillageId(v.id)}
-            visited={showVisited ? villagesVisited : []}
-            seedStatus={seedStatus}
-          />
-        </div>
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-3 py-3 sm:px-5 sm:py-4 lg:max-w-6xl lg:items-center lg:justify-center lg:py-6">
+        <div className="flex w-full flex-1 flex-col gap-3 lg:h-[76vh] lg:flex-row lg:gap-4">
+          {/* Map */}
+          <div className="relative h-[42vh] min-h-[240px] w-full flex-1 overflow-hidden rounded-2xl sm:rounded-3xl lg:h-auto">
+            <VillageMap
+              onSelectVillage={v => setSelectedVillageId(v.id)}
+              visited={showVisited ? villagesVisited : []}
+              seedStatus={seedStatus}
+            />
+          </div>
 
-        {/* Side panel */}
-        <motion.aside
-          key={selectedVillageId ?? 'empty'}
-          initial={{ opacity: 0, x: 16 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.25 }}
-          className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm flex w-full shrink-0 flex-col overflow-y-auto rounded-3xl border-t lg:w-72 lg:border-l lg:border-t"
-        >
-          {selectedVillage ? (
-            <div className="p-5 flex flex-col gap-5">
+          {/* Side panel */}
+          <motion.aside
+            key={selectedVillageId ?? 'empty'}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25 }}
+            className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm flex w-full shrink-0 flex-col overflow-y-auto rounded-2xl sm:rounded-3xl lg:w-72"
+          >
+            {selectedVillage ? (
+              <div className="p-4 sm:p-5 flex flex-col gap-5">
               {/* Village header */}
               <div>
                 <div className="flex items-center justify-between mb-1">
@@ -158,9 +158,9 @@ export default function MapPage() {
               >
                 Find matching experiences
               </Link>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center flex-1 p-6 text-center">
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center flex-1 p-5 sm:p-6 text-center">
               <div className="text-4xl mb-4">🗺️</div>
               <p className="mb-1 font-medium">Select a village</p>
               <p className="text-muted text-sm">Click any marker on the map to explore village details and available experiences.</p>
@@ -179,9 +179,9 @@ export default function MapPage() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-        </motion.aside>
+              </div>
+            )}
+          </motion.aside>
         </div>
       </div>
     </motion.div>

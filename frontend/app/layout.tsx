@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppProvider>
           <DataProvider>
             <Navbar />
-            <main className="flex-1 pt-14 pb-20 md:pb-0">
+            <main className="flex-1 pt-16 md:pt-[72px] pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0">
               {children}
             </main>
           </DataProvider>

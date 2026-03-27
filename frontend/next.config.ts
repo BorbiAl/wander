@@ -4,9 +4,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: process.cwd(),
   compress: true,
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
   typescript: {
     ignoreBuildErrors: false,
   },

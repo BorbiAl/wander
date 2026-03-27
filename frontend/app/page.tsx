@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
@@ -138,6 +138,8 @@ export default function LandingPage() {
   const [input, setInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [showHubPicker, setShowHubPicker] = useState(false);
+  const [hubSearch, setHubSearch] = useState('');
   const [mounted, setMounted] = useState(false);
   const [destinations, setDestinations] = useState<DestinationNode[]>(() => buildCityHubNodes());
   const [shouldHydrateGlobe, setShouldHydrateGlobe] = useState(false);
@@ -235,6 +237,25 @@ export default function LandingPage() {
       ? destinations.filter((s) => s.name.toLowerCase().includes(input.toLowerCase()))
       : destinations;
 
+  const featuredDestinations = useMemo(() => {
+    return [...destinations]
+      .sort((a, b) => {
+        const villageDiff = (b.villages ?? 0) - (a.villages ?? 0);
+        if (villageDiff !== 0) return villageDiff;
+        return a.country.localeCompare(b.country);
+      });
+  }, [destinations]);
+
+  const mobileQuickDestinations = useMemo(() => featuredDestinations.slice(0, 6), [featuredDestinations]);
+
+  const hubSearchResults = useMemo(() => {
+    const q = hubSearch.trim().toLowerCase();
+    if (!q) return featuredDestinations;
+    return featuredDestinations.filter((d) =>
+      [d.city, d.country, d.name].some((value) => value.toLowerCase().includes(q)),
+    );
+  }, [featuredDestinations, hubSearch]);
+
   const handleSubmit = (loc: string) => {
     const trimmed = loc.trim();
     if (!trimmed) return;
@@ -277,20 +298,20 @@ export default function LandingPage() {
 
   return (
     <>
-      <main className="relative min-h-screen overflow-hidden bg-[#E5E9DF] px-6 py-8 lg:px-12">
-        <section className="relative z-10 mx-auto grid min-h-[86vh] w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-4">
+      <main className="relative min-h-screen overflow-hidden bg-[#E5E9DF] px-4 py-4 sm:px-6 sm:py-6 lg:px-12">
+        <section className="relative z-10 mx-auto grid min-h-[calc(100vh-8rem)] w-full max-w-7xl grid-cols-1 items-center gap-8 lg:min-h-[86vh] lg:grid-cols-[0.95fr_1.05fr] lg:gap-4">
           <div className="relative z-20 max-w-2xl">
-            <div className="mb-8 inline-block rounded-full bg-[#F4E3D7] px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#C84A31]">
+            <div className="mb-6 inline-block rounded-full bg-[#F4E3D7] px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-[#C84A31] sm:px-4 sm:py-1.5 sm:text-[10px]">
               Redefining Discovery
             </div>
 
-            <h1 className="mb-6 font-display text-6xl leading-[1.1] tracking-tight text-[#1A2E1C] lg:text-7xl">
+            <h1 className="mb-4 font-display text-4xl leading-[1.1] tracking-tight text-[#1A2E1C] sm:mb-6 sm:text-5xl lg:text-7xl">
               The world is a
               <br />
               map of <span className="italic text-[#0B6E2A]">your character.</span>
             </h1>
 
-            <p className="mb-10 max-w-lg text-lg leading-relaxed text-[#1A2E1C]/70">
+            <p className="mb-8 max-w-lg text-base leading-relaxed text-[#1A2E1C]/70 sm:mb-10 sm:text-lg">
               Wander uses behavioral AI to match your travel personality with hidden villages and authentic local hosts.
             </p>
 
@@ -298,36 +319,38 @@ export default function LandingPage() {
               <label htmlFor="destination-input" className="sr-only">
                 Choose a destination
               </label>
-              <div className="relative z-20 flex items-center rounded-full border border-black/5 bg-white p-2 pr-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                <div className="pl-4 pr-3 text-black/40">
-                  <Globe2 className="h-5 w-5" />
-                </div>
-                <input
-                  id="destination-input"
-                  ref={inputRef}
-                  type="text"
-                  value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                    setShowSuggestions(true);
-                  }}
-                  onFocus={() => {
-                    setShowSuggestions(true);
-                    setShouldHydrateGlobe(true);
-                    void loadDestinationsOnDemand();
-                  }}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  onKeyDown={handleKey}
-                  placeholder="Choose a destination..."
-                  className="min-w-0 flex-1 bg-transparent py-3 text-sm text-black placeholder-black/40 focus:outline-none"
-                />
-                <div className="mr-3 border-r border-black/10 px-3 text-black/40">
-                  <ChevronDown className="h-4 w-4" />
+              <div className="relative z-20 flex flex-col gap-2 rounded-2xl border border-black/5 bg-white p-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:flex-row sm:items-center sm:gap-0 sm:rounded-full sm:pr-2">
+                <div className="flex min-w-0 flex-1 items-center">
+                  <div className="pl-3 pr-3 text-black/40 sm:pl-4">
+                    <Globe2 className="h-5 w-5" />
+                  </div>
+                  <input
+                    id="destination-input"
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => {
+                      setInput(e.target.value);
+                      setShowSuggestions(true);
+                    }}
+                    onFocus={() => {
+                      setShowSuggestions(true);
+                      setShouldHydrateGlobe(true);
+                      void loadDestinationsOnDemand();
+                    }}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                    onKeyDown={handleKey}
+                    placeholder="Choose a destination..."
+                    className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-black placeholder-black/40 focus:outline-none"
+                  />
+                  <div className="mr-2 border-r border-black/10 px-3 text-black/40 sm:mr-0">
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
                 </div>
                 <button
                   onClick={() => void handleSubmit(input)}
                   disabled={seedStatus === 'loading' || !input.trim()}
-                  className="whitespace-nowrap rounded-full bg-[#0B6E2A] px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#095A22] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full whitespace-nowrap rounded-full bg-[#0B6E2A] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#095A22] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {seedStatus === 'loading' ? 'Locating...' : 'Find My Match'}
                 </button>
@@ -377,12 +400,12 @@ export default function LandingPage() {
               )}
             </AnimatePresence>
 
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
               {activeGroup && personality && (
                 <button
                   onClick={() => void handleGroupSubmit(input || destinations[Math.floor(Math.random() * destinations.length)]?.name || '')}
                   disabled={seedStatus === 'loading'}
-                  className="flex items-center gap-2 rounded-full bg-[#0B6E2A] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#095A22] disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#0B6E2A] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#095A22] disabled:opacity-50 sm:w-auto"
                 >
                   <Users className="h-4 w-4" />
                   {seedStatus === 'loading' ? 'Loading...' : `Plan with ${activeGroup.name}`}
@@ -391,14 +414,14 @@ export default function LandingPage() {
               <button
                 onClick={handleLucky}
                 disabled={seedStatus === 'loading'}
-                className="flex items-center gap-2 rounded-full bg-[#F4E3D7] px-6 py-3 text-sm font-semibold text-[#C84A31] transition-colors hover:bg-[#F0D5C4]"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#F4E3D7] px-5 py-2.5 text-sm font-semibold text-[#C84A31] transition-colors hover:bg-[#F0D5C4] sm:w-auto"
               >
                 <Dices className="h-4 w-4" />
                 I&apos;m Feeling Lucky
               </button>
               <button
                 onClick={() => setShowHowItWorks(true)}
-                className="flex items-center gap-3 rounded-full px-6 py-3 text-sm font-medium text-black/60 transition-colors hover:bg-black/5"
+                className="flex w-full items-center justify-center gap-3 rounded-full px-5 py-2.5 text-sm font-medium text-black/60 transition-colors hover:bg-black/5 sm:w-auto"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E5E9DF] text-[#0B6E2A]">
                   <Play className="ml-0.5 h-3.5 w-3.5" fill="currentColor" />
@@ -416,21 +439,63 @@ export default function LandingPage() {
                   className="mt-6 overflow-hidden"
                 >
                   {seedStatus === 'loading' && (
-                    <p className="flex items-center gap-2 text-sm font-medium text-[#0B6E2A]">
-                      <span className="h-3 w-3 animate-spin rounded-full border-2 border-[#0B6E2A] border-t-transparent" />
-                      Fetching geographic demographic data...
+                    <p className="inline-flex items-center gap-2 rounded-full border border-[#0B6E2A]/20 bg-[#0B6E2A]/8 px-3 py-1.5 text-[13px] font-medium text-[#0B6E2A]">
+                      <span className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-[#0B6E2A] border-t-transparent" />
+                      Fetching location data...
                     </p>
                   )}
                   {seedStatus === 'done' && (
-                    <p className="text-sm font-medium text-[#0B6E2A]">Region structured. Preparing onboarding...</p>
+                    <p className="inline-flex items-center rounded-full border border-[#0B6E2A]/20 bg-[#0B6E2A]/8 px-3 py-1.5 text-[13px] font-medium text-[#0B6E2A]">Region structured. Preparing onboarding...</p>
                   )}
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
+          <div className="relative z-10 lg:hidden">
+            <div className="relative overflow-hidden rounded-[28px] border border-[#D6DCCD]/60 bg-white/65 p-4 shadow-[0_14px_36px_rgba(0,0,0,0.06)]">
+              <div className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(11,110,42,0.14)_0%,rgba(11,110,42,0)_70%)]" />
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.13em] text-[#1A2E1C]/45">City hub explorer</p>
+              <h2 className="mb-4 font-display text-2xl leading-tight text-[#1A2E1C]">Choose a city hub</h2>
+              <p className="mb-4 inline-flex items-center rounded-full border border-[#1A2E1C]/10 bg-[#F8F5EF] px-3 py-1 text-[11px] font-semibold text-[#1A2E1C]/65">
+                {featuredDestinations.length} hubs available worldwide
+              </p>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                {mobileQuickDestinations.map((destination) => (
+                  <button
+                    key={destination.name}
+                    onClick={() => void handleSubmit(destination.name)}
+                    className="rounded-2xl border border-[#D6DCCD]/60 bg-[#F8F5EF] px-3 py-2.5 text-left transition-all hover:border-[#0B6E2A]/40 hover:bg-white active:scale-[0.99]"
+                  >
+                    <p className="text-sm font-semibold leading-tight text-[#1A2E1C]">{destination.city}</p>
+                    <p className="mt-0.5 text-[11px] font-medium text-[#1A2E1C]/60">{destination.country}</p>
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={handleLucky}
+                disabled={seedStatus === 'loading'}
+                className="mt-4 w-full rounded-full bg-[#1A2E1C] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2A412D] disabled:opacity-50"
+              >
+                Surprise Destination
+              </button>
+
+              <button
+                onClick={() => {
+                  setHubSearch('');
+                  setShowHubPicker(true);
+                }}
+                className="mt-2.5 w-full rounded-full border border-[#1A2E1C]/20 bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#1A2E1C] transition-colors hover:bg-white"
+              >
+                Browse all {featuredDestinations.length} hubs
+              </button>
+            </div>
+          </div>
+
           <div
-            className="relative z-10 h-[400px] w-full lg:-mt-28 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center"
+            className="relative z-10 hidden w-full lg:-mt-20 lg:flex lg:h-[620px] lg:items-center lg:justify-end lg:self-center"
             onPointerEnter={() => {
               setShouldHydrateGlobe(true);
               void loadDestinationsOnDemand();
@@ -445,10 +510,10 @@ export default function LandingPage() {
                 onSelect={(location) => void handleSubmit(location)}
                 inline
                 allowOverflow
-                className="lg:h-[660px] lg:w-[760px]"
+                className="h-full w-full lg:h-[620px] lg:w-[720px]"
               />
             ) : (
-              <div className="relative h-full w-full overflow-hidden rounded-3xl border border-black/5 bg-[radial-gradient(circle_at_35%_35%,#F7FBFF_0%,#DCE9EF_45%,#C9DCE5_100%)] lg:h-[660px] lg:w-[760px]">
+              <div className="relative h-full w-full overflow-hidden rounded-3xl border border-black/5 bg-[radial-gradient(circle_at_35%_35%,#F7FBFF_0%,#DCE9EF_45%,#C9DCE5_100%)] lg:h-[620px] lg:w-[720px]">
                 <div className="absolute inset-[22%] rounded-full border border-white/50 bg-[radial-gradient(circle,#FDFEFF_0%,#DFECF4_70%,#C9DCE5_100%)] shadow-[0_30px_80px_rgba(0,0,0,0.08)]" />
               </div>
             )}
@@ -459,7 +524,7 @@ export default function LandingPage() {
       <AnimatePresence>
         {showHowItWorks && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-6 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 sm:p-6 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -468,7 +533,7 @@ export default function LandingPage() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
-              className="relative w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl"
+              className="relative w-full max-w-2xl rounded-3xl bg-white p-5 sm:p-8 shadow-2xl"
             >
               <button
                 type="button"
@@ -480,8 +545,8 @@ export default function LandingPage() {
                 <X className="h-5 w-5" />
               </button>
 
-              <h2 className="mb-2 font-display text-3xl text-[#1A2E1C]">How It Works</h2>
-              <p className="mb-8 text-sm text-[#1A2E1C]/60">Four steps to your perfect off-the-beaten-path trip.</p>
+              <h2 className="mb-2 font-display text-2xl sm:text-3xl text-[#1A2E1C]">How It Works</h2>
+              <p className="mb-6 sm:mb-8 text-sm text-[#1A2E1C]/60">Four steps to your perfect off-the-beaten-path trip.</p>
 
               <div className="flex flex-col gap-6">
                 {[
@@ -534,6 +599,69 @@ export default function LandingPage() {
               >
                 Start your journey
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showHubPicker && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/35 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="absolute inset-x-0 bottom-0 max-h-[86vh] rounded-t-[28px] border-t border-[#D6DCCD]/70 bg-[#F8F5EF] p-4 shadow-[0_-20px_60px_rgba(0,0,0,0.2)]"
+            >
+              <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-[#1A2E1C]/20" />
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1A2E1C]/45">All city hubs</p>
+                  <h3 className="font-display text-2xl leading-tight text-[#1A2E1C]">{featuredDestinations.length} destinations</h3>
+                </div>
+                <button
+                  onClick={() => setShowHubPicker(false)}
+                  className="rounded-full border border-[#1A2E1C]/15 bg-white/70 px-3 py-1.5 text-xs font-semibold text-[#1A2E1C]/75"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mb-3 rounded-2xl border border-[#D6DCCD]/70 bg-white px-3 py-2">
+                <input
+                  value={hubSearch}
+                  onChange={(e) => setHubSearch(e.target.value)}
+                  placeholder="Search by city or country"
+                  className="w-full bg-transparent text-sm text-[#1A2E1C] placeholder:text-[#1A2E1C]/35 focus:outline-none"
+                />
+              </div>
+
+              <div className="max-h-[58vh] overflow-y-auto pr-1">
+                <div className="grid grid-cols-2 gap-2.5 pb-4">
+                  {hubSearchResults.map((destination) => (
+                    <button
+                      key={`hub-${destination.name}`}
+                      onClick={() => {
+                        setShowHubPicker(false);
+                        void handleSubmit(destination.name);
+                      }}
+                      className="rounded-2xl border border-[#D6DCCD]/65 bg-white px-3 py-2.5 text-left transition-all hover:border-[#0B6E2A]/40 hover:bg-[#FDFCF8] active:scale-[0.99]"
+                    >
+                      <p className="text-sm font-semibold leading-tight text-[#1A2E1C]">{destination.city}</p>
+                      <p className="mt-0.5 text-[11px] font-medium text-[#1A2E1C]/60">{destination.country}</p>
+                    </button>
+                  ))}
+                </div>
+                {hubSearchResults.length === 0 && (
+                  <p className="pb-4 text-center text-sm text-[#1A2E1C]/55">No hubs matched your search.</p>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}

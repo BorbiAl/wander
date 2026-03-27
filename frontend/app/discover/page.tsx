@@ -166,27 +166,27 @@ export default function DiscoverPage() {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20"
     >
-      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8 pb-32">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-          <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[32px] p-6 md:p-8 flex flex-col gap-6 transition-all hover:bg-white/80">
+      <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-5 sm:py-6 lg:px-8 pb-28 md:pb-16">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
+          <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 transition-all hover:bg-white/80">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[#1A2E1C]/50">Discover</p>
-                <h1 className="font-bold tracking-tighter text-3xl md:text-5xl text-[#1A2E1C] leading-[1.1] mt-1">Start with the globe</h1>
+                <h1 className="font-bold tracking-tighter text-2xl sm:text-4xl md:text-5xl text-[#1A2E1C] leading-[1.1] mt-1">Start with the globe</h1>
                 <p className="text-[#1A2E1C]/60 text-sm md:text-base mt-3 max-w-[46ch] font-medium leading-relaxed">
                   Pick a village first. The trip list updates instantly to match that place.
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto">
                 <button
                   onClick={handleSurprisePick}
-                  className="bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-2.5 hover:bg-[#095A22] transition-all shadow-md hover:scale-105 active:scale-95 shadow-[#0B6E2A]/20"
+                  className="w-full sm:w-auto bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-2.5 hover:bg-[#095A22] transition-all shadow-md hover:scale-105 active:scale-95 shadow-[#0B6E2A]/20"
                 >
                   Surprise me
                 </button>
                 <button
                   onClick={() => setSelectedVillageId(null)}
-                  className="bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-2.5 hover:bg-white transition-all shadow-sm active:scale-95"
+                  className="w-full sm:w-auto bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-2.5 hover:bg-white transition-all shadow-sm active:scale-95"
                 >
                   Clear focus
                 </button>
@@ -194,25 +194,25 @@ export default function DiscoverPage() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-5 py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
                 <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Villages</p>
-                <p className="font-bold tracking-tighter text-3xl text-[#1A2E1C]">{villages.length}</p>
+                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{villages.length}</p>
               </div>
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-5 py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
                 <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Matches</p>
-                <p className="font-bold tracking-tighter text-3xl text-[#1A2E1C]">{filteredMatches.length}</p>
+                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{filteredMatches.length}</p>
               </div>
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-5 py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
                 <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Avg CWS</p>
-                <p className="font-bold tracking-tighter text-3xl text-[#1A2E1C]">{avgCws}</p>
+                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{avgCws}</p>
               </div>
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-5 py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
                 <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Focus</p>
-                <p className="font-bold tracking-tighter text-3xl text-[#1A2E1C]">{selectedVillage ? '1' : '0'}</p>
+                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{selectedVillage ? '1' : '0'}</p>
               </div>
             </div>
 
-            <div className="w-full rounded-[24px] overflow-hidden border border-[#D6DCCD]/60 shadow-inner" style={{ height: 420 }}>
+            <div className="w-full h-[300px] sm:h-[380px] md:h-[420px] rounded-[24px] overflow-hidden border border-[#D6DCCD]/60 shadow-inner">
               <VillageMap
                 onSelectVillage={v => setSelectedVillageId(v.id)}
                 seedStatus={seedStatus}
@@ -220,12 +220,12 @@ export default function DiscoverPage() {
             </div>
           </section>
 
-          <section className="xl:col-span-5 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[32px] p-6 md:p-8 flex flex-col gap-5 transition-all hover:bg-white/80">
-            <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[24px] p-6">
+          <section className="xl:col-span-5 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-8 flex flex-col gap-5 transition-all hover:bg-white/80">
+            <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[24px] p-5 sm:p-6">
               {selectedVillage ? (
                 <>
                   <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#1A2E1C]/50 mb-3">Selected node</p>
-                  <h2 className="font-bold tracking-tighter text-3xl text-[#1A2E1C] leading-[1.1]">{selectedVillage.name}</h2>
+                  <h2 className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C] leading-[1.1]">{selectedVillage.name}</h2>
                   <p className="text-[#1A2E1C]/60 text-sm mt-1.5 font-medium tracking-tight">
                     {selectedVillage.region}
                   </p>
@@ -243,12 +243,12 @@ export default function DiscoverPage() {
             </div>
 
             {suggestedRoutes.length > 0 && (
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[24px] p-6 flex flex-col gap-4">
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[24px] p-5 sm:p-6 flex flex-col gap-4">
                 <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#1A2E1C]/50 mb-1">Suggested routes</p>
                 {suggestedRoutes.map((route, i) => (
                   <div key={route.id} className={`flex flex-wrap items-center justify-between gap-4 ${i > 0 ? 'border-t border-[#D6DCCD]/40 pt-4' : ''}`}>
                     <div>
-                      <h3 className="font-bold tracking-tighter text-[22px] text-[#1A2E1C] leading-[1.1]">{route.name}</h3>
+                      <h3 className="font-bold tracking-tighter text-xl sm:text-[22px] text-[#1A2E1C] leading-[1.1]">{route.name}</h3>
                       <p className="text-[#1A2E1C]/60 text-[13px] font-medium tracking-tight mt-1">{villageById.get(route.villageId)?.name || 'Unknown village'}</p>
                     </div>
                     <Link
@@ -266,7 +266,7 @@ export default function DiscoverPage() {
 
         {/* Group mode banner */}
         {activeGroup && groupVector && (
-          <div className="mt-5 flex items-center gap-3 rounded-2xl border border-[#0B6E2A]/30 bg-[#0B6E2A]/10 px-4 py-3">
+          <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-[#0B6E2A]/30 bg-[#0B6E2A]/10 px-4 py-3">
             <span className="text-[#0B6E2A] text-lg">👥</span>
             <div className="flex-1 min-w-0">
               <span className="text-sm font-semibold text-[#1A2E1C]">{activeGroup.name}</span>
@@ -285,20 +285,20 @@ export default function DiscoverPage() {
           </div>
         )}
 
-        <section id="discover-feed" className="mt-8 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[32px] p-6 md:p-10 mb-24 transition-all hover:bg-white/80">
+        <section id="discover-feed" className="mt-8 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-10 mb-16 sm:mb-20 transition-all hover:bg-white/80">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8">
             <div>
-              <h3 className="font-bold tracking-tighter text-3xl md:text-4xl text-[#1A2E1C] leading-[1.1]">Trips you can actually book</h3>
+              <h3 className="font-bold tracking-tighter text-2xl sm:text-3xl md:text-4xl text-[#1A2E1C] leading-[1.1]">Trips you can actually book</h3>
               <p className="text-[#1A2E1C]/60 text-[15px] font-medium tracking-tight mt-2">
                 {activeGroup ? `Scored for ${activeGroup.name} · Sorted by group fit` : 'Sorted by fit, cost, or community impact.'}
               </p>
             </div>
-            <div className="flex gap-2 bg-[#E5E9DF]/70 p-1.5 rounded-full border border-white/50 shadow-sm">
+            <div className="flex w-full md:w-auto overflow-x-auto gap-2 bg-[#E5E9DF]/70 p-1.5 rounded-full border border-white/50 shadow-sm">
               {(['match', 'price', 'cws'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSortBy(s)}
-                  className={`text-[13px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-full transition-all ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
+                  className={`shrink-0 text-[12px] sm:text-[13px] font-bold uppercase tracking-widest px-3 sm:px-4 py-2.5 rounded-full transition-all ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
                 >
                   {s === 'match' ? 'Best match' : s === 'price' ? 'Lowest price' : 'Impact first'}
                 </button>
@@ -334,11 +334,11 @@ export default function DiscoverPage() {
                 : null;
 
               return (
-                <article key={exp.id} className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-6 flex flex-col gap-5 transition-transform hover:scale-[1.02] hover:bg-white/80">
-                  <div className="flex items-start justify-between gap-5">
+                <article key={exp.id} className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-5 sm:p-6 flex flex-col gap-5 transition-transform hover:scale-[1.02] hover:bg-white/80">
+                  <div className="flex items-start justify-between gap-4 sm:gap-5">
                     <div>
                       <p className="text-[10px] uppercase font-bold tracking-[0.14em] text-[#1A2E1C]/50 mb-1.5">{village.region}</p>
-                      <h4 className="font-bold tracking-tighter text-2xl text-[#1A2E1C] leading-tight">{exp.name}</h4>
+                      <h4 className="font-bold tracking-tighter text-xl sm:text-2xl text-[#1A2E1C] leading-tight">{exp.name}</h4>
                       <p className="text-[#1A2E1C]/60 text-[14px] font-medium tracking-tight mt-1">{village.name}</p>
                     </div>
                     <div className="flex flex-col gap-2 items-end shrink-0">
@@ -353,7 +353,7 @@ export default function DiscoverPage() {
 
                   <p className="text-[#1A2E1C]/60 text-[15px] font-medium leading-relaxed line-clamp-3">{exp.description}</p>
 
-                  <div className="flex items-center justify-between text-[13px] font-semibold tracking-wide text-[#1A2E1C]/60 pt-4 border-t border-[rgba(0,0,0,0.05)]">
+                  <div className="flex flex-wrap items-center gap-2 justify-between text-[13px] font-semibold tracking-wide text-[#1A2E1C]/60 pt-4 border-t border-[rgba(0,0,0,0.05)]">
                     <span className="capitalize px-3 py-1 bg-[#E5E9DF]/70 rounded-md">{exp.type}</span>
                     <span>EUR {exp.price} · {exp.duration}</span>
                     <span style={{ color: cwsColor(village.cws) }}>CWS {village.cws}</span>

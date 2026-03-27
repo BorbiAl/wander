@@ -342,7 +342,9 @@ export default function DiscoverPage() {
                       <p className="text-[#1A2E1C]/60 text-[14px] font-medium tracking-tight mt-1">{village.name}</p>
                     </div>
                     <div className="flex flex-col gap-2 items-end shrink-0">
-                      <span className="bg-white border border-[#D6DCCD]/40 shadow-sm text-[#0B6E2A] px-3 py-1.5 rounded-full text-[12px] font-bold tracking-widest">{pct}% fit</span>
+                      {pct > 0 && (
+                        <span className="bg-white border border-[#D6DCCD]/40 shadow-sm text-[#0B6E2A] px-3 py-1.5 rounded-full text-[12px] font-bold tracking-widest">{pct}% fit</span>
+                      )}
                       {groupPct !== null && (
                         <span className="bg-[#F5A623]/10 border border-[#F5A623]/30 text-[#F5A623] px-3 py-1.5 rounded-full text-[12px] font-bold tracking-widest">👥 {groupPct}%</span>
                       )}

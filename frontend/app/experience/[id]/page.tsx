@@ -348,9 +348,11 @@ export default function ExperiencePage() {
         <span className="text-[10px] px-3 py-1 rounded-full bg-white/60 backdrop-blur-md border border-white/50 text-[#1A2E1C]/70 shadow-sm font-bold tracking-widest capitalize">
           {exp.type}
         </span>
-        <span className="text-[10px] px-3 py-1 rounded-full bg-[#0B6E2A]/10 border border-[#0B6E2A]/20 text-[#0B6E2A] font-bold">
-          {matchPct}% Match
-        </span>
+        {matchPct > 0 && (
+          <span className="text-[10px] px-3 py-1 rounded-full bg-[#0B6E2A]/10 border border-[#0B6E2A]/20 text-[#0B6E2A] font-bold">
+            {matchPct}% Match
+          </span>
+        )}
       </div>
 
       <h1 className="font-bold tracking-tighter text-4xl md:text-6xl text-[#1A2E1C] leading-[1.05] mb-4">{exp.name}</h1>

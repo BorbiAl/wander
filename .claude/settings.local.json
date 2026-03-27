@@ -3,7 +3,8 @@
     "allow": [
       "Bash(\"c:/Users/Velina/Documents/GitHub/wander/frontend/components/SwipeCard.tsx\":*)",
       "Bash(\"c:/Users/Velina/Documents/GitHub/wander/frontend/app/api/onboarding/route.ts\":*)",
-      "Bash(\"c:/Users/Velina/Documents/GitHub/wander/frontend/components/PersonalityRadar.tsx\":*)"
+      "Bash(\"c:/Users/Velina/Documents/GitHub/wander/frontend/components/PersonalityRadar.tsx\":*)",
+      "Bash(grep -r \"stopColor\\\\|fill=\\\\|stroke=\" /c/Users/boris/OneDrive/Desktop/GitHub/wander/frontend/components --include=*.tsx)"
     ]
   }
 }

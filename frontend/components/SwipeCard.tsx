@@ -15,7 +15,7 @@ function imageAssetUrl(description: string): string {
 }
 
 export function SwipeCard({ 
-  leftLabel, leftDescription, rightLabel, rightDescription, leftImageSrc, rightImageSrc, leftImageObjectPosition, rightImageObjectPosition, leftColor, rightColor, onChoice 
+  leftLabel, leftDescription, rightLabel, rightDescription, leftImageSrc, rightImageSrc, leftImageObjectPosition, rightImageObjectPosition, leftImageZoom, rightImageZoom, leftColor, rightColor, onChoice 
 }: { 
   leftLabel: string,
   leftDescription: string,
@@ -25,6 +25,8 @@ export function SwipeCard({
   rightImageSrc?: string,
   leftImageObjectPosition?: string,
   rightImageObjectPosition?: string,
+  leftImageZoom?: number,
+  rightImageZoom?: number,
   leftColor: string,
   rightColor: string,
   onChoice: (side: 'left'|'right') => void
@@ -50,7 +52,11 @@ export function SwipeCard({
               src={leftImageSrc ?? imageAssetUrl(leftDescription)}
               alt={leftDescription}
               className="h-full w-full object-cover"
-              style={{ objectPosition: leftImageObjectPosition ?? 'center' }}
+              style={{
+                objectPosition: leftImageObjectPosition ?? 'center',
+                transform: `scale(${leftImageZoom ?? 1})`,
+                transformOrigin: 'center',
+              }}
               loading="lazy"
             />
           </div>
@@ -75,7 +81,11 @@ export function SwipeCard({
               src={rightImageSrc ?? imageAssetUrl(rightDescription)}
               alt={rightDescription}
               className="h-full w-full object-cover"
-              style={{ objectPosition: rightImageObjectPosition ?? 'center' }}
+              style={{
+                objectPosition: rightImageObjectPosition ?? 'center',
+                transform: `scale(${rightImageZoom ?? 1})`,
+                transformOrigin: 'center',
+              }}
               loading="lazy"
             />
           </div>

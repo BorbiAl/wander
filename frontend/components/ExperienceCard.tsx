@@ -6,7 +6,7 @@ import { getHost, getVillage } from '@/app/lib/utils';
 import { motion } from 'motion/react';
 
 const TYPE_EMOJIS: Record<string, string> = {
-  craft: '🔨', hike: '🥾', homestay: '🏡', ceremony: '🔥', cooking: '🍳', volunteer: '♻️', folklore: '🎭'
+  craft: '🔨', hike: '🥾', homestay: '🏡', ceremony: '🔥', cooking: '🍳', volunteer: '♻️', folklore: '🎭', sightseeing: '🏛️'
 };
 
 export function ExperienceCard({ exp }: { exp: Experience & { score: number } }) {
@@ -35,9 +35,21 @@ export function ExperienceCard({ exp }: { exp: Experience & { score: number } })
         <div className="text-[#1A2E1C]/60 text-[13px] font-medium tracking-tight mb-2">
           {host?.name} <span className="mx-1">•</span> <span className="text-[#F5A623]">★</span> {host?.rating}
         </div>
-        <div className="flex items-center gap-2.5 mt-2">
-          <span className="text-[#1A2E1C]/70 text-[13px] font-semibold bg-[#E5E9DF]/80 px-2.5 py-1 rounded-md">€{exp.price}</span>
+        <div className="flex items-center gap-2.5 mt-2 flex-wrap">
+          {(exp.isFree || (exp.price === 0 && exp.type === 'sightseeing')) ? (
+            <span className="text-[13px] font-bold bg-[#0B6E2A]/10 text-[#0B6E2A] border border-[#0B6E2A]/20 px-2.5 py-1 rounded-md">Free</span>
+          ) : (
+            <span className="text-[#1A2E1C]/70 text-[13px] font-semibold bg-[#E5E9DF]/80 px-2.5 py-1 rounded-md">€{exp.price}</span>
+          )}
           <span className="text-[#1A2E1C]/50 text-[12px] font-medium">{exp.duration}</span>
+          {exp.isActive && (
+            <span className="text-[12px] font-bold bg-[#F5A623]/10 text-[#F5A623] border border-[#F5A623]/30 px-2.5 py-1 rounded-md">Open now</span>
+          )}
+          {exp.spotsRemaining !== undefined && (
+            <span className={`text-[12px] font-bold px-2.5 py-1 rounded-md ${exp.spotsRemaining <= 2 ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-[#E5E9DF]/80 text-[#1A2E1C]/60 border border-[#D6DCCD]/40'}`}>
+              {exp.spotsRemaining} left
+            </span>
+          )}
           <span className="ml-auto sm:ml-2 text-[10px] uppercase tracking-widest px-3 py-1 rounded-full bg-white border border-[#D6DCCD]/60 text-[#1A2E1C]/60 font-bold shadow-sm">
             {exp.type}
           </span>

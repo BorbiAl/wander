@@ -22,7 +22,11 @@ export default function DiscoverPage() {
   const router = useRouter();
   const { personality, matches, setMatches, seedStatus, destination, activeGroupId, setActiveGroup } = useApp();
   const [filterType, setFilterType] = useState<string>('All');
+  const [freeOnly, setFreeOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(false);
   const [sortBy, setSortBy] = useState<'match' | 'price' | 'cws'>('match');
+  const [freeSightseeing, setFreeSightseeing] = useState<Experience[]>([]);
+  const [activeVolunteering, setActiveVolunteering] = useState<Experience[]>([]);
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
   const [villages, setVillages] = useState<Village[]>(VILLAGES);
   const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
@@ -86,6 +90,21 @@ export default function DiscoverPage() {
     if (scored.length > 0) setMatches(scored);
   }, [personality, experiences]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Fetch free sightseeing and active volunteering sections
+  useEffect(() => {
+    async function loadSections() {
+      try {
+        const [sRes, vRes] = await Promise.all([
+          fetch('/api/sightseeing', { cache: 'no-store' }),
+          fetch('/api/volunteering?active_only=true', { cache: 'no-store' }),
+        ]);
+        if (sRes.ok) { const d = await sRes.json(); if (Array.isArray(d)) setFreeSightseeing(d); }
+        if (vRes.ok) { const d = await vRes.json(); if (Array.isArray(d)) setActiveVolunteering(d); }
+      } catch { /* keep empty */ }
+    }
+    loadSections();
+  }, []);
+
   // Fetch active group for group-mode scoring
   useEffect(() => {
     if (!activeGroupId) { setActiveGroupData(null); return; }
@@ -127,6 +146,12 @@ export default function DiscoverPage() {
     if (filterType !== 'All') {
       res = res.filter(m => m.type === filterType);
     }
+    if (freeOnly) {
+      res = res.filter(m => m.isFree || m.price === 0);
+    }
+    if (activeOnly) {
+      res = res.filter(m => m.isActive);
+    }
     if (selectedVillageId) {
       res = res.filter(m => m.villageId === selectedVillageId);
     }
@@ -142,7 +167,7 @@ export default function DiscoverPage() {
       res = [...res].sort((a, b) => b.score - a.score);
     }
     return res;
-  }, [scoredMatches, filterType, sortBy, selectedVillageId, villageById]);
+  }, [scoredMatches, filterType, freeOnly, activeOnly, sortBy, selectedVillageId, villageById]);
 
   const suggestedRoutes = useMemo(() => {
     return scoredMatches.slice(0, 3);
@@ -320,13 +345,55 @@ export default function DiscoverPage() {
             {FILTERS.map(t => (
               <button
                 key={t}
-                onClick={() => setFilterType(t)}
+                onClick={() => { setFilterType(t); if (t === 'volunteer') setActiveOnly(true); else setActiveOnly(false); }}
                 className={`shrink-0 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold uppercase tracking-widest transition-all shadow-sm ${filterType === t ? 'bg-[#0B6E2A] text-white shadow-[#0B6E2A]/20 scale-[1.02]' : 'bg-white/60 border border-white/50 text-[#1A2E1C]/60 hover:bg-white active:scale-95'}`}
               >
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => setFreeOnly(f => !f)}
+              className={`shrink-0 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold uppercase tracking-widest transition-all shadow-sm ${freeOnly ? 'bg-[#0B6E2A] text-white shadow-[#0B6E2A]/20 scale-[1.02]' : 'bg-white/60 border border-white/50 text-[#1A2E1C]/60 hover:bg-white active:scale-95'}`}
+            >
+              Free
+            </button>
           </div>
+
+          {freeSightseeing.length > 0 && (
+            <div className="mb-6">
+              <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-3">Free to visit</p>
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-5 px-5 sm:mx-0 sm:px-0 pb-2">
+                {freeSightseeing.slice(0, 6).map(s => (
+                  <Link key={s.id} href={`/experience/${s.id}`}
+                    className="shrink-0 bg-white/70 border border-[#D6DCCD]/60 rounded-[20px] p-4 w-52 flex flex-col gap-1 hover:bg-white transition-all shadow-sm">
+                    <span className="text-2xl">🏛️</span>
+                    <p className="font-bold text-[14px] text-[#1A2E1C] leading-tight line-clamp-2">{s.name}</p>
+                    <span className="text-[11px] font-bold text-[#0B6E2A]">Free</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeVolunteering.length > 0 && (
+            <div className="mb-6">
+              <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#F5A623] mb-3">Volunteer now</p>
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-5 px-5 sm:mx-0 sm:px-0 pb-2">
+                {activeVolunteering.slice(0, 6).map(v => (
+                  <Link key={v.id} href={`/experience/${v.id}`}
+                    className="shrink-0 bg-white/70 border border-[#F5A623]/30 rounded-[20px] p-4 w-52 flex flex-col gap-1 hover:bg-white transition-all shadow-sm">
+                    <span className="text-2xl">♻️</span>
+                    <p className="font-bold text-[14px] text-[#1A2E1C] leading-tight line-clamp-2">{v.name}</p>
+                    {v.startDate && <span className="text-[11px] text-[#1A2E1C]/50">{v.startDate}{v.endDate ? ` – ${v.endDate}` : ''}</span>}
+                    {v.spotsRemaining !== undefined && (
+                      <span className={`text-[11px] font-bold ${v.spotsRemaining <= 2 ? 'text-red-500' : 'text-[#1A2E1C]/50'}`}>{v.spotsRemaining} spots left</span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
             {filteredMatches.slice(0, 10).map(exp => {

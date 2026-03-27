@@ -1,22 +1,57 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useApp } from '@/app/lib/store';
-import { VILLAGES, EXPERIENCES } from '@/app/lib/data';
+import { VILLAGES, EXPERIENCES, Village } from '@/app/lib/data';
 import { cwsColor, cwsLabel } from '@/app/lib/utils';
 
 // VillageMap uses Leaflet which requires no SSR
 const VillageMap = dynamic(() => import('@/components/VillageMap'), { ssr: false });
 
 export default function MapPage() {
-  const { seedStatus, villagesVisited } = useApp();
+  const { seedStatus, villagesVisited, destination } = useApp();
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
   const [showVisited, setShowVisited] = useState(false);
+  const [villages, setVillages] = useState<Village[]>(VILLAGES);
+  const [experiences, setExperiences] = useState(EXPERIENCES);
 
-  const villages = VILLAGES;
+  useEffect(() => {
+    if (destination && seedStatus !== 'done') {
+      setVillages([]);
+      setExperiences([]);
+      return;
+    }
+    if (seedStatus === 'done') {
+      setVillages([...VILLAGES]);
+      setExperiences([...EXPERIENCES]);
+      return;
+    }
+
+    let mounted = true;
+    async function loadLiveData() {
+      try {
+        const [vRes, eRes] = await Promise.all([
+          fetch('/api/villages', { cache: 'no-store' }),
+          fetch('/api/experiences', { cache: 'no-store' }),
+        ]);
+        if (!mounted) return;
+
+        if (vRes.ok) {
+          const data = await vRes.json();
+          if (data.length > 0) setVillages(data);
+        }
+        if (eRes.ok) {
+          const data = await eRes.json();
+          if (data.length > 0) setExperiences(data);
+        }
+      } catch (e) {}
+    }
+    loadLiveData();
+    return () => { mounted = false; };
+  }, [seedStatus, destination]);
 
   const selectedVillage = useMemo(
     () => (selectedVillageId ? villages.find(v => v.id === selectedVillageId) ?? null : null),
@@ -25,8 +60,8 @@ export default function MapPage() {
 
   const villageExperiences = useMemo(() => {
     if (!selectedVillage) return [];
-    return EXPERIENCES.filter(e => e.villageId === selectedVillage.id);
-  }, [selectedVillage]);
+    return experiences.filter(e => e.villageId === selectedVillage.id);
+  }, [selectedVillage, experiences]);
 
   const visitedSet = new Set(villagesVisited);
 
@@ -42,24 +77,24 @@ export default function MapPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 flex flex-col"
+      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 flex flex-col pt-[60px] md:pt-[72px] pb-[80px] md:pb-0"
     >
       {/* Top bar */}
-      <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-5 sm:py-6 lg:px-8 flex shrink-0 flex-col items-start justify-between gap-3 border-b border-[#D6DCCD] md:flex-row md:items-center">
+      <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-5 sm:py-6 lg:px-8 flex shrink-0 flex-col items-start justify-between gap-3 border-b border-[#D6DCCD]/40 md:flex-row md:items-center">
         <div>
-          <h1 className="text-xl sm:text-3xl">Village Map</h1>
-          <p className="text-muted text-xs">{stats.total} villages · avg CWS {stats.avgCws} · {stats.pioneering} pioneer territories</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Village Map</h1>
+          <p className="text-muted text-xs sm:text-sm mt-1">{stats.total} villages · avg CWS {stats.avgCws} · {stats.pioneering} pioneer territories</p>
         </div>
-        <div className="flex w-full flex-col sm:flex-row flex-wrap items-center gap-2 sm:gap-3 md:w-auto md:justify-end">
+        <div className="flex w-full flex-row items-center gap-3 md:w-auto md:justify-end">
           <button
             onClick={() => setShowVisited(v => !v)}
-            className={`w-full sm:w-auto rounded-full border bg-white px-4 py-2 text-sm text-black transition-colors ${showVisited ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#A8B09F]'}`}
+            className={`flex-1 md:flex-none rounded-full border px-4 py-2.5 text-[13px] font-semibold transition-colors ${showVisited ? 'bg-[#0B6E2A] text-white border-[#0B6E2A] hover:bg-[#095A22]' : 'bg-white text-black border-[#D6DCCD] hover:border-[#A8B09F]'}`}
           >
             {showVisited ? 'Showing visited' : 'Show visited only'}
           </button>
           <Link
             href="/discover"
-            className="w-full sm:w-auto text-center rounded-full bg-[#0B6E2A] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#095A22]"
+            className="flex-1 md:flex-none text-center rounded-full bg-[#1A2E1C] px-5 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#2A412D]"
           >
             Browse experiences →
           </Link>
@@ -67,14 +102,15 @@ export default function MapPage() {
       </div>
 
       {/* Main layout */}
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-3 py-3 sm:px-5 sm:py-4 lg:max-w-6xl lg:items-center lg:justify-center lg:py-6">
-        <div className="flex w-full flex-1 flex-col gap-3 lg:h-[76vh] lg:flex-row lg:gap-4">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-4 sm:px-5 sm:py-4 lg:py-6 relative z-0">
+        <div className="flex w-full flex-1 flex-col gap-4 lg:h-[72vh] lg:flex-row lg:gap-5">
           {/* Map */}
-          <div className="relative h-[42vh] min-h-[240px] w-full flex-1 overflow-hidden rounded-2xl sm:rounded-3xl lg:h-auto">
+          <div className="relative h-[45vh] min-h-[300px] w-full flex-1 overflow-hidden rounded-[24px] sm:rounded-3xl lg:h-auto border border-[#D6DCCD]/60 shadow-inner z-0">
             <VillageMap
               onSelectVillage={v => setSelectedVillageId(v.id)}
-              visited={showVisited ? villagesVisited : []}
+              visited={showVisited ? (villagesVisited || []) : null}
               seedStatus={seedStatus}
+              villages={villages}
             />
           </div>
 

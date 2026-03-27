@@ -2,10 +2,28 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from './lib/store';
-import MarketingGlobe, { type DestinationNode } from '../components/MarketingGlobe';
 import { MapPin, ChevronDown, Play, Dices, Globe2, X, Users } from 'lucide-react';
+
+// Three.js + react-globe.gl are large (~500 KB). Lazy-load them so they are
+// excluded from the initial bundle and don't block the main thread on first paint.
+export type DestinationNode = {
+  name: string;
+  city: string;
+  country: string;
+  lat: number;
+  lng: number;
+  villages: number;
+};
+
+const MarketingGlobe = dynamic(() => import('../components/MarketingGlobe'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full rounded-3xl bg-[#1A2E1C]/5 animate-pulse" aria-hidden="true" />
+  ),
+});
 
 type ApiVillage = {
   id: string;
@@ -302,7 +320,7 @@ export default function LandingPage() {
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-[#1A2E1C]">{activeGroup.name}</span>
                     <span className="text-xs text-[#1A2E1C]/60 ml-2">
-                      {activeGroup.memberCount} член{activeGroup.memberCount !== 1 ? 'а' : ''}
+                      {activeGroup.memberCount} member{activeGroup.memberCount !== 1 ? 's' : ''}
                     </span>
                   </div>
                 </motion.div>
@@ -317,7 +335,7 @@ export default function LandingPage() {
                   className="flex items-center gap-2 rounded-full bg-[#0B6E2A] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#095A22] disabled:opacity-50"
                 >
                   <Users className="h-4 w-4" />
-                  {seedStatus === 'loading' ? 'Зарежда…' : `Планирай с ${activeGroup.name}`}
+                  {seedStatus === 'loading' ? 'Loading...' : `Plan with ${activeGroup.name}`}
                 </button>
               )}
               <button

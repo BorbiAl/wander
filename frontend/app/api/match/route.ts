@@ -48,15 +48,24 @@ async function loadSeedExperiencesForFallback() {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json() as Record<string, unknown>;
     const { personality_vector } = body;
+
+    // Validate personality vector before hitting the engine or doing local scoring
+    if (
+      !Array.isArray(personality_vector) ||
+      personality_vector.length !== 5 ||
+      !(personality_vector as unknown[]).every(v => typeof v === 'number' && Number.isFinite(v))
+    ) {
+      return NextResponse.json({ error: 'personality_vector must be an array of 5 finite numbers' }, { status: 400 });
+    }
 
     try {
       const res = await fetch('http://localhost:8081/graph/match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ personality_vector }),
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(1500),
       });
       if (!res.ok) throw new Error(`C++ returned ${res.status}`);
       const data = await res.json();

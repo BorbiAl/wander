@@ -1,10 +1,33 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { EXPERIENCES } from '@/app/lib/data';
 import { readFile, access } from 'node:fs/promises';
+import { getCached, setCached } from '@/app/lib/fileCache';
 import path from 'node:path';
 
+/** Server-side TTL for the parsed JSON — avoids re-reading disk on every request. */
+const FILE_CACHE_TTL_MS = 60_000; // 60 s
+/** Default page size when the client requests pagination. */
+const DEFAULT_PAGE_LIMIT = 100;
+/** Maximum page size accepted from query params. */
+const MAX_PAGE_LIMIT = 500;
+
+type NormalisedExperience = {
+  id: string;
+  villageId: string;
+  name: string;
+  type: string;
+  price: number;
+  duration: string;
+  hostId: string;
+  description: string;
+  personalityWeights: [number, number, number, number, number];
+  mainCity: string;
+  mainCityLat: number;
+  mainCityLng: number;
+};
+
 // Normalise C++ experience shape → frontend Experience type
-function normalise(e: Record<string, unknown>) {
+function normalise(e: Record<string, unknown>): NormalisedExperience {
   const pw = (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as number[];
   while (pw.length < 5) pw.push(0.2);
   return {
@@ -23,7 +46,7 @@ function normalise(e: Record<string, unknown>) {
   };
 }
 
-function normaliseSeedExperience(e: Record<string, unknown>) {
+function normaliseSeedExperience(e: Record<string, unknown>): NormalisedExperience {
   const pw = (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as number[];
   while (pw.length < 5) pw.push(0.2);
   return {
@@ -42,7 +65,11 @@ function normaliseSeedExperience(e: Record<string, unknown>) {
   };
 }
 
-async function loadSeedExperiences() {
+async function loadSeedExperiences(): Promise<NormalisedExperience[]> {
+  const CACHE_KEY = 'seed:experiences';
+  const cached = getCached<NormalisedExperience[]>(CACHE_KEY);
+  if (cached) return cached;
+
   const candidatePaths = [
     path.resolve(process.cwd(), 'data', 'experiences.json'),
     path.resolve(process.cwd(), '..', 'data', 'experiences.json'),
@@ -55,8 +82,12 @@ async function loadSeedExperiences() {
       await access(seedPath);
       const raw = await readFile(seedPath, 'utf-8');
       const data = JSON.parse(raw);
-      if (!Array.isArray(data)) return [];
-      return data.map((e) => normaliseSeedExperience(e as Record<string, unknown>));
+      if (!Array.isArray(data)) continue;
+      const result = data.map((e) => normaliseSeedExperience(e as Record<string, unknown>));
+      if (result.length > 0) {
+        setCached(CACHE_KEY, result, FILE_CACHE_TTL_MS);
+        return result;
+      }
     } catch {
       // Try next candidate path.
     }
@@ -65,31 +96,84 @@ async function loadSeedExperiences() {
   return [];
 }
 
-const CACHE_HEADERS = {
+const HTTP_CACHE_HEADERS = {
   'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
 };
 
-export async function GET() {
+/**
+ * GET /api/experiences
+ *
+ * Query params (all optional):
+ *   villageId  Comma-separated village IDs — returns only experiences for those villages
+ *   type       Experience type filter (e.g. "hike", "craft")
+ *   limit      Page size (default: all; max: 500)
+ *   offset     Zero-based offset into the filtered result set (default: 0)
+ *
+ * Response headers:
+ *   X-Total-Count  Total number of experiences matching the filter (before pagination)
+ */
+export async function GET(req: NextRequest) {
+  const { searchParams } = req.nextUrl;
+
+  // Parse filter params
+  const villageIdParam = searchParams.get('villageId');
+  const typeParam = searchParams.get('type');
+  const limitParam = searchParams.get('limit');
+  const offsetParam = searchParams.get('offset');
+
+  const villageIdSet = villageIdParam
+    ? new Set(villageIdParam.split(',').map(s => s.trim()).filter(Boolean))
+    : null;
+
+  const typeFilter = typeParam?.trim().toLowerCase() ?? null;
+
+  const limit = limitParam !== null
+    ? Math.min(Math.max(1, parseInt(limitParam, 10) || DEFAULT_PAGE_LIMIT), MAX_PAGE_LIMIT)
+    : null;
+  const offset = offsetParam !== null ? Math.max(0, parseInt(offsetParam, 10) || 0) : 0;
+
   const seedExperiences = await loadSeedExperiences();
+
+  // Build the full merged set (engine → seed → static fallback)
+  let allExperiences: NormalisedExperience[];
 
   try {
     const res = await fetch('http://localhost:8081/graph/experiences', {
       signal: AbortSignal.timeout(2000),
     });
-    if (!res.ok) throw new Error(`C++ returned ${res.status}`);
-    const data = await res.json();
-    if (Array.isArray(data) && data.length > 0) {
-      const cppExperiences = data.map(normalise);
-      const merged = new Map<string, (typeof EXPERIENCES)[number]>();
-      for (const e of seedExperiences) merged.set(String(e.id), e as (typeof EXPERIENCES)[number]);
-      for (const e of cppExperiences) merged.set(String(e.id), e as (typeof EXPERIENCES)[number]);
-      return NextResponse.json(Array.from(merged.values()), { headers: CACHE_HEADERS });
-    }
-    throw new Error('empty response');
+    if (!res.ok) throw new Error(`Engine returned ${res.status}`);
+    const data = await res.json() as unknown[];
+    if (!Array.isArray(data) || data.length === 0) throw new Error('empty response');
+
+    const cppExperiences = data.map(e => normalise(e as Record<string, unknown>));
+    const merged = new Map<string, NormalisedExperience>();
+    for (const e of seedExperiences) merged.set(e.id, e);
+    for (const e of cppExperiences) merged.set(e.id, e);
+    allExperiences = Array.from(merged.values());
   } catch {
-    if (seedExperiences.length > 0) {
-      return NextResponse.json(seedExperiences, { headers: CACHE_HEADERS });
-    }
-    return NextResponse.json(EXPERIENCES, { headers: CACHE_HEADERS });
+    allExperiences = seedExperiences.length > 0
+      ? seedExperiences
+      : (EXPERIENCES as unknown as NormalisedExperience[]);
   }
+
+  // Apply server-side filters
+  let filtered = allExperiences;
+  if (villageIdSet) {
+    filtered = filtered.filter(e => villageIdSet.has(e.villageId));
+  }
+  if (typeFilter) {
+    filtered = filtered.filter(e => e.type.toLowerCase() === typeFilter);
+  }
+
+  const total = filtered.length;
+
+  // Apply pagination only when the client explicitly requests it
+  const page = limit !== null ? filtered.slice(offset, offset + limit) : filtered;
+
+  const headers: Record<string, string> = {
+    ...HTTP_CACHE_HEADERS,
+    'X-Total-Count': String(total),
+  };
+
+  return NextResponse.json(page, { headers });
 }

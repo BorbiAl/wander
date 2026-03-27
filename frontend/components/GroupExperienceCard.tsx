@@ -82,8 +82,8 @@ export function GroupExperienceCard({
 
       <div className="flex flex-col items-end shrink-0">
         <div className="text-xl font-bold text-amber-600">{groupPct}%</div>
-        <div className="text-[10px] text-[#1A2E1C]/40 mb-2">Група</div>
-        <button className="text-xs text-[#1A2E1C]/65 hover:text-[#1A2E1C] transition-colors">Виж →</button>
+        <div className="text-[10px] text-[#1A2E1C]/40 mb-2">Group</div>
+        <button className="text-xs text-[#1A2E1C]/65 hover:text-[#1A2E1C] transition-colors">View →</button>
       </div>
     </div>
   );

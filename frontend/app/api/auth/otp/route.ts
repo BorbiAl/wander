@@ -1,14 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFile, writeFile, access } from 'node:fs/promises';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import path from 'node:path';
-import nodemailer from 'nodemailer';
+// nodemailer 8 ships its own CJS types that don't resolve cleanly under
+// moduleResolution:"bundler". We require() it and declare only what we use.
+type MailTransporter = { sendMail(opts: MailOptions): Promise<unknown> };
+type MailOptions = { from?: string; to: string; subject: string; text: string; html: string };
+type TransportConfig = { host?: string; port?: number; secure?: boolean; auth?: { user?: string; pass?: string } };
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const nodemailer = require('nodemailer') as { createTransport(cfg: TransportConfig): MailTransporter };
+import { checkRateLimit } from '@/app/lib/rateLimit';
+import { withFileLock } from '@/app/lib/fileLock';
 
 // ---------------------------------------------------------------------------
 // OTP store (in-memory + persisted to otp.json for restarts)
+// OTPs are stored as SHA-256(code + ':' + email) — never in plaintext.
 // ---------------------------------------------------------------------------
 
 type OtpEntry = {
-  code: string;
+  hash: string;  // SHA-256 hex of `${code}:${email}`
   expiresAt: number; // unix ms
 };
 
@@ -18,6 +28,10 @@ const DATA_PATHS = [
   path.resolve(process.cwd(), 'data', 'otp.json'),
   path.resolve(process.cwd(), '..', 'data', 'otp.json'),
 ];
+
+function hashOtp(code: string, email: string): string {
+  return createHash('sha256').update(`${code}:${email}`).digest('hex');
+}
 
 async function getOtpPath(): Promise<string> {
   for (const p of DATA_PATHS) {
@@ -37,7 +51,6 @@ async function readOtpStore(): Promise<Record<string, OtpEntry>> {
 }
 
 async function writeOtpStore(store: Record<string, OtpEntry>): Promise<void> {
-  // Prune expired entries before writing
   const now = Date.now();
   const pruned: Record<string, OtpEntry> = {};
   for (const [k, v] of Object.entries(store)) {
@@ -78,7 +91,7 @@ async function readUsers(): Promise<StoredUser[]> {
   try {
     const raw = await readFile(p, 'utf-8');
     const users = JSON.parse(raw) as StoredUser[];
-    return users.map(u => ({ eventsBefore: [], eventsAfter: [], ...u }));
+    return users.map(u => ({ ...u, eventsBefore: u.eventsBefore ?? [], eventsAfter: u.eventsAfter ?? [] }));
   } catch {
     return [];
   }
@@ -156,26 +169,46 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
   }
 
-  // --- send ---
+  // ── send ──────────────────────────────────────────────────────────────────
   if (action === 'send') {
+    // 5 OTP sends per email per 10 minutes — prevents spam and API cost abuse
+    if (!checkRateLimit(`otp:send:${emailLower}`, 5, 10 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: 'Too many code requests. Please wait before trying again.' },
+        { status: 429 },
+      );
+    }
+
     const otp = generateCode();
-    const store = await readOtpStore();
-    store[emailLower] = { code: otp, expiresAt: Date.now() + OTP_TTL_MS };
-    await writeOtpStore(store);
+    const otpHash = hashOtp(otp, emailLower);
+
+    await withFileLock('otp', async () => {
+      const store = await readOtpStore();
+      store[emailLower] = { hash: otpHash, expiresAt: Date.now() + OTP_TTL_MS };
+      await writeOtpStore(store);
+    });
 
     try {
       await sendOtpEmail(emailLower, otp);
     } catch (err) {
-      console.error('SMTP error:', err);
+      console.error('[otp] SMTP error:', err);
       return NextResponse.json({ error: 'Failed to send email — please try again' }, { status: 502 });
     }
 
     return NextResponse.json({ ok: true });
   }
 
-  // --- verify ---
+  // ── verify ────────────────────────────────────────────────────────────────
   if (action === 'verify') {
     if (!code) return NextResponse.json({ error: 'Missing code' }, { status: 400 });
+
+    // 10 verify attempts per email per 10 minutes — prevents brute-force of 6-digit codes
+    if (!checkRateLimit(`otp:verify:${emailLower}`, 10, 10 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: 'Too many attempts. Please request a new code.' },
+        { status: 429 },
+      );
+    }
 
     const store = await readOtpStore();
     const entry = store[emailLower];
@@ -184,35 +217,49 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Code expired or not found — request a new one' }, { status: 401 });
     }
 
-    if (entry.code !== String(code).trim()) {
+    // Timing-safe comparison: prevents timing-oracle attacks
+    const submittedHash = hashOtp(String(code).trim(), emailLower);
+    const storedBuf = Buffer.from(entry.hash, 'hex');
+    const submittedBuf = Buffer.from(submittedHash, 'hex');
+    const isValid = storedBuf.length === submittedBuf.length
+      && timingSafeEqual(storedBuf, submittedBuf);
+
+    if (!isValid) {
       return NextResponse.json({ error: 'Incorrect code' }, { status: 401 });
     }
 
-    // Consume the OTP
-    delete store[emailLower];
-    await writeOtpStore(store);
+    // Consume the OTP so it cannot be reused
+    await withFileLock('otp', async () => {
+      const freshStore = await readOtpStore();
+      delete freshStore[emailLower];
+      await writeOtpStore(freshStore);
+    });
 
-    // Find or create user
-    const users = await readUsers();
-    let user = users.find(u => u.email === emailLower);
-    let isNew = false;
+    // Find or create user (serialised to prevent duplicate accounts)
+    const result = await withFileLock('users', async () => {
+      const users = await readUsers();
+      let user = users.find(u => u.email === emailLower);
+      let isNew = false;
 
-    if (!user) {
-      isNew = true;
-      user = {
-        email: emailLower,
-        userId: 'user_' + Math.random().toString(36).slice(2, 8),
-        state: null,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        eventsBefore: [],
-        eventsAfter: [],
-      };
-      users.push(user);
-      await writeUsers(users);
-    }
+      if (!user) {
+        isNew = true;
+        user = {
+          email: emailLower,
+          userId: 'user_' + Math.random().toString(36).slice(2, 8),
+          state: null,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          eventsBefore: [],
+          eventsAfter: [],
+        };
+        users.push(user);
+        await writeUsers(users);
+      }
 
-    return NextResponse.json({ userId: user.userId, state: user.state, isNew });
+      return { userId: user.userId, state: user.state, isNew };
+    });
+
+    return NextResponse.json(result);
   }
 
   return NextResponse.json({ error: 'Unknown action' }, { status: 400 });

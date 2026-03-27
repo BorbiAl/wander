@@ -22,7 +22,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`}>
       <head>
+        {/* Local HD texture — served from same origin, preloaded in parallel with the lazy globe chunk */}
         <link rel="preload" as="image" href="/assets/earth-day-hd.jpg" />
+        {/* Early connections for external origins used after the landing page loads */}
+        <link rel="preconnect" href="https://picsum.photos" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://picsum.photos" />
+        <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
       </head>
       <body suppressHydrationWarning className="bg-[#E5E9DF] text-[#1A2E1C] font-sans antialiased min-h-screen flex flex-col selection:bg-[#0B6E2A]/20">
         <AppProvider>

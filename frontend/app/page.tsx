@@ -302,7 +302,7 @@ export default function LandingPage() {
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-[#1A2E1C]">{activeGroup.name}</span>
                     <span className="text-xs text-[#1A2E1C]/60 ml-2">
-                      {activeGroup.memberCount} член{activeGroup.memberCount !== 1 ? 'а' : ''}
+                      {activeGroup.memberCount} member{activeGroup.memberCount !== 1 ? 's' : ''}
                     </span>
                   </div>
                 </motion.div>
@@ -317,7 +317,7 @@ export default function LandingPage() {
                   className="flex items-center gap-2 rounded-full bg-[#0B6E2A] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#095A22] disabled:opacity-50"
                 >
                   <Users className="h-4 w-4" />
-                  {seedStatus === 'loading' ? 'Зарежда…' : `Планирай с ${activeGroup.name}`}
+                  {seedStatus === 'loading' ? 'Loading...' : `Plan with ${activeGroup.name}`}
                 </button>
               )}
               <button

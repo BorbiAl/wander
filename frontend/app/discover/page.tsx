@@ -271,12 +271,12 @@ export default function DiscoverPage() {
             <div className="flex-1 min-w-0">
               <span className="text-sm font-semibold text-[#1A2E1C]">{activeGroup.name}</span>
               <span className="text-xs text-[#1A2E1C]/60 ml-2">
-                {activeGroup.members.length} членове · Group % score активен
+                {activeGroup.members.length} members · Group % score active
               </span>
             </div>
             <button onClick={() => router.push(`/group/${activeGroup.id}`)}
               className="text-xs text-[#0B6E2A] font-semibold hover:underline shrink-0">
-              Детайли →
+              Details →
             </button>
             <button onClick={() => setActiveGroup(null)}
               className="text-xs text-[#1A2E1C]/40 hover:text-[#1A2E1C]/70 shrink-0 ml-1">

@@ -300,7 +300,7 @@ export default function ExperiencePage() {
         experienceId: exp.id,
         villageName: village.name,
         experienceName: exp.name,
-        hostName: host.name,
+        hostName: host?.name ?? 'Unknown Host',
         amount: exp.price,
         split: data.split,
         timestamp: now,
@@ -364,21 +364,27 @@ export default function ExperiencePage() {
         <span className="text-[#1A2E1C] font-bold">€{exp.price}</span>
         <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
         <span>⏱ {exp.duration}</span>
-        <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
-        <span className="text-[#F5A623] font-bold">⭐ {host.rating}</span>
+        {host && (
+          <>
+            <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
+            <span className="text-[#F5A623] font-bold">⭐ {host.rating}</span>
+          </>
+        )}
       </div>
 
       {/* Host Card */}
-      <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[28px] p-6 flex gap-5 mb-12 items-center transition-transform hover:scale-[1.02]">
-        <div className="w-12 h-12 rounded-full bg-[#0B6E2A] text-white shadow-md flex items-center justify-center text-lg font-bold shrink-0">
-          {host.name.split(' ').map(n => n[0]).join('')}
+      {host && (
+        <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[28px] p-6 flex gap-5 mb-12 items-center transition-transform hover:scale-[1.02]">
+          <div className="w-12 h-12 rounded-full bg-[#0B6E2A] text-white shadow-md flex items-center justify-center text-lg font-bold shrink-0">
+            {host.name.split(' ').map(n => n[0]).join('')}
+          </div>
+          <div>
+            <div className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Your host</div>
+            <div className="text-[#1A2E1C] font-bold text-base mb-1">{host.name}</div>
+            <div className="text-[#1A2E1C]/60 text-sm italic">{host.bio}</div>
+          </div>
         </div>
-        <div>
-          <div className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Your host</div>
-          <div className="text-[#1A2E1C] font-bold text-base mb-1">{host.name}</div>
-          <div className="text-[#1A2E1C]/60 text-sm italic">{host.bio}</div>
-        </div>
-      </div>
+      )}
 
       {/* Description */}
       <div className="mb-12">

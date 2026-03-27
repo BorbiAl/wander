@@ -36,10 +36,16 @@ export function Navbar() {
       <nav className="fixed top-0 left-0 right-0 h-[60px] md:h-[72px] bg-[#F4E3D7]/80 backdrop-blur-xl border-b border-[#0B6E2A]/10 z-50 flex items-center justify-center px-4 md:px-8 font-sans shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-300">
         <div className="relative w-full flex items-center justify-center">
           <Link href="/" className="absolute left-0 flex items-center gap-2.5 group">
-            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#0B6E2A] text-[#E5E9DF] group-hover:scale-105 transition-transform duration-300 shadow-md">
-              <span className="font-display text-[15px] font-bold tracking-widest mt-0.5">WG</span>
+            <div className="flex items-center justify-center w-9 h-9 rounded-full overflow-hidden bg-[#f5efde] border border-[#0B6E2A]/10 shadow-md group-hover:scale-105 transition-transform duration-300">
+              <Image
+                src="/favicon.svg"
+                alt="Wander Logo"
+                width={54}
+                height={54}
+                className="w-[54px] h-[54px]"
+              />
             </div>
-            <span className="text-[#1A2E1C] font-semibold tracking-tight hidden sm:block text-lg">Wander</span>
+            <span className="text-[#1A2E1C] font-semibold tracking-tight text-lg">Wander</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-1.5 bg-white/50 p-1.5 rounded-full border border-white/60 shadow-[0_2px_12px_rgba(0,0,0,0.02)] backdrop-blur-md">

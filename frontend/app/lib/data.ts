@@ -27,9 +27,11 @@ export type Village = {
 
 export type Experience = {
   id: string; villageId: string; name: string;
-  type: 'craft'|'hike'|'homestay'|'ceremony'|'cooking'|'volunteer'|'folklore';
+  type: 'craft'|'hike'|'homestay'|'ceremony'|'cooking'|'volunteer'|'folklore'|'sightseeing';
   price: number; duration: string; hostId: string;
   description: string; personalityWeights: [number,number,number,number,number];
+  isFree?: boolean; isActive?: boolean; spotsRemaining?: number;
+  startDate?: string; endDate?: string;
 }
 
 export type Host = {

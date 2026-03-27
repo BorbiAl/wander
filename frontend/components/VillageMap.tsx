@@ -10,12 +10,12 @@ import type { Village } from '@/app/lib/data';
 import type { SeedStatus } from '@/app/lib/store';
 
 // Recenter map whenever seedStatus changes to 'done' (new destination seeded)
-function AutoCenter({ seedStatus }: { seedStatus: SeedStatus }) {
+function AutoCenter({ seedStatus, villages }: { seedStatus: SeedStatus, villages: Village[] }) {
   const map = useMap();
   useEffect(() => {
-    if (VILLAGES.length === 0) return;
-    const lats = VILLAGES.map(v => v.lat);
-    const lngs = VILLAGES.map(v => v.lng);
+    if (villages.length === 0) return;
+    const lats = villages.map(v => v.lat);
+    const lngs = villages.map(v => v.lng);
     const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
     const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
     const latSpan = Math.max(...lats) - Math.min(...lats);
@@ -24,33 +24,36 @@ function AutoCenter({ seedStatus }: { seedStatus: SeedStatus }) {
     // Rough zoom: wider span = lower zoom
     const zoom = span < 0.5 ? 12 : span < 2 ? 10 : span < 5 ? 8 : span < 15 ? 7 : 5;
     map.setView([centerLat, centerLng], zoom);
-  }, [map, seedStatus]);
+  }, [map, seedStatus, villages]);
   return null;
 }
 
 export default function VillageMap({
   onSelectVillage,
-  visited = [],
+  visited = null,
   seedStatus = 'idle',
+  villages: propVillages = null,
 }: {
   onSelectVillage?: (v: Village) => void;
-  visited?: string[];
+  visited?: string[] | null;
   seedStatus?: SeedStatus;
+  villages?: Village[] | null;
 }) {
   const mapRef = useRef<LeafletMap | null>(null);
-  // Re-read VILLAGES from the mutable array when seed completes
-  const [villages, setVillages] = useState([...VILLAGES]);
+  
+  // Re-read VILLAGES from the mutable array when seed completes, or use props
+  const [localVillages, setLocalVillages] = useState([...(propVillages || VILLAGES)]);
   useEffect(() => {
-    setVillages([...VILLAGES]);
-  }, [seedStatus]);
+    setLocalVillages([...(propVillages || VILLAGES)]);
+  }, [seedStatus, propVillages]);
 
-  const villagesToShow = visited.length > 0
-    ? villages.filter(v => visited.includes(v.name))
-    : villages;
+  const villagesToShow = visited !== null
+    ? localVillages.filter(v => visited.includes(v.name))
+    : localVillages;
 
-  // Initial center: compute from current VILLAGES (or world default)
-  const lats = villages.map(v => v.lat);
-  const lngs = villages.map(v => v.lng);
+  // Initial center: compute from current villages (or world default)
+  const lats = localVillages.map(v => v.lat);
+  const lngs = localVillages.map(v => v.lng);
   const initLat = lats.length ? (Math.min(...lats) + Math.max(...lats)) / 2 : 20;
   const initLng = lngs.length ? (Math.min(...lngs) + Math.max(...lngs)) / 2 : 0;
 
@@ -67,7 +70,7 @@ export default function VillageMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <AutoCenter seedStatus={seedStatus} />
+        <AutoCenter seedStatus={seedStatus} villages={localVillages} />
         {villagesToShow.map(village => (
           <CircleMarker
             key={village.id}

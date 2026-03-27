@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
@@ -77,6 +77,19 @@ type CountryHubStats = {
   sampleLng: number;
 };
 
+const DEST_CACHE_KEY = 'wander_dest_nodes_v1';
+const DEST_CACHE_TTL = 5 * 60 * 1000;
+
+function readDestCache(): DestinationNode[] | null {
+  try {
+    const raw = localStorage.getItem(DEST_CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw) as { data: DestinationNode[]; ts: number };
+    if (Date.now() - ts < DEST_CACHE_TTL && Array.isArray(data) && data.length > 0) return data;
+    return null;
+  } catch { return null; }
+}
+
 function buildCityHubNodes(villageStats?: Map<string, CountryHubStats>): DestinationNode[] {
   if (villageStats && villageStats.size > 0) {
     return Array.from(villageStats.entries())
@@ -126,52 +139,84 @@ export default function LandingPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [destinations, setDestinations] = useState<DestinationNode[]>([]);
+  const [destinations, setDestinations] = useState<DestinationNode[]>(() => buildCityHubNodes());
+  const [shouldHydrateGlobe, setShouldHydrateGlobe] = useState(false);
   const [activeGroup, setActiveGroupData] = useState<{ id: string; name: string; memberCount: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const loadingDestinationsRef = useRef(false);
+
+  const loadDestinationsOnDemand = useCallback(async () => {
+    if (loadingDestinationsRef.current) return;
+    loadingDestinationsRef.current = true;
+
+    try {
+      const res = await fetch('/api/villages', { cache: 'no-store' });
+      if (!res.ok) return;
+      const villages: ApiVillage[] = await res.json();
+      if (!Array.isArray(villages) || villages.length === 0) return;
+
+      const byCountry = new Map<string, CountryHubStats>();
+      for (const v of villages) {
+        const country = v.country?.trim() || 'Bulgaria';
+        const prev = byCountry.get(country);
+        if (!prev) {
+          byCountry.set(country, {
+            count: 1,
+            sampleCity: v.name,
+            sampleLat: v.lat,
+            sampleLng: v.lng,
+          });
+        } else {
+          prev.count += 1;
+        }
+      }
+
+      const nodes = buildCityHubNodes(byCountry);
+      if (nodes.length > 0) {
+        setDestinations(nodes);
+        try {
+          localStorage.setItem(DEST_CACHE_KEY, JSON.stringify({ data: nodes, ts: Date.now() }));
+        } catch {}
+      }
+    } catch {
+      loadingDestinationsRef.current = false;
+    }
+  }, []);
 
   useEffect(() => {
     setMounted(true);
+    router.prefetch('/onboarding');
 
-    async function loadDestinations() {
-      try {
-        const res = await fetch('/api/villages');
-        if (!res.ok) {
-          setDestinations([]);
-          return;
-        }
-        const villages: ApiVillage[] = await res.json();
-        if (!Array.isArray(villages) || villages.length === 0) {
-          setDestinations([]);
-          return;
-        }
+    // Serve cached nodes instantly so the globe renders on first paint.
+    const cached = readDestCache();
+    if (cached) setDestinations(cached);
 
-        const byCountry = new Map<string, CountryHubStats>();
-        for (const v of villages) {
-          const country = v.country?.trim() || 'Bulgaria';
-          const prev = byCountry.get(country);
-          if (!prev) {
-            byCountry.set(country, {
-              count: 1,
-              sampleCity: v.name,
-              sampleLat: v.lat,
-              sampleLng: v.lng,
-            });
-          } else {
-            prev.count += 1;
-          }
-        }
+    const hydrate = () => setShouldHydrateGlobe(true);
+    let idleCallbackId: number | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-        const nodes = buildCityHubNodes(byCountry);
-        if (nodes.length > 0) setDestinations(nodes);
-        else setDestinations([]);
-      } catch {
-        setDestinations([]);
-      }
+    if ('requestIdleCallback' in window) {
+      idleCallbackId = (window as Window & {
+        requestIdleCallback: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+      }).requestIdleCallback(hydrate, { timeout: 2200 });
+    } else {
+      timeoutId = setTimeout(hydrate, 2200);
     }
 
-    loadDestinations();
-  }, []);
+    const wakeEvents: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'scroll'];
+    const onWake = () => setShouldHydrateGlobe(true);
+    wakeEvents.forEach((event) => window.addEventListener(event, onWake, { once: true, passive: true }));
+
+    return () => {
+      if (idleCallbackId !== null && 'cancelIdleCallback' in window) {
+        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleCallbackId);
+      }
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      wakeEvents.forEach((event) => window.removeEventListener(event, onWake));
+    };
+  }, [router]);
 
   // Fetch active group info for the banner
   useEffect(() => {
@@ -190,12 +235,12 @@ export default function LandingPage() {
       ? destinations.filter((s) => s.name.toLowerCase().includes(input.toLowerCase()))
       : destinations;
 
-  const handleSubmit = async (loc: string) => {
+  const handleSubmit = (loc: string) => {
     const trimmed = loc.trim();
     if (!trimmed) return;
     setInput(trimmed);
     setShowSuggestions(false);
-    await seedLocation(trimmed);
+    void seedLocation(trimmed); // fire-and-forget — onboarding page handles seedStatus
     router.push('/onboarding');
   };
 
@@ -205,13 +250,14 @@ export default function LandingPage() {
     if (!trimmed) return;
     setInput(trimmed);
     setShowSuggestions(false);
-    // Update destination on the group backend + seed locally
+    // Update destination on group backend first (needed before group page loads),
+    // then navigate — seed runs in parallel.
     await fetch(`/api/groups/${activeGroupId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ destination: trimmed }),
     });
-    await seedLocation(trimmed);
+    void seedLocation(trimmed);
     router.push(`/group/${activeGroupId}`);
   };
 
@@ -265,7 +311,11 @@ export default function LandingPage() {
                     setInput(e.target.value);
                     setShowSuggestions(true);
                   }}
-                  onFocus={() => setShowSuggestions(true)}
+                  onFocus={() => {
+                    setShowSuggestions(true);
+                    setShouldHydrateGlobe(true);
+                    void loadDestinationsOnDemand();
+                  }}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                   onKeyDown={handleKey}
                   placeholder="Choose a destination..."
@@ -379,17 +429,29 @@ export default function LandingPage() {
             </AnimatePresence>
           </div>
 
-          <div className="relative z-10 h-[400px] w-full lg:-mt-4 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center">
+          <div
+            className="relative z-10 h-[400px] w-full lg:-mt-4 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center"
+            onPointerEnter={() => {
+              setShouldHydrateGlobe(true);
+              void loadDestinationsOnDemand();
+            }}
+          >
             <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
               <div className="absolute right-[8%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(26,46,28,0.12)_0%,rgba(229,233,223,0)_72%)]" />
             </div>
-            <MarketingGlobe
-              destinations={destinations}
-              onSelect={(location) => void handleSubmit(location)}
-              inline
-              allowOverflow
-              className="lg:h-[660px] lg:w-[760px]"
-            />
+            {shouldHydrateGlobe ? (
+              <MarketingGlobe
+                destinations={destinations}
+                onSelect={(location) => void handleSubmit(location)}
+                inline
+                allowOverflow
+                className="lg:h-[660px] lg:w-[760px]"
+              />
+            ) : (
+              <div className="relative h-full w-full overflow-hidden rounded-3xl border border-black/5 bg-[radial-gradient(circle_at_35%_35%,#F7FBFF_0%,#DCE9EF_45%,#C9DCE5_100%)] lg:h-[660px] lg:w-[760px]">
+                <div className="absolute inset-[22%] rounded-full border border-white/50 bg-[radial-gradient(circle,#FDFEFF_0%,#DFECF4_70%,#C9DCE5_100%)] shadow-[0_30px_80px_rgba(0,0,0,0.08)]" />
+              </div>
+            )}
           </div>
         </section>
       </main>

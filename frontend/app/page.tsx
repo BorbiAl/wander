@@ -430,7 +430,7 @@ export default function LandingPage() {
           </div>
 
           <div
-            className="relative z-10 h-[400px] w-full lg:-mt-4 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center"
+            className="relative z-10 h-[400px] w-full lg:-mt-28 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center"
             onPointerEnter={() => {
               setShouldHydrateGlobe(true);
               void loadDestinationsOnDemand();

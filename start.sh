@@ -8,7 +8,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 ) &
 (
   cd "$ROOT/hmm"
-  python app.py
+  python3 app.py
 ) &
 (
   cd "$ROOT/frontend"

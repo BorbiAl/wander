@@ -27,15 +27,17 @@ const STAGE_META = [
   { group: 'Reaction Set', title: 'Instant reaction profile', detail: 'Emoji responses sharpen your spontaneous social and practical tendencies.', hint: 'Choose quickly for best signal quality.' },
   { group: 'Reaction Set', title: 'Pressure response style', detail: 'This captures how you handle friction, surprises, and group dynamics.', hint: 'First instinct is usually the most accurate.' },
   { group: 'Budget Lens', title: 'Comfort and spending lens', detail: 'Budget preference helps align experience intensity and value expectations.', hint: 'Answer for your real trip behavior, not ideal behavior.' },
+  { group: 'Volunteer Intent', title: 'Would you like to volunteer?', detail: 'If checked, we will highlight active volunteering events with dates and sign-up links in your results.', hint: 'Only check if you genuinely want to give back during this trip.' },
 ] as const;
 
 export default function OnboardingPage() {
   const router = useRouter();
 
-  const { setObservations, setPersonality, setMatches, destination, seedStatus } = useApp();
+  const { setObservations, setPersonality, setMatches, setVolunteerIntent, destination, seedStatus } = useApp();
   const [step, setStep] = useState(0);
   const [obs, setObs] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const [volunteerChecked, setVolunteerChecked] = useState(false);
   const pendingNavigate = useRef(false);
 
   // When seedStatus finishes (done/idle), navigate if we were waiting for it
@@ -52,35 +54,33 @@ export default function OnboardingPage() {
   const progressPct = ((step + 1) / totalSteps) * 100;
   const currentMeta = STAGE_META[step] ?? STAGE_META[0];
 
-  const handleChoice = async (val: number) => {
+  const handleChoice = (val: number) => {
     const newObs = [...obs, val];
     setObs(newObs);
+    setStep(s => s + 1);
+  };
 
-    if (step < 14) {
-      setStep(s => s + 1);
-    } else {
-      // Finish
-      setLoading(true);
-      try {
-        const res = await fetch('/api/onboarding', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ observations: newObs })
-        });
-        const data = await res.json();
-        setPersonality(data.personality);
-        setObservations(newObs);
-        setMatches(data.matches);
-        // If seed is still running, let the useEffect navigate once it finishes
-        if (seedStatus === 'loading') {
-          pendingNavigate.current = true;
-        } else {
-          router.push('/discover');
-        }
-      } catch (e) {
-        console.error(e);
-        setLoading(false);
+  const handleFinishOnboarding = async () => {
+    setLoading(true);
+    try {
+      setVolunteerIntent(volunteerChecked);
+      const res = await fetch('/api/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ observations: obs })
+      });
+      const data = await res.json();
+      setPersonality(data.personality);
+      setObservations(obs);
+      setMatches(data.matches);
+      if (seedStatus === 'loading') {
+        pendingNavigate.current = true;
+      } else {
+        router.push('/discover');
       }
+    } catch (e) {
+      console.error(e);
+      setLoading(false);
     }
   };
 
@@ -163,6 +163,34 @@ export default function OnboardingPage() {
                 {step === 13 && <EmojiScenario scenario={questions.emojis[1].scenario} options={questions.emojis[1].options} onChoice={(v) => handleChoice(21 + v % 3)} />}
 
                 {step === 14 && <BudgetSlider question={questions.budget} onChoice={(v) => handleChoice(21 + v)} />}
+
+                {step === 15 && (
+                  <div className="w-full max-w-sm mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-5 sm:p-6 flex flex-col items-center">
+                    <div className="text-[#0B6E2A] text-[10px] font-bold tracking-widest uppercase mb-3">Volunteer Intent</div>
+                    <h2 className="font-sans font-bold text-center leading-tight text-[22px] sm:text-[24px] text-[#1A2E1C] mb-2">Would you like to volunteer?</h2>
+                    <p className="font-sans text-xs sm:text-sm text-[#1A2E1C]/70 mb-6 text-center">If yes, we will surface active volunteering events with dates and sign-up links at the top of your results.</p>
+                    <label
+                      className={`w-full flex items-center gap-4 border rounded-[20px] p-4 cursor-pointer transition-all mb-6 ${volunteerChecked ? 'border-[#0B6E2A] bg-white ring-1 ring-[#0B6E2A]/30 shadow-sm' : 'border-[#D6DCCD]/60 bg-white/40 hover:border-[#0B6E2A]/50 hover:bg-white/60'}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={volunteerChecked}
+                        onChange={e => setVolunteerChecked(e.target.checked)}
+                        className="h-5 w-5 rounded accent-[#0B6E2A] cursor-pointer"
+                      />
+                      <div>
+                        <div className="font-semibold text-sm sm:text-base text-[#1A2E1C]">Yes, show me volunteering opportunities</div>
+                        <div className="text-[11px] sm:text-xs text-[#1A2E1C]/50 mt-0.5">Active events with available spots will be highlighted</div>
+                      </div>
+                    </label>
+                    <button
+                      onClick={handleFinishOnboarding}
+                      className="bg-[#0B6E2A] text-white font-semibold tracking-wide rounded-full px-6 py-3.5 hover:bg-[#095A22] active:scale-[0.98] transition-transform w-full shadow-md"
+                    >
+                      Complete Onboarding
+                    </button>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </section>

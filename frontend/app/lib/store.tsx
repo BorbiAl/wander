@@ -54,6 +54,7 @@ export type AppState = {
   seedStatus: SeedStatus;
   friends: FriendProfile[];
   activeGroupId: string | null;
+  volunteerIntent: boolean;
   // Auth
   email: string | null;
 }
@@ -67,6 +68,7 @@ type AppContextType = AppState & {
   addPoints: (p: number) => void;
   addBadge: (b: string) => void;
   resetOnboarding: () => void;
+  setVolunteerIntent: (v: boolean) => void;
   seedLocation: (location: string) => Promise<void>;
   addFriend: (f: FriendProfile) => void;
   removeFriend: (userId: string) => void;
@@ -94,6 +96,7 @@ const defaultState: AppState = {
   friends: [],
   activeGroupId: null,
   email: null,
+  volunteerIntent: false,
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -275,6 +278,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const setActiveGroup = (groupId: string | null) => setState(prev => ({ ...prev, activeGroupId: groupId }));
+  const setVolunteerIntent = (v: boolean) => setState(prev => ({ ...prev, volunteerIntent: v }));
 
   // Auth: restore saved server state on login
   const loginWithEmail = (email: string, userId: string, savedState: Record<string, unknown> | null) => {
@@ -372,7 +376,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <AppContext.Provider value={{
       ...state, setObservations, setPersonality, setMatches,
-      addBooking, updateBooking, addPoints, addBadge, resetOnboarding, seedLocation,
+      addBooking, updateBooking, addPoints, addBadge, resetOnboarding, setVolunteerIntent, seedLocation,
       addFriend, removeFriend, createGroup, joinGroup, setActiveGroup,
       loginWithEmail, logout,
     }}>

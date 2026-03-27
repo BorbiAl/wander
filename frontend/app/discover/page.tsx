@@ -20,10 +20,10 @@ type ScoredExperience = Experience & { score: number };
 
 export default function DiscoverPage() {
   const router = useRouter();
-  const { personality, matches, setMatches, seedStatus, destination, activeGroupId, setActiveGroup } = useApp();
-  const [filterType, setFilterType] = useState<string>('All');
+  const { personality, matches, setMatches, seedStatus, destination, activeGroupId, setActiveGroup, volunteerIntent } = useApp();
+  const [filterType, setFilterType] = useState<string>(() => volunteerIntent ? 'volunteer' : 'All');
   const [freeOnly, setFreeOnly] = useState(false);
-  const [activeOnly, setActiveOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(() => volunteerIntent);
   const [sortBy, setSortBy] = useState<'match' | 'price' | 'cws'>('match');
   const [freeSightseeing, setFreeSightseeing] = useState<Experience[]>([]);
   const [activeVolunteering, setActiveVolunteering] = useState<Experience[]>([]);
@@ -377,8 +377,10 @@ export default function DiscoverPage() {
           )}
 
           {activeVolunteering.length > 0 && (
-            <div className="mb-6">
-              <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#F5A623] mb-3">Volunteer now</p>
+            <div className={`mb-6 ${volunteerIntent ? 'order-first' : ''}`}>
+              <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#F5A623] mb-3">
+                {volunteerIntent ? '⬆ Volunteering — your priority' : 'Volunteer now'}
+              </p>
               <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-5 px-5 sm:mx-0 sm:px-0 pb-2">
                 {activeVolunteering.slice(0, 6).map(v => (
                   <Link key={v.id} href={`/experience/${v.id}`}

@@ -108,13 +108,13 @@ export default function OnboardingPage() {
               ← Back
             </button>
           )}
-          <span className="hidden sm:inline-block text-sm font-semibold tracking-tight text-[#1A2E1C]">Wander Onboarding</span>
+          <span className="inline-block md:hidden text-sm font-semibold tracking-tight text-[#1A2E1C]">Wander Onboarding</span>
           {destination && (
             <span className="rounded-full bg-[#0B6E2A]/10 px-2.5 py-1 text-[10px] font-bold text-[#0B6E2A] uppercase tracking-wider">{destination}</span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <div className="text-xs font-medium text-[#1A2E1C]/65">Step {step + 1} of {totalSteps}</div>
+          <div className="md:hidden text-xs font-medium text-[#1A2E1C]/65">Step {step + 1} of {totalSteps}</div>
         </div>
       </div>
 
@@ -122,81 +122,81 @@ export default function OnboardingPage() {
         <div className="h-full bg-[#0B6E2A] transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }} />
       </div>
 
-      <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 py-6 sm:px-6 md:py-10 flex flex-col justify-center min-h-[500px]">
+      <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 py-6 sm:px-6 md:py-10 flex min-h-[500px]">
         {/* Subtle background gradients compatible with cozy vibe */}
         <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(11,110,42,0.06)_0%,rgba(229,233,223,0)_70%)]" />
         <div className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(245,166,35,0.08)_0%,rgba(229,233,223,0)_72%)]" />
 
-        <div className="relative mx-auto flex w-full max-w-lg flex-col items-center">
-          <div className="mb-6 w-full text-center px-2">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0B6E2A] mb-2">{currentMeta.group}</p>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A2E1C] leading-tight">{currentMeta.title}</h2>
-            <p className="mt-2 text-sm sm:text-base leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
-          </div>
+        <div className="mx-auto w-full max-w-5xl grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)] gap-8 md:gap-6 relative">
 
-          <section className="w-full flex-1 md:bg-white/30 md:border md:border-white/50 md:backdrop-blur-xl md:shadow-sm md:rounded-[32px] md:p-6 mb-4">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 1.05, y: -10 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="w-full"
-              >
-                {step === 0 && <SwipeCard {...questions.swipes[0]} onChoice={(s) => handleChoice(s === 'left' ? 0 : 1)} />}
-                {step === 1 && <SwipeCard {...questions.swipes[1]} onChoice={(s) => handleChoice(s === 'left' ? 2 : 3)} />}
-                {step === 2 && <SwipeCard {...questions.swipes[2]} onChoice={(s) => handleChoice(s === 'left' ? 4 : 5)} />}
-                {step === 3 && <SwipeCard {...questions.swipes[3]} onChoice={(s) => handleChoice(s === 'left' ? 6 : 7)} />}
-                {step === 4 && <SwipeCard {...questions.swipes[4]} onChoice={(s) => handleChoice(s === 'left' ? 8 : 9)} />}
-                {step === 5 && <SwipeCard {...questions.swipes[5]} onChoice={(s) => handleChoice(s === 'left' ? 10 : 11)} />}
+          {/* Desktop Left Sidebar */}
+          <aside className="hidden md:block w-[300px] shrink-0 rounded-[28px] border border-white/60 bg-white/55 p-6 shadow-sm backdrop-blur-xl">
+            <h2 className="text-2xl font-bold tracking-tight text-[#1A2E1C]">{currentMeta.title}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
 
-                {step === 6 && <AudioReactor {...questions.audios[0]} onChoice={(v) => handleChoice(12 + v)} />}
-                {step === 7 && <AudioReactor {...questions.audios[1]} onChoice={(v) => handleChoice(15 + v)} />}
-                {step === 8 && <AudioReactor {...questions.audios[2]} onChoice={(v) => handleChoice(18 + v)} />}
+            <div className="mt-5 rounded-2xl border border-[#D6DCCD]/70 bg-[#E5E9DF]/70 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#1A2E1C]/45">Detail</p>
+              <p className="mt-1 text-sm text-[#1A2E1C]/70">{currentMeta.hint}</p>
+            </div>
 
-                {step === 9 && <ScrollCard {...questions.scrollCards[0]} onChoice={(v) => handleChoice(18 + v)} />}
-                {step === 10 && <ScrollCard {...questions.scrollCards[1]} onChoice={(v) => handleChoice(18 + v)} />}
-                {step === 11 && <ScrollCard {...questions.scrollCards[2]} onChoice={(v) => handleChoice(18 + v)} />}
+            <div className="mt-5 flex items-center justify-between rounded-2xl border border-[#D6DCCD]/70 bg-white/70 px-4 py-3">
+              <span className="text-xs font-medium text-[#1A2E1C]/55">Signals captured</span>
+              <span className="text-xl font-bold tracking-tighter text-[#0B6E2A]">{obs.length}</span>
+            </div>
 
-                {step === 12 && <EmojiScenario scenario={questions.emojis[0].scenario} options={questions.emojis[0].options} onChoice={(v) => handleChoice(21 + v % 3)} />}
-                {step === 13 && <EmojiScenario scenario={questions.emojis[1].scenario} options={questions.emojis[1].options} onChoice={(v) => handleChoice(21 + v % 3)} />}
+            <div className="mt-5 flex flex-wrap gap-2">
+              {STAGE_META.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-2.5 w-2.5 rounded-full ${idx < step ? 'bg-[#0B6E2A]' : idx === step ? 'bg-[#F5A623]' : 'bg-[#D6DCCD]'}`}
+                />
+              ))}
+            </div>
+          </aside>
 
-                {step === 14 && <BudgetSlider question={questions.budget} onChoice={(v) => handleChoice(21 + v)} />}
+          <div className="relative flex w-full flex-col items-center justify-center">
+            <div className="md:hidden mb-6 w-full text-center px-2">
+              <p className="md:hidden text-[10px] font-bold uppercase tracking-[0.14em] text-[#0B6E2A] mb-2">{currentMeta.group}</p>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A2E1C] leading-tight">{currentMeta.title}</h2>
+              <p className="mt-2 text-sm sm:text-base leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
+            </div>
 
-                {step === 15 && (
-                  <div className="w-full max-w-sm mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-5 sm:p-6 flex flex-col items-center">
-                    <div className="text-[#0B6E2A] text-[10px] font-bold tracking-widest uppercase mb-3">Volunteer Intent</div>
-                    <h2 className="font-sans font-bold text-center leading-tight text-[22px] sm:text-[24px] text-[#1A2E1C] mb-2">Would you like to volunteer?</h2>
-                    <p className="font-sans text-xs sm:text-sm text-[#1A2E1C]/70 mb-6 text-center">If yes, we will surface active volunteering events with dates and sign-up links at the top of your results.</p>
-                    <label
-                      className={`w-full flex items-center gap-4 border rounded-[20px] p-4 cursor-pointer transition-all mb-6 ${volunteerChecked ? 'border-[#0B6E2A] bg-white ring-1 ring-[#0B6E2A]/30 shadow-sm' : 'border-[#D6DCCD]/60 bg-white/40 hover:border-[#0B6E2A]/50 hover:bg-white/60'}`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={volunteerChecked}
-                        onChange={e => setVolunteerChecked(e.target.checked)}
-                        className="h-5 w-5 rounded accent-[#0B6E2A] cursor-pointer"
-                      />
-                      <div>
-                        <div className="font-semibold text-sm sm:text-base text-[#1A2E1C]">Yes, show me volunteering opportunities</div>
-                        <div className="text-[11px] sm:text-xs text-[#1A2E1C]/50 mt-0.5">Active events with available spots will be highlighted</div>
-                      </div>
-                    </label>
-                    <button
-                      onClick={handleFinishOnboarding}
-                      className="bg-[#0B6E2A] text-white font-semibold tracking-wide rounded-full px-6 py-3.5 hover:bg-[#095A22] active:scale-[0.98] transition-transform w-full shadow-md"
-                    >
-                      Complete Onboarding
-                    </button>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </section>
+            <section className="w-full md:flex-1 md:bg-white/30 md:border md:border-white/50 md:backdrop-blur-xl md:shadow-sm md:rounded-[32px] md:p-6 mb-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 1.05, y: -10 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="w-full"
+                >
+                  {step === 0 && <SwipeCard {...questions.swipes[0]} onChoice={(s) => handleChoice(s === 'left' ? 0 : 1)} />}
+                  {step === 1 && <SwipeCard {...questions.swipes[1]} onChoice={(s) => handleChoice(s === 'left' ? 2 : 3)} />}
+                  {step === 2 && <SwipeCard {...questions.swipes[2]} onChoice={(s) => handleChoice(s === 'left' ? 4 : 5)} />}
+                  {step === 3 && <SwipeCard {...questions.swipes[3]} onChoice={(s) => handleChoice(s === 'left' ? 6 : 7)} />}
+                  {step === 4 && <SwipeCard {...questions.swipes[4]} onChoice={(s) => handleChoice(s === 'left' ? 8 : 9)} />}
+                  {step === 5 && <SwipeCard {...questions.swipes[5]} onChoice={(s) => handleChoice(s === 'left' ? 10 : 11)} />}
 
-          <div className="w-full rounded-2xl bg-white/40 p-3 sm:p-4 text-center mt-auto border border-white/50">
-            <span className="text-xs sm:text-sm font-medium text-[#1A2E1C]/65">💡 Hint: {currentMeta.hint}</span>
+                  {step === 6 && <AudioReactor {...questions.audios[0]} onChoice={(v) => handleChoice(12 + v)} />}
+                  {step === 7 && <AudioReactor {...questions.audios[1]} onChoice={(v) => handleChoice(15 + v)} />}
+                  {step === 8 && <AudioReactor {...questions.audios[2]} onChoice={(v) => handleChoice(18 + v)} />}
+
+                  {step === 9 && <ScrollCard {...questions.scrollCards[0]} onChoice={(v) => handleChoice(18 + v)} />}
+                  {step === 10 && <ScrollCard {...questions.scrollCards[1]} onChoice={(v) => handleChoice(18 + v)} />}
+                  {step === 11 && <ScrollCard {...questions.scrollCards[2]} onChoice={(v) => handleChoice(18 + v)} />}
+
+                  {step === 12 && <EmojiScenario scenario={questions.emojis[0].scenario} options={questions.emojis[0].options} onChoice={(v) => handleChoice(21 + v % 3)} />}
+                  {step === 13 && <EmojiScenario scenario={questions.emojis[1].scenario} options={questions.emojis[1].options} onChoice={(v) => handleChoice(21 + v % 3)} />}
+
+                  {step === 14 && <BudgetSlider question={questions.budget} onChoice={(v) => handleChoice(21 + v)} />}
+                </motion.div>
+              </AnimatePresence>
+            </section>
+
+            <div className="md:hidden w-full rounded-2xl bg-white/40 p-3 sm:p-4 text-center mt-4 border border-white/50 mb-2">
+              <span className="text-xs sm:text-sm font-medium text-[#1A2E1C]/65">💡 Hint: {currentMeta.hint}</span>
+            </div>
           </div>
         </div>
       </div>

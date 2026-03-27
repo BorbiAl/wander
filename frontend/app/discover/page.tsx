@@ -164,55 +164,55 @@ export default function DiscoverPage() {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20"
+      className="min-h-screen bg-[#E5E9DF] text-[#1A2E1C] font-sans selection:bg-[#0B6E2A]/20 pt-[60px] md:pt-[72px]"
     >
-      <div className="mx-auto w-full max-w-6xl px-3 py-4 sm:px-5 sm:py-6 lg:px-8 pb-28 md:pb-16">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
-          <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 transition-all hover:bg-white/80">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 md:py-8 lg:px-8 pb-28 md:pb-16">
+        <div className="flex flex-col xl:grid xl:grid-cols-12 gap-5 sm:gap-6">
+          <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 transition-all hover:bg-white/80">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.12em] font-bold text-[#1A2E1C]/50">Discover</p>
-                <h1 className="font-bold tracking-tighter text-2xl sm:text-4xl md:text-5xl text-[#1A2E1C] leading-[1.1] mt-1">Start with the globe</h1>
-                <p className="text-[#1A2E1C]/60 text-sm md:text-base mt-3 max-w-[46ch] font-medium leading-relaxed">
+                <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-1">Discover</p>
+                <h1 className="font-bold tracking-tighter text-3xl sm:text-4xl md:text-5xl text-[#1A2E1C] leading-[1.1]">Start with the globe</h1>
+                <p className="text-[#1A2E1C]/65 text-[14px] sm:text-[15px] mt-2 max-w-[46ch] font-medium leading-relaxed">
                   Pick a village first. The trip list updates instantly to match that place.
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto">
+              <div className="flex flex-row gap-2 sm:gap-3 w-full md:w-auto mt-2 md:mt-0">
                 <button
                   onClick={handleSurprisePick}
-                  className="w-full sm:w-auto bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-2.5 hover:bg-[#095A22] transition-all shadow-md hover:scale-105 active:scale-95 shadow-[#0B6E2A]/20"
+                  className="flex-1 md:flex-none justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"
                 >
                   Surprise me
                 </button>
                 <button
                   onClick={() => setSelectedVillageId(null)}
-                  className="w-full sm:w-auto bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-2.5 hover:bg-white transition-all shadow-sm active:scale-95"
+                  className="flex-1 md:flex-none justify-center bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-white transition-all shadow-sm active:scale-95"
                 >
                   Clear focus
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
-                <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Villages</p>
-                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{villages.length}</p>
+            <div className="grid grid-cols-4 gap-2 sm:gap-3">
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[16px] sm:rounded-[20px] p-3 sm:p-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+                <p className="text-[#1A2E1C]/50 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mb-0.5">Villages</p>
+                <p className="font-bold tracking-tighter text-xl sm:text-3xl text-[#1A2E1C]">{villages.length}</p>
               </div>
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
-                <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Matches</p>
-                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{filteredMatches.length}</p>
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[16px] sm:rounded-[20px] p-3 sm:p-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+                <p className="text-[#1A2E1C]/50 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mb-0.5">Matches</p>
+                <p className="font-bold tracking-tighter text-xl sm:text-3xl text-[#1A2E1C]">{filteredMatches.length}</p>
               </div>
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
-                <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Avg CWS</p>
-                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{avgCws}</p>
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[16px] sm:rounded-[20px] p-3 sm:p-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+                <p className="text-[#1A2E1C]/50 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mb-0.5">Avg CWS</p>
+                <p className="font-bold tracking-tighter text-xl sm:text-3xl text-[#1A2E1C]">{avgCws}</p>
               </div>
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[20px] px-4 py-3 sm:px-5 sm:py-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
-                <p className="text-[#1A2E1C]/50 text-[10px] font-bold uppercase tracking-widest mb-1">Focus</p>
-                <p className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C]">{selectedVillage ? '1' : '0'}</p>
+              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[16px] sm:rounded-[20px] p-3 sm:p-4 flex flex-col items-center justify-center transition-transform hover:scale-[1.02]">
+                <p className="text-[#1A2E1C]/50 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mb-0.5">Focus</p>
+                <p className="font-bold tracking-tighter text-xl sm:text-3xl text-[#1A2E1C]">{selectedVillage ? '1' : '0'}</p>
               </div>
             </div>
 
-            <div className="w-full h-[300px] sm:h-[380px] md:h-[420px] rounded-[24px] overflow-hidden border border-[#D6DCCD]/60 shadow-inner">
+            <div className="w-full h-[320px] sm:h-[400px] md:h-[480px] rounded-[20px] sm:rounded-[24px] overflow-hidden border border-[#D6DCCD]/60 shadow-inner relative">
               <VillageMap
                 onSelectVillage={v => setSelectedVillageId(v.id)}
                 seedStatus={seedStatus}
@@ -220,40 +220,44 @@ export default function DiscoverPage() {
             </div>
           </section>
 
-          <section className="xl:col-span-5 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-8 flex flex-col gap-5 transition-all hover:bg-white/80">
-            <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[24px] p-5 sm:p-6">
+          <section className="xl:col-span-5 flex flex-col gap-5 sm:gap-6 lg:mt-0">
+            <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 transition-all hover:bg-white/80 h-full flex flex-col justify-between">
               {selectedVillage ? (
                 <>
-                  <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#1A2E1C]/50 mb-3">Selected node</p>
-                  <h2 className="font-bold tracking-tighter text-2xl sm:text-3xl text-[#1A2E1C] leading-[1.1]">{selectedVillage.name}</h2>
-                  <p className="text-[#1A2E1C]/60 text-sm mt-1.5 font-medium tracking-tight">
-                    {selectedVillage.region}
-                  </p>
-                  <p className="text-[#1A2E1C]/70 text-[15px] mt-4 line-clamp-3 leading-relaxed">{selectedVillage.description}</p>
-                  <div className="mt-6 flex items-center justify-between pt-4 border-t border-[rgba(0,0,0,0.05)]">
-                    <span className="text-[10px] text-[#1A2E1C]/50 font-bold tracking-widest uppercase">Community signal</span>
-                    <span className="font-bold tracking-tighter text-lg" style={{ color: cwsColor(selectedVillage.cws) }}>
-                      {selectedVillage.cws} · {cwsLabel(selectedVillage.cws)}
+                  <div className="mb-6">
+                    <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-2 sm:mb-3">Selected node</p>
+                    <h2 className="font-bold tracking-tighter text-3xl sm:text-4xl text-[#1A2E1C] leading-[1.1]">{selectedVillage.name}</h2>
+                    <p className="text-[#1A2E1C]/60 text-sm sm:text-[15px] mt-2 font-medium tracking-tight">
+                      {selectedVillage.region}
+                    </p>
+                    <p className="text-[#1A2E1C]/70 text-[14px] sm:text-[15px] mt-4 line-clamp-4 leading-relaxed">{selectedVillage.description}</p>
+                  </div>
+                  <div className="mt-auto flex items-center justify-between pt-5 border-t border-[rgba(0,0,0,0.05)]">
+                    <span className="text-[10px] sm:text-[11px] text-[#1A2E1C]/50 font-bold tracking-widest uppercase">Community signal</span>
+                    <span className="font-bold tracking-tighter text-xl sm:text-2xl" style={{ color: cwsColor(selectedVillage.cws) }}>
+                      {selectedVillage.cws} · <span className="text-sm tracking-tight">{cwsLabel(selectedVillage.cws)}</span>
                     </span>
                   </div>
                 </>
               ) : (
-                <p className="text-[#1A2E1C]/60 text-[15px] font-medium leading-relaxed">Click a village on the map to lock recommendations to one place.</p>
+                <div className="flex flex-col items-center justify-center text-center h-full min-h-[200px] text-[#1A2E1C]/60">
+                   <p className="text-[15px] sm:text-base font-medium leading-relaxed max-w-[28ch]">Click a village on the map to lock recommendations to one place.</p>
+                </div>
               )}
             </div>
 
             {suggestedRoutes.length > 0 && (
-              <div className="bg-[#E5E9DF]/70 border border-[#D6DCCD]/40 rounded-[24px] p-5 sm:p-6 flex flex-col gap-4">
-                <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-[#1A2E1C]/50 mb-1">Suggested routes</p>
+              <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 flex flex-col gap-4 transition-all hover:bg-white/80">
+                <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-1">Suggested routes</p>
                 {suggestedRoutes.map((route, i) => (
-                  <div key={route.id} className={`flex flex-wrap items-center justify-between gap-4 ${i > 0 ? 'border-t border-[#D6DCCD]/40 pt-4' : ''}`}>
-                    <div>
-                      <h3 className="font-bold tracking-tighter text-xl sm:text-[22px] text-[#1A2E1C] leading-[1.1]">{route.name}</h3>
-                      <p className="text-[#1A2E1C]/60 text-[13px] font-medium tracking-tight mt-1">{villageById.get(route.villageId)?.name || 'Unknown village'}</p>
+                  <div key={route.id} className={`flex flex-row items-center justify-between gap-4 ${i > 0 ? 'border-t border-[#D6DCCD]/40 pt-4' : ''}`}>
+                    <div className="flex-1 min-w-0 pr-2">
+                      <h3 className="font-bold tracking-tight text-lg sm:text-xl text-[#1A2E1C] leading-[1.1] truncate">{route.name}</h3>
+                      <p className="text-[#1A2E1C]/60 text-[12px] sm:text-[13px] font-medium tracking-tight mt-1 truncate">{villageById.get(route.villageId)?.name || 'Unknown village'}</p>
                     </div>
                     <Link
                       href={`/experience/${route.id}`}
-                      className="bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide px-5 py-2.5 rounded-full hover:bg-[#095A22] transition-all shadow-md hover:scale-105 active:scale-95 shadow-[#0B6E2A]/20"
+                      className="bg-[#0B6E2A] text-white text-[12px] sm:text-[13px] font-semibold tracking-wide px-4 py-2 sm:px-5 sm:py-2.5 rounded-full hover:bg-[#095A22] transition-all shadow-md active:scale-95 shrink-0"
                     >
                       Open
                     </Link>
@@ -285,20 +289,20 @@ export default function DiscoverPage() {
           </div>
         )}
 
-        <section id="discover-feed" className="mt-8 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[28px] p-4 sm:p-6 md:p-10 mb-16 sm:mb-20 transition-all hover:bg-white/80">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8">
+        <section id="discover-feed" className="mt-6 sm:mt-8 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 mb-4 sm:mb-20 transition-all hover:bg-white/80">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-5 mb-6 md:mb-8">
             <div>
               <h3 className="font-bold tracking-tighter text-2xl sm:text-3xl md:text-4xl text-[#1A2E1C] leading-[1.1]">Trips you can actually book</h3>
-              <p className="text-[#1A2E1C]/60 text-[15px] font-medium tracking-tight mt-2">
+              <p className="text-[#1A2E1C]/65 text-[14px] sm:text-[15px] font-medium tracking-tight mt-1.5 sm:mt-2">
                 {activeGroup ? `Scored for ${activeGroup.name} · Sorted by group fit` : 'Sorted by fit, cost, or community impact.'}
               </p>
             </div>
-            <div className="flex w-full md:w-auto overflow-x-auto gap-2 bg-[#E5E9DF]/70 p-1.5 rounded-full border border-white/50 shadow-sm">
+            <div className="flex w-full md:w-auto overflow-x-auto gap-2 bg-[#E5E9DF]/70 p-1.5 sm:p-2 rounded-full border border-white/50 shadow-sm scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
               {(['match', 'price', 'cws'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSortBy(s)}
-                  className={`shrink-0 text-[12px] sm:text-[13px] font-bold uppercase tracking-widest px-3 sm:px-4 py-2.5 rounded-full transition-all ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
+                  className={`shrink-0 text-[11px] sm:text-[12px] md:text-[13px] font-bold uppercase tracking-widest px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
                 >
                   {s === 'match' ? 'Best match' : s === 'price' ? 'Lowest price' : 'Impact first'}
                 </button>
@@ -307,24 +311,24 @@ export default function DiscoverPage() {
           </div>
 
           {destination && seedStatus !== 'done' && experiences.length === 0 && (
-            <div className="mb-6 rounded-[24px] border border-[#F5A623]/30 bg-[#F5A623]/10 p-5 text-[15px] font-medium text-[#7A3E00]">
+            <div className="mb-6 rounded-[20px] border border-[#F5A623]/30 bg-[#F5A623]/10 p-4 sm:p-5 text-[14px] sm:text-[15px] font-medium text-[#7A3E00]">
               No local dataset found for {destination}. Add villages/experiences for this country or choose a location covered by the current JSON files.
             </div>
           )}
 
-          <div className="flex overflow-x-auto gap-2.5 pb-4 mb-6 scrollbar-hide">
+          <div className="flex overflow-x-auto gap-2 sm:gap-2.5 pb-4 mb-4 sm:mb-6 scrollbar-hide -mx-5 px-5 sm:mx-0 sm:px-0">
             {FILTERS.map(t => (
               <button
                 key={t}
                 onClick={() => setFilterType(t)}
-                className={`shrink-0 px-5 py-2.5 rounded-full text-[13px] font-bold uppercase tracking-widest transition-all shadow-sm ${filterType === t ? 'bg-[#0B6E2A] text-white shadow-[#0B6E2A]/20 scale-[1.02]' : 'bg-white/60 border border-white/50 text-[#1A2E1C]/60 hover:bg-white active:scale-95'}`}
+                className={`shrink-0 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold uppercase tracking-widest transition-all shadow-sm ${filterType === t ? 'bg-[#0B6E2A] text-white shadow-[#0B6E2A]/20 scale-[1.02]' : 'bg-white/60 border border-white/50 text-[#1A2E1C]/60 hover:bg-white active:scale-95'}`}
               >
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
             {filteredMatches.slice(0, 10).map(exp => {
               const village = villageById.get(exp.villageId);
               if (!village) return null;
@@ -334,27 +338,27 @@ export default function DiscoverPage() {
                 : null;
 
               return (
-                <article key={exp.id} className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-5 sm:p-6 flex flex-col gap-5 transition-transform hover:scale-[1.02] hover:bg-white/80">
-                  <div className="flex items-start justify-between gap-4 sm:gap-5">
-                    <div>
-                      <p className="text-[10px] uppercase font-bold tracking-[0.14em] text-[#1A2E1C]/50 mb-1.5">{village.region}</p>
+                <article key={exp.id} className="bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-5 sm:p-6 flex flex-col gap-4 sm:gap-5 transition-transform md:hover:scale-[1.02] hover:bg-white/80">
+                  <div className="flex items-start justify-between gap-3 sm:gap-5">
+                    <div className="flex-1 pr-2">
+                      <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-[0.14em] text-[#0B6E2A] mb-1 sm:mb-1.5">{village.region}</p>
                       <h4 className="font-bold tracking-tighter text-xl sm:text-2xl text-[#1A2E1C] leading-tight">{exp.name}</h4>
-                      <p className="text-[#1A2E1C]/60 text-[14px] font-medium tracking-tight mt-1">{village.name}</p>
+                      <p className="text-[#1A2E1C]/60 text-[13px] sm:text-[14px] font-medium tracking-tight mt-1">{village.name}</p>
                     </div>
                     <div className="flex flex-col gap-2 items-end shrink-0">
                       {pct > 0 && (
-                        <span className="bg-white border border-[#D6DCCD]/40 shadow-sm text-[#0B6E2A] px-3 py-1.5 rounded-full text-[12px] font-bold tracking-widest">{pct}% fit</span>
+                        <span className="bg-white border border-[#D6DCCD]/40 shadow-sm text-[#0B6E2A] px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold tracking-widest">{pct}% fit</span>
                       )}
                       {groupPct !== null && (
-                        <span className="bg-[#F5A623]/10 border border-[#F5A623]/30 text-[#F5A623] px-3 py-1.5 rounded-full text-[12px] font-bold tracking-widest">👥 {groupPct}%</span>
+                        <span className="bg-[#F5A623]/10 border border-[#F5A623]/30 text-[#F5A623] px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold tracking-widest">👥 {groupPct}%</span>
                       )}
                     </div>
                   </div>
 
-                  <p className="text-[#1A2E1C]/60 text-[15px] font-medium leading-relaxed line-clamp-3">{exp.description}</p>
+                  <p className="text-[#1A2E1C]/65 text-[14px] sm:text-[15px] font-medium leading-relaxed line-clamp-3">{exp.description}</p>
 
-                  <div className="flex flex-wrap items-center gap-2 justify-between text-[13px] font-semibold tracking-wide text-[#1A2E1C]/60 pt-4 border-t border-[rgba(0,0,0,0.05)]">
-                    <span className="capitalize px-3 py-1 bg-[#E5E9DF]/70 rounded-md">{exp.type}</span>
+                  <div className="flex flex-wrap items-center gap-2 justify-between text-[12px] sm:text-[13px] font-semibold tracking-wide text-[#1A2E1C]/60 pt-4 border-t border-[rgba(0,0,0,0.05)]">
+                    <span className="capitalize px-2.5 py-1 sm:px-3 bg-[#E5E9DF]/70 rounded-md">{exp.type}</span>
                     <span>EUR {exp.price} · {exp.duration}</span>
                     <span style={{ color: cwsColor(village.cws) }}>CWS {village.cws}</span>
                   </div>
@@ -362,7 +366,7 @@ export default function DiscoverPage() {
                   <div className="flex justify-end pt-2">
                     <Link
                       href={`/experience/${exp.id}`}
-                      className="bg-[#1A2E1C] text-white text-[13px] font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-[#2A412D] transition-all shadow-md active:scale-95"
+                      className="bg-[#1A2E1C] text-white text-[12px] sm:text-[13px] font-bold tracking-widest uppercase px-5 py-2.5 sm:px-6 sm:py-3 rounded-full hover:bg-[#2A412D] transition-all shadow-md active:scale-95 w-full sm:w-auto text-center"
                     >
                       View route
                     </Link>

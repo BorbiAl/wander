@@ -41,32 +41,6 @@ export function ScrollCard({
 
       <div className="w-full h-px bg-[#D6DCCD]/60" />
 
-      {/* Reading depth tracker */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between text-xs text-[#1A2E1C]/50 font-medium">
-          <span>Reading depth</span>
-          <span className="font-semibold text-[#0B6E2A]">{readingLabels[readingState]}</span>
-        </div>
-        <div className="w-full h-2 bg-[#D6DCCD]/50 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-[#0B6E2A] rounded-full transition-all duration-1000 ease-linear"
-            style={{ width: `${progressPct}%` }}
-          />
-        </div>
-        <div className="flex justify-between">
-          {readingLabels.map((label, i) => (
-            <span
-              key={label}
-              className={`text-[10px] font-semibold transition-colors ${
-                readingState === i ? 'text-[#0B6E2A]' : 'text-[#1A2E1C]/35'
-              }`}
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-      </div>
-
       <button
         type="button"
         onClick={handleNext}

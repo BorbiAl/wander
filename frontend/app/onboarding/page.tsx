@@ -86,7 +86,7 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#E5E9DF]">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#e5e9df]">
         <div className="mb-6 h-16 w-16 rounded-full border-4 border-[#D6DCCD] border-t-[#0B6E2A] animate-spin" />
         <p className="text-xl font-bold leading-tight tracking-tighter text-[#1A2E1C]">
           {seedStatus === 'loading' ? `Discovering villages in ${destination}…` : 'Analyzing your personality...'}
@@ -97,67 +97,51 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-[#E5E9DF] font-sans text-[#1A2E1C] selection:bg-[#0B6E2A]/20">
-      <div className="flex items-center justify-between border-b border-[#D6DCCD]/70 bg-white/35 px-4 py-4 backdrop-blur-sm sm:px-6">
+    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-[#e5e9df] font-sans text-[#1A2E1C] selection:bg-[#0B6E2A]/20">
+      <div className="sticky top-0 z-20 flex items-center justify-between border-b border-[#0B6E2A]/10 bg-[#e5e9df]/90 px-4 py-3 backdrop-blur-md sm:px-6">
         <div className="flex items-center gap-3">
           {step > 0 && (
             <button
               onClick={() => setStep((s) => s - 1)}
-              className="rounded-full border border-[#D6DCCD] bg-white/70 px-3 py-1 text-sm text-[#1A2E1C]/70 transition-colors hover:text-[#1A2E1C]"
+              className="flex h-8 items-center justify-center rounded-full bg-white/50 px-3 text-sm font-medium text-[#1A2E1C] shadow-sm backdrop-blur-md transition-colors hover:bg-white"
             >
               ← Back
             </button>
           )}
-          <span className="text-sm font-semibold tracking-tight text-[#1A2E1C]">Wander Onboarding</span>
+          <span className="hidden sm:inline-block text-sm font-semibold tracking-tight text-[#1A2E1C]">Wander Onboarding</span>
           {destination && (
-            <span className="rounded-full bg-[#0B6E2A]/10 px-2.5 py-1 text-xs font-medium text-[#0B6E2A]">{destination}</span>
+            <span className="rounded-full bg-[#0B6E2A]/10 px-2.5 py-1 text-[10px] font-bold text-[#0B6E2A] uppercase tracking-wider">{destination}</span>
           )}
         </div>
-        <div className="text-xs font-medium text-[#1A2E1C]/65">Step {step + 1} of {totalSteps}</div>
+        <div className="flex items-center gap-2">
+          <div className="text-xs font-medium text-[#1A2E1C]/65">Step {step + 1} of {totalSteps}</div>
+        </div>
       </div>
 
-      <div className="h-[4px] w-full bg-[#D6DCCD]/80">
-        <div className="h-full bg-[#0B6E2A] transition-all duration-300" style={{ width: `${progressPct}%` }} />
+      <div className="h-[3px] w-full bg-[#D6DCCD]/40">
+        <div className="h-full bg-[#0B6E2A] transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }} />
       </div>
 
-      <div className="relative flex-1 overflow-hidden px-4 py-6 sm:px-6 lg:py-8">
-        <div className="pointer-events-none absolute -left-24 top-8 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(11,110,42,0.18)_0%,rgba(229,233,223,0)_70%)]" />
-        <div className="pointer-events-none absolute -right-20 bottom-6 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(245,166,35,0.16)_0%,rgba(229,233,223,0)_72%)]" />
+      <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 py-6 sm:px-6 md:py-10 flex flex-col justify-center min-h-[500px]">
+        {/* Subtle background gradients compatible with cozy vibe */}
+        <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(11,110,42,0.06)_0%,rgba(229,233,223,0)_70%)]" />
+        <div className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(245,166,35,0.08)_0%,rgba(229,233,223,0)_72%)]" />
 
-        <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
-          <aside className="rounded-[28px] border border-white/60 bg-white/55 p-6 shadow-sm backdrop-blur-xl">
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#0B6E2A]">{currentMeta.group}</p>
-            <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#1A2E1C]">{currentMeta.title}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
+        <div className="relative mx-auto flex w-full max-w-lg flex-col items-center">
+          <div className="mb-6 w-full text-center px-2">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0B6E2A] mb-2">{currentMeta.group}</p>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A2E1C] leading-tight">{currentMeta.title}</h2>
+            <p className="mt-2 text-sm sm:text-base leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
+          </div>
 
-            <div className="mt-5 rounded-2xl border border-[#D6DCCD]/70 bg-[#E5E9DF]/70 p-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#1A2E1C]/45">Detail</p>
-              <p className="mt-1 text-sm text-[#1A2E1C]/70">{currentMeta.hint}</p>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between rounded-2xl border border-[#D6DCCD]/70 bg-white/70 px-4 py-3">
-              <span className="text-xs font-medium text-[#1A2E1C]/55">Signals captured</span>
-              <span className="text-xl font-bold tracking-tighter text-[#0B6E2A]">{obs.length}</span>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {STAGE_META.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`h-2.5 w-2.5 rounded-full ${idx < step ? 'bg-[#0B6E2A]' : idx === step ? 'bg-[#F5A623]' : 'bg-[#D6DCCD]'}`}
-                />
-              ))}
-            </div>
-          </aside>
-
-          <section className="rounded-[32px] border border-white/60 bg-white/35 p-4 shadow-sm backdrop-blur-xl sm:p-6">
+          <section className="w-full flex-1 md:bg-white/30 md:border md:border-white/50 md:backdrop-blur-xl md:shadow-sm md:rounded-[32px] md:p-6 mb-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={step}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.28 }}
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 1.05, y: -10 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
                 className="w-full"
               >
                 {step === 0 && <SwipeCard {...questions.swipes[0]} onChoice={(s) => handleChoice(s === 'left' ? 0 : 1)} />}
@@ -182,6 +166,10 @@ export default function OnboardingPage() {
               </motion.div>
             </AnimatePresence>
           </section>
+
+          <div className="w-full rounded-2xl bg-white/40 p-3 sm:p-4 text-center mt-auto border border-white/50">
+            <span className="text-xs sm:text-sm font-medium text-[#1A2E1C]/65">💡 Hint: {currentMeta.hint}</span>
+          </div>
         </div>
       </div>
     </div>

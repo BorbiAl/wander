@@ -199,48 +199,68 @@ export function AudioReactor({
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-card p-6 flex flex-col items-center text-center">
-      <div className="text-5xl mb-4">🎵</div>
-      <h3 className="font-display text-xl text-[#1A2E1C] mb-2">{clipTitle}</h3>
-      <p className="font-sans text-sm text-[#1A2E1C]/70 italic mb-6">{clipDescription}</p>
-      
-      <div className="w-full h-[1px] bg-[#D6DCCD] mb-6" />
-      
-      <p className="text-[#1A2E1C]/70 text-[13px] mb-4">How does this make you feel?</p>
-      
-      <div className="w-full mb-8 relative">
-        <label htmlFor="audio-feeling-slider" className="sr-only">
-          Feeling intensity from uneasy to at peace
-        </label>
-        <input 
+    <div className="w-full max-w-sm mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-6 sm:p-8 flex flex-col items-center text-center gap-5">
+
+      {/* Header */}
+      <div className="flex flex-col items-center gap-2">
+        <div className="text-4xl sm:text-5xl">🎵</div>
+        <h3 className="font-sans font-bold text-lg sm:text-xl text-[#1A2E1C] leading-snug">{clipTitle}</h3>
+        <p className="font-sans text-xs sm:text-sm text-[#1A2E1C]/60 italic leading-relaxed">{clipDescription}</p>
+      </div>
+
+      <div className="w-full h-px bg-[#D6DCCD]/60" />
+
+      {/* Play button */}
+      <button
+        onClick={togglePlayback}
+        className="flex items-center justify-center gap-2.5 border border-[#D6DCCD] bg-white/70 text-[#1A2E1C]/80 rounded-full px-6 py-3 hover:bg-white hover:border-[#0B6E2A]/40 hover:text-[#1A2E1C] transition-all w-full text-sm font-medium shadow-sm"
+      >
+        {isPlaying ? (
+          <>
+            <div className="w-2.5 h-2.5 rounded-sm bg-[#1A2E1C]/80 shrink-0" />
+            Stop audio
+          </>
+        ) : (
+          <>
+            <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+            Play audio
+          </>
+        )}
+      </button>
+
+      {/* Slider section */}
+      <div className="w-full flex flex-col gap-3">
+        <p className="text-[#1A2E1C]/80 font-medium text-sm">How does this make you feel?</p>
+
+        {/* Active value pill */}
+        <div className="flex items-center justify-center">
+          <span className="inline-flex items-center gap-1.5 bg-[#0B6E2A]/10 text-[#0B6E2A] text-sm font-semibold px-4 py-1.5 rounded-full">
+            <span className="text-base font-bold">{val}</span>
+            <span className="font-medium">— {activeLabel}</span>
+          </span>
+        </div>
+
+        <label htmlFor="audio-feeling-slider" className="sr-only">Feeling intensity</label>
+        <input
           id="audio-feeling-slider"
-          type="range" min="1" max="5" step="1" 
+          type="range" min="1" max="5" step="1"
           value={val} onChange={(e) => setVal(parseInt(e.target.value))}
           title="Feeling intensity"
           className="w-full accent-[#0B6E2A] h-2 bg-[#D6DCCD] rounded-lg appearance-none cursor-pointer"
         />
-        <div className="flex justify-between text-xs text-[#1A2E1C]/65 mt-2">
+        <div className="flex justify-between text-[10px] font-semibold uppercase tracking-wider text-[#1A2E1C]/45">
           <span>{sliderLabels[0]}</span>
           <span>{sliderLabels[2]}</span>
         </div>
-        <div className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <span className="text-3xl font-bold text-[#0B6E2A] leading-none">{val}</span>
-          <span className="text-[11px] text-[#1A2E1C]/70 mt-1">{activeLabel}</span>
-        </div>
       </div>
 
+      {/* Next */}
       <button
-        onClick={togglePlayback}
-        className="border border-[#D6DCCD] text-[#1A2E1C]/70 rounded-pill px-6 py-3 hover:border-[#A8B09F] hover:text-[#1A2E1C] transition-colors mb-4 w-full text-sm"
-      >
-        {isPlaying ? '■ Stop audio' : '▶ Play audio'}
-      </button>
-
-      <button 
+        type="button"
         onClick={handleNext}
-        className="bg-[#0B6E2A] text-white font-medium rounded-pill px-6 py-3 hover:bg-[#095A22] active:scale-[0.97] transition-all w-full"
+        className="bg-[#0B6E2A] text-white font-semibold tracking-wide rounded-full px-6 py-3.5 hover:bg-[#095A22] active:scale-[0.98] transition-all w-full shadow-md"
       >
-        Next →
+        Next step
       </button>
     </div>
   );

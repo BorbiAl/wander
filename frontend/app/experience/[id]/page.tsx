@@ -150,7 +150,7 @@ export default function ExperiencePage() {
 
     const title = `${exp.name} - Wander`;
     const location = `${village.name}, ${village.region}`;
-    const details = `${exp.description}\n\nHost: ${host.name}`;
+    const details = `${exp.description}\n\nHost: ${host?.name || 'Unknown Host'}`;
 
     const toGoogleStamp = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
     const startStamp = toGoogleStamp(start);

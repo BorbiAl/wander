@@ -21,32 +21,58 @@ export function ScrollCard({
     onChoice(reading);
   };
 
+  const readingState = elapsed < 3 ? 0 : elapsed <= 8 ? 1 : 2;
+  const readingLabels = ['Just glanced', 'Read it', 'Read it twice'];
+  const progressPct = Math.min((elapsed / 9) * 100, 100);
+
   return (
-    <div className="w-full max-w-md mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-card p-6 flex flex-col">
-      <div className="text-[#1A2E1C]/65 text-[11px] uppercase mb-4">Read this experience</div>
-      <h3 className="font-display text-[22px] text-[#1A2E1C] mb-4">{title}</h3>
-      <div className="max-h-[40vh] overflow-y-auto pr-1 mb-6">
-        <p className="font-sans text-base text-[#1A2E1C]/70 leading-relaxed">{description}</p>
+    <div className="w-full max-w-sm sm:max-w-md mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-6 sm:p-8 flex flex-col gap-5">
+
+      {/* Header */}
+      <div className="text-center flex flex-col gap-1">
+        <p className="text-[#0B6E2A] text-[10px] font-bold tracking-widest uppercase">Read this experience</p>
+        <h3 className="font-sans font-bold text-xl sm:text-2xl text-[#1A2E1C] leading-snug">{title}</h3>
       </div>
-      
-      <div className="w-full h-[1px] bg-[#D6DCCD] mb-6" />
-      
-      <div className="flex flex-col items-center mb-6">
-        <span className="hidden text-[#1A2E1C]/70 text-xs mb-2">Time spent reading</span>
-        <span className="hidden text-4xl font-bold text-[#0B6E2A] mb-4">{elapsed}s</span>
-        
-        <div className="flex gap-2 w-full justify-between">
-          <div className={`text-xs px-3 py-1 rounded-pill border ${elapsed < 3 ? 'bg-[#0B6E2A]/15 border-[#0B6E2A] text-[#0B6E2A]' : 'bg-[#E2E7DA] border-[#D6DCCD] text-[#1A2E1C]/65'}`}>Just glanced</div>
-          <div className={`text-xs px-3 py-1 rounded-pill border ${elapsed >= 3 && elapsed <= 8 ? 'bg-[#0B6E2A]/15 border-[#0B6E2A] text-[#0B6E2A]' : 'bg-[#E2E7DA] border-[#D6DCCD] text-[#1A2E1C]/65'}`}>Read it</div>
-          <div className={`text-xs px-3 py-1 rounded-pill border ${elapsed > 8 ? 'bg-[#0B6E2A]/15 border-[#0B6E2A] text-[#0B6E2A]' : 'bg-[#E2E7DA] border-[#D6DCCD] text-[#1A2E1C]/65'}`}>Read it twice</div>
+
+      {/* Story text */}
+      <div className="max-h-[32vh] overflow-y-auto overscroll-contain rounded-2xl bg-white/50 border border-[#D6DCCD]/50 p-4">
+        <p className="font-sans text-sm sm:text-[15px] text-[#1A2E1C]/80 leading-relaxed">{description}</p>
+      </div>
+
+      <div className="w-full h-px bg-[#D6DCCD]/60" />
+
+      {/* Reading depth tracker */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between text-xs text-[#1A2E1C]/50 font-medium">
+          <span>Reading depth</span>
+          <span className="font-semibold text-[#0B6E2A]">{readingLabels[readingState]}</span>
+        </div>
+        <div className="w-full h-2 bg-[#D6DCCD]/50 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-[#0B6E2A] rounded-full transition-all duration-1000 ease-linear"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+        <div className="flex justify-between">
+          {readingLabels.map((label, i) => (
+            <span
+              key={label}
+              className={`text-[10px] font-semibold transition-colors ${
+                readingState === i ? 'text-[#0B6E2A]' : 'text-[#1A2E1C]/35'
+              }`}
+            >
+              {label}
+            </span>
+          ))}
         </div>
       </div>
 
-      <button 
+      <button
+        type="button"
         onClick={handleNext}
-        className="bg-[#0B6E2A] text-white font-medium rounded-pill px-6 py-3 hover:bg-[#095A22] active:scale-[0.97] transition-all w-full"
+        className="bg-[#0B6E2A] text-white font-semibold tracking-wide rounded-full px-6 py-3.5 hover:bg-[#095A22] active:scale-[0.98] transition-all w-full shadow-md"
       >
-        Continue →
+        Continue
       </button>
     </div>
   );

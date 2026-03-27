@@ -131,11 +131,26 @@ export const EXPERIENCES: Experience[] = [
     personalityWeights:[0.20, 0.30, 0.15, 0.25, 0.10] },
 ];
 
-export function patchDataArrays(data: Record<string, unknown>) {
-  if (Array.isArray(data.villages) && data.villages.length) {
-    VILLAGES.splice(0, VILLAGES.length, ...(data.villages as Village[]));
+export function patchDataArrays(data: Record<string, unknown>, opts: { replace?: boolean } = {}) {
+  const hasNewVillages = Array.isArray(data.villages) && (data.villages as unknown[]).length > 0;
+  const hasNewExperiences = Array.isArray(data.experiences) && (data.experiences as unknown[]).length > 0;
+
+  if (hasNewVillages) {
+    if (opts.replace) {
+      VILLAGES.splice(0, VILLAGES.length, ...(data.villages as Village[]));
+      // Full seed replacement: if new villages arrived with no experiences, clear stale
+      // experiences so the discover page doesn't show cards with mismatched village IDs.
+      if (!hasNewExperiences) {
+        EXPERIENCES.splice(0, EXPERIENCES.length);
+      }
+    } else {
+      // Merge: add/update by id, keep existing villages not in the new set
+      const byId = new Map(VILLAGES.map(v => [v.id, v]));
+      for (const v of data.villages as Village[]) byId.set(v.id, v);
+      VILLAGES.splice(0, VILLAGES.length, ...byId.values());
+    }
   }
-  if (Array.isArray(data.experiences) && data.experiences.length) {
+  if (hasNewExperiences) {
     const exps = (data.experiences as Record<string, unknown>[]).map(e => ({
       id: e.id,
       villageId: e.village_id ?? e.villageId,
@@ -146,8 +161,20 @@ export function patchDataArrays(data: Record<string, unknown>) {
       hostId: (e.host_id ?? e.hostId ?? '') as string,
       description: (e.description ?? '') as string,
       personalityWeights: (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as [number,number,number,number,number],
+      isFree: e.isFree as boolean | undefined,
+      isActive: e.isActive as boolean | undefined,
+      spotsRemaining: e.spotsRemaining as number | undefined,
+      startDate: e.startDate as string | undefined,
+      endDate: e.endDate as string | undefined,
     })) as Experience[];
-    EXPERIENCES.splice(0, EXPERIENCES.length, ...exps);
+    if (opts.replace) {
+      EXPERIENCES.splice(0, EXPERIENCES.length, ...exps);
+    } else {
+      // Merge: add/update by id, keep existing entries that aren't in the new set
+      const byId = new Map(EXPERIENCES.map(e => [e.id, e]));
+      for (const e of exps) byId.set(e.id as string, e);
+      EXPERIENCES.splice(0, EXPERIENCES.length, ...byId.values());
+    }
   }
   if (Array.isArray(data.hosts) && data.hosts.length) {
     const hosts = (data.hosts as Record<string, unknown>[]).map(h => ({

@@ -9044,5 +9044,195 @@
       "Local art exhibitions"
     ],
     "nearby": []
+  },
+  {
+    "id": "us_bellbuckle",
+    "name": "Bell Buckle",
+    "country": "United States",
+    "lat": 35.5398,
+    "lng": -86.3072,
+    "region": "Bedford County",
+    "settlement_type": "village",
+    "population": 410,
+    "cws": 55,
+    "description": "A charming historic village known for its well-preserved Victorian architecture, unique antique shops, and the famous annual RC-MoonPie Festival. It offers a quaint, artistic atmosphere with a strong sense of community and heritage.",
+    "traditions": [
+      "RC-MoonPie Festival",
+      "Bell Buckle Arts & Crafts Fair",
+      "Community Christmas Celebration",
+      "Preservation of historic buildings"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_lynchburg",
+    "name": "Lynchburg",
+    "country": "United States",
+    "lat": 35.2831,
+    "lng": -86.375,
+    "region": "Moore County",
+    "settlement_type": "village",
+    "population": 646,
+    "cws": 68,
+    "description": "A small, dry town famous worldwide as the home of the Jack Daniel's Distillery, offering a glimpse into traditional Southern life and whiskey-making heritage. Despite its fame, it maintains a quiet, rural village charm with a historic town square.",
+    "traditions": [
+      "Jack Daniel's Distillery tours",
+      "Local craft markets",
+      "Community gatherings in the town square",
+      "Southern hospitality"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_leipersfork",
+    "name": "Leiper's Fork",
+    "country": "United States",
+    "lat": 35.889,
+    "lng": -87.039,
+    "region": "Williamson County",
+    "settlement_type": "village",
+    "population": 650,
+    "cws": 72,
+    "description": "This historic village is celebrated for its commitment to preserving its 19th-century character, attracting artists, musicians, and visitors seeking a tranquil rural escape. It's renowned for its unique art galleries, antique shops, and vibrant local music scene.",
+    "traditions": [
+      "Leiper's Fork Christmas Parade",
+      "Concerts at \"The Lawn\"",
+      "Preservation of historic architecture",
+      "Art and craft shows"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_wartrace",
+    "name": "Wartrace",
+    "country": "United States",
+    "lat": 35.4595,
+    "lng": -86.309,
+    "region": "Bedford County",
+    "settlement_type": "village",
+    "population": 651,
+    "cws": 49,
+    "description": "A quaint historic railroad village featuring charming Victorian homes and a rich past connected to the Tennessee Walking Horse. Its quiet streets and well-preserved architecture offer a peaceful step back in time.",
+    "traditions": [
+      "Annual Wartrace Music Fest",
+      "Tennessee Walking Horse industry ties",
+      "Historic railroad heritage events",
+      "Local community dinners"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_flatcreek",
+    "name": "Flat Creek",
+    "country": "United States",
+    "lat": 35.3976,
+    "lng": -86.2907,
+    "region": "Bedford County",
+    "settlement_type": "village",
+    "population": 300,
+    "cws": 61,
+    "description": "A small, unincorporated rural community nestled along Flat Creek, characterized by its agricultural roots and quiet country living. It represents a quintessential piece of rural Tennessee life, focused on farming and local community ties.",
+    "traditions": [
+      "Local farming practices",
+      "Community potlucks",
+      "Outdoor recreational activities",
+      "Family gatherings"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "hr_cavtat",
+    "name": "Cavtat",
+    "country": "Croatia",
+    "lat": 42.5833,
+    "lng": 18.2167,
+    "region": "Dubrovnik-Neretva County",
+    "settlement_type": "village",
+    "population": 2172,
+    "cws": 78,
+    "description": "A picturesque coastal town built on the site of ancient Epidaurum, known for its charming harbor, historical villas, and the Racic Mausoleum. Its rich history and beautiful seafront promenades offer a blend of cultural heritage and relaxed Mediterranean charm.",
+    "traditions": [
+      "Konavle embroidery",
+      "Fishing festivals",
+      "Religious processions",
+      "Traditional folk dancing"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "hr_mali_ston",
+    "name": "Mali Ston",
+    "country": "Croatia",
+    "lat": 42.848,
+    "lng": 17.697,
+    "region": "Dubrovnik-Neretva County",
+    "settlement_type": "village",
+    "population": 139,
+    "cws": 70,
+    "description": "Famous for its medieval walls, which are part of the 'European Great Wall' connecting it to Ston, and its world-renowned oyster farms. The village thrives on aquaculture, offering fresh seafood in a tranquil historical setting.",
+    "traditions": [
+      "Oyster harvesting",
+      "Salt production",
+      "Seafood festivals",
+      "Local wine making"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "hr_cilipi",
+    "name": "Cilipi",
+    "country": "Croatia",
+    "lat": 42.541,
+    "lng": 18.261,
+    "region": "Dubrovnik-Neretva County",
+    "settlement_type": "village",
+    "population": 933,
+    "cws": 65,
+    "description": "The heart of Konavle folklore, this village is celebrated for its vibrant Sunday morning performances of traditional dances and music in authentic costumes. It offers an immersive experience into the region's rich cultural heritage and artisanal crafts.",
+    "traditions": [
+      "Konavle folklore performances",
+      "Silk embroidery",
+      "Olive oil production",
+      "Local costume making"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "hr_trsteno",
+    "name": "Trsteno",
+    "country": "Croatia",
+    "lat": 42.7,
+    "lng": 17.967,
+    "region": "Dubrovnik-Neretva County",
+    "settlement_type": "village",
+    "population": 223,
+    "cws": 72,
+    "description": "Home to the historic Trsteno Arboretum, a stunning Renaissance garden featuring exotic plants, ancient trees, and Baroque fountains. This peaceful village offers a unique blend of botanical beauty and historical architecture.",
+    "traditions": [
+      "Arboretum maintenance",
+      "Olive growing",
+      "Traditional stone masonry",
+      "Herbal medicine knowledge"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "hr_slano",
+    "name": "Slano",
+    "country": "Croatia",
+    "lat": 42.785,
+    "lng": 17.89,
+    "region": "Dubrovnik-Neretva County",
+    "settlement_type": "village",
+    "population": 579,
+    "cws": 68,
+    "description": "Nestled in a deep, picturesque bay, Slano is a peaceful retreat with a rich history, evident in its Franciscan monastery and ruins of a ducal palace. It's known for its clear waters, natural beauty, and a relaxed Mediterranean atmosphere.",
+    "traditions": [
+      "Fishing",
+      "Olive cultivation",
+      "Local Dalmatian cuisine preparation",
+      "Boat building"
+    ],
+    "nearby": []
   }
 ]

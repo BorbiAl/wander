@@ -124,7 +124,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (parsed.destination && parsed.seedStatus === 'done') {
           fetch(`/api/seed?location=${encodeURIComponent(parsed.destination)}&allowGenerate=1`)
             .then(r => r.json())
-            .then(data => patchDataArrays(data))
+            .then(data => patchDataArrays(data, { replace: true }))
             .catch(() => {});
         }
       } catch (e) {
@@ -295,7 +295,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (merged.destination && merged.seedStatus === 'done') {
         fetch(`/api/seed?location=${encodeURIComponent(merged.destination)}`)
           .then(r => r.json())
-          .then(data => patchDataArrays(data))
+          .then(data => patchDataArrays(data, { replace: true }))
           .catch(() => {});
       }
     } else {
@@ -352,7 +352,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           setState(prev => ({ ...prev, seedStatus: 'idle' }));
           return;
         }
-        patchDataArrays(data);
+        patchDataArrays(data, { replace: true });
         setState(prev => ({
           ...prev,
           seedStatus: 'done',

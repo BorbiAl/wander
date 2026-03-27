@@ -92,14 +92,48 @@ export default function DiscoverPage() {
 
   // Fetch free sightseeing and active volunteering sections
   useEffect(() => {
+    function normaliseRaw(e: Record<string, unknown>): Experience {
+      const pw = (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as number[];
+      while (pw.length < 5) pw.push(0.2);
+      return {
+        id: String(e.id ?? ''),
+        villageId: String(e.village_id ?? e.villageId ?? ''),
+        name: String(e.title ?? e.name ?? ''),
+        type: (e.type ?? 'sightseeing') as Experience['type'],
+        price: Number(e.price_eur ?? e.price ?? 0),
+        duration: e.duration_h ? `${e.duration_h}h` : String(e.duration ?? ''),
+        hostId: String(e.host_id ?? e.hostId ?? ''),
+        description: String(e.description ?? ''),
+        personalityWeights: pw.slice(0, 5) as [number, number, number, number, number],
+        isFree: Boolean(e.isFree ?? (Number(e.price_eur ?? e.price ?? 0) === 0)),
+        isActive: Boolean(e.isActive ?? false),
+        spotsRemaining: e.spotsRemaining !== undefined ? Number(e.spotsRemaining) : undefined,
+        startDate: e.startDate as string | undefined,
+        endDate: e.endDate as string | undefined,
+      };
+    }
+
     async function loadSections() {
       try {
         const [sRes, vRes] = await Promise.all([
           fetch('/api/sightseeing', { cache: 'no-store' }),
           fetch('/api/volunteering?active_only=true', { cache: 'no-store' }),
         ]);
-        if (sRes.ok) { const d = await sRes.json(); if (Array.isArray(d)) setFreeSightseeing(d); }
-        if (vRes.ok) { const d = await vRes.json(); if (Array.isArray(d)) setActiveVolunteering(d); }
+        const sightseeing: Experience[] = [];
+        const volunteering: Experience[] = [];
+        if (sRes.ok) { const d = await sRes.json(); if (Array.isArray(d)) sightseeing.push(...d.map(normaliseRaw)); }
+        if (vRes.ok) { const d = await vRes.json(); if (Array.isArray(d)) volunteering.push(...d.map(normaliseRaw)); }
+        setFreeSightseeing(sightseeing);
+        setActiveVolunteering(volunteering);
+        // Merge into main experiences state so the main grid can also show these items
+        const extra = [...sightseeing, ...volunteering];
+        if (extra.length > 0) {
+          setExperiences(prev => {
+            const byId = new Map(prev.map(e => [e.id, e]));
+            for (const e of extra) byId.set(e.id, e);
+            return Array.from(byId.values());
+          });
+        }
       } catch { /* keep empty */ }
     }
     loadSections();
@@ -177,6 +211,14 @@ export default function DiscoverPage() {
     if (villages.length === 0) return 0;
     return Math.round(villages.reduce((sum, v) => sum + v.cws, 0) / villages.length);
   }, [villages]);
+
+  const fmtDate = (iso: string) => {
+    try {
+      return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch {
+      return iso.slice(0, 10);
+    }
+  };
 
   const handleSurprisePick = () => {
     if (villages.length === 0) return;
@@ -399,7 +441,7 @@ export default function DiscoverPage() {
                     className="shrink-0 bg-white/70 border border-[#F5A623]/30 rounded-[20px] p-4 w-52 flex flex-col gap-1 hover:bg-white transition-all shadow-sm">
                     <span className="text-2xl">♻️</span>
                     <p className="font-bold text-[14px] text-[#1A2E1C] leading-tight line-clamp-2">{v.name}</p>
-                    {v.startDate && <span className="text-[11px] text-[#1A2E1C]/50">{v.startDate}{v.endDate ? ` – ${v.endDate}` : ''}</span>}
+                    {v.startDate && <span className="text-[11px] text-[#1A2E1C]/50">{fmtDate(v.startDate)}{v.endDate ? ` – ${fmtDate(v.endDate)}` : ''}</span>}
                     {v.spotsRemaining !== undefined && (
                       <span className={`text-[11px] font-bold ${v.spotsRemaining <= 2 ? 'text-red-500' : 'text-[#1A2E1C]/50'}`}>{v.spotsRemaining} spots left</span>
                     )}

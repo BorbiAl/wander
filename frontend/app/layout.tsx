@@ -22,8 +22,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`}>
       <head>
-        {/* Local HD texture — served from same origin, preloaded in parallel with the lazy globe chunk */}
-        <link rel="preload" as="image" href="/assets/earth-day.jpg" />
         {/* Early connections for external origins used after the landing page loads */}
         <link rel="preconnect" href="https://picsum.photos" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://picsum.photos" />

@@ -213,7 +213,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const addBooking = (b: Booking) => setState(prev => {
-    const classified = classifyBookingDate({ eventsBefore: [], eventsAfter: [], ...b });
+    const classified = classifyBookingDate(b);
     const newImpact = prev.totalImpact + b.amount;
     const newVillages = Array.from(new Set([...prev.villagesVisited, b.villageName]));
     return { ...prev, bookings: [classified, ...prev.bookings], totalImpact: newImpact, villagesVisited: newVillages };

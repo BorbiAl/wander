@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
@@ -139,9 +139,49 @@ export default function LandingPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [destinations, setDestinations] = useState<DestinationNode[]>([]);
+  const [destinations, setDestinations] = useState<DestinationNode[]>(() => buildCityHubNodes());
+  const [shouldHydrateGlobe, setShouldHydrateGlobe] = useState(false);
   const [activeGroup, setActiveGroupData] = useState<{ id: string; name: string; memberCount: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const loadingDestinationsRef = useRef(false);
+
+  const loadDestinationsOnDemand = useCallback(async () => {
+    if (loadingDestinationsRef.current) return;
+    loadingDestinationsRef.current = true;
+
+    try {
+      const res = await fetch('/api/villages', { cache: 'no-store' });
+      if (!res.ok) return;
+      const villages: ApiVillage[] = await res.json();
+      if (!Array.isArray(villages) || villages.length === 0) return;
+
+      const byCountry = new Map<string, CountryHubStats>();
+      for (const v of villages) {
+        const country = v.country?.trim() || 'Bulgaria';
+        const prev = byCountry.get(country);
+        if (!prev) {
+          byCountry.set(country, {
+            count: 1,
+            sampleCity: v.name,
+            sampleLat: v.lat,
+            sampleLng: v.lng,
+          });
+        } else {
+          prev.count += 1;
+        }
+      }
+
+      const nodes = buildCityHubNodes(byCountry);
+      if (nodes.length > 0) {
+        setDestinations(nodes);
+        try {
+          localStorage.setItem(DEST_CACHE_KEY, JSON.stringify({ data: nodes, ts: Date.now() }));
+        } catch {}
+      }
+    } catch {
+      loadingDestinationsRef.current = false;
+    }
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -151,40 +191,31 @@ export default function LandingPage() {
     const cached = readDestCache();
     if (cached) setDestinations(cached);
 
-    async function loadDestinations() {
-      try {
-        const res = await fetch('/api/villages');
-        if (!res.ok) return;
-        const villages: ApiVillage[] = await res.json();
-        if (!Array.isArray(villages) || villages.length === 0) return;
+    const hydrate = () => setShouldHydrateGlobe(true);
+    let idleCallbackId: number | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-        const byCountry = new Map<string, CountryHubStats>();
-        for (const v of villages) {
-          const country = v.country?.trim() || 'Bulgaria';
-          const prev = byCountry.get(country);
-          if (!prev) {
-            byCountry.set(country, {
-              count: 1,
-              sampleCity: v.name,
-              sampleLat: v.lat,
-              sampleLng: v.lng,
-            });
-          } else {
-            prev.count += 1;
-          }
-        }
-
-        const nodes = buildCityHubNodes(byCountry);
-        if (nodes.length > 0) {
-          setDestinations(nodes);
-          try {
-            localStorage.setItem(DEST_CACHE_KEY, JSON.stringify({ data: nodes, ts: Date.now() }));
-          } catch {}
-        }
-      } catch {}
+    if ('requestIdleCallback' in window) {
+      idleCallbackId = (window as Window & {
+        requestIdleCallback: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+      }).requestIdleCallback(hydrate, { timeout: 2200 });
+    } else {
+      timeoutId = setTimeout(hydrate, 2200);
     }
 
-    loadDestinations();
+    const wakeEvents: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'scroll'];
+    const onWake = () => setShouldHydrateGlobe(true);
+    wakeEvents.forEach((event) => window.addEventListener(event, onWake, { once: true, passive: true }));
+
+    return () => {
+      if (idleCallbackId !== null && 'cancelIdleCallback' in window) {
+        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleCallbackId);
+      }
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      wakeEvents.forEach((event) => window.removeEventListener(event, onWake));
+    };
   }, [router]);
 
   // Fetch active group info for the banner
@@ -280,7 +311,11 @@ export default function LandingPage() {
                     setInput(e.target.value);
                     setShowSuggestions(true);
                   }}
-                  onFocus={() => setShowSuggestions(true)}
+                  onFocus={() => {
+                    setShowSuggestions(true);
+                    setShouldHydrateGlobe(true);
+                    void loadDestinationsOnDemand();
+                  }}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                   onKeyDown={handleKey}
                   placeholder="Choose a destination..."
@@ -394,17 +429,29 @@ export default function LandingPage() {
             </AnimatePresence>
           </div>
 
-          <div className="relative z-10 h-[400px] w-full lg:-mt-4 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center">
+          <div
+            className="relative z-10 h-[400px] w-full lg:-mt-4 lg:flex lg:h-[680px] lg:items-center lg:justify-end lg:self-center"
+            onPointerEnter={() => {
+              setShouldHydrateGlobe(true);
+              void loadDestinationsOnDemand();
+            }}
+          >
             <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
               <div className="absolute right-[8%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(26,46,28,0.12)_0%,rgba(229,233,223,0)_72%)]" />
             </div>
-            <MarketingGlobe
-              destinations={destinations}
-              onSelect={(location) => void handleSubmit(location)}
-              inline
-              allowOverflow
-              className="lg:h-[660px] lg:w-[760px]"
-            />
+            {shouldHydrateGlobe ? (
+              <MarketingGlobe
+                destinations={destinations}
+                onSelect={(location) => void handleSubmit(location)}
+                inline
+                allowOverflow
+                className="lg:h-[660px] lg:w-[760px]"
+              />
+            ) : (
+              <div className="relative h-full w-full overflow-hidden rounded-3xl border border-black/5 bg-[radial-gradient(circle_at_35%_35%,#F7FBFF_0%,#DCE9EF_45%,#C9DCE5_100%)] lg:h-[660px] lg:w-[760px]">
+                <div className="absolute inset-[22%] rounded-full border border-white/50 bg-[radial-gradient(circle,#FDFEFF_0%,#DFECF4_70%,#C9DCE5_100%)] shadow-[0_30px_80px_rgba(0,0,0,0.08)]" />
+              </div>
+            )}
           </div>
         </section>
       </main>

@@ -8765,5 +8765,284 @@
       "albania_shirq",
       "albania_buben"
     ]
+  },
+  {
+    "id": "bt_pangrizampa",
+    "name": "Pangri Zampa",
+    "country": "Bhutan",
+    "lat": 27.4674,
+    "lng": 89.6558,
+    "region": "Thimphu District",
+    "settlement_type": "village",
+    "population": 450,
+    "cws": 72,
+    "description": "Nestled just outside Thimphu city, Pangri Zampa is home to a significant historic monastery and a renowned astrology school, offering a deep insight into Bhutanese spiritual and traditional education.",
+    "traditions": [
+      "Astrological readings",
+      "Monastic rituals",
+      "Traditional healing practices"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "bt_talo",
+    "name": "Talo",
+    "country": "Bhutan",
+    "lat": 27.5638,
+    "lng": 89.7891,
+    "region": "Punakha District",
+    "settlement_type": "village",
+    "population": 900,
+    "cws": 78,
+    "description": "Perched on a plateau overlooking the Punakha Valley, Talo is famed for its stunning terraced fields, pristine natural beauty, and its strong historical connections to the Bhutanese royal family.",
+    "traditions": [
+      "Agricultural festivals",
+      "Archery competitions",
+      "Buddhist chanting"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "bt_lobesa",
+    "name": "Lobesa",
+    "country": "Bhutan",
+    "lat": 27.508,
+    "lng": 89.864,
+    "region": "Punakha District",
+    "settlement_type": "village",
+    "population": 1100,
+    "cws": 65,
+    "description": "A vibrant village in the Punakha Valley, Lobesa is widely known for Chimi Lhakhang, the 'fertility temple', and its picturesque rice paddies that dominate the landscape.",
+    "traditions": [
+      "Fertility blessings",
+      "Rice cultivation",
+      "Traditional Bhutanese cuisine"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "bt_shapa",
+    "name": "Shapa",
+    "country": "Bhutan",
+    "lat": 27.4205,
+    "lng": 89.3751,
+    "region": "Paro District",
+    "settlement_type": "village",
+    "population": 750,
+    "cws": 69,
+    "description": "Located in the picturesque Paro Valley, Shapa embodies the authentic rural Bhutanese lifestyle with its traditional farmhouses, vast agricultural lands, and serene, unspoiled natural environment.",
+    "traditions": [
+      "Traditional weaving",
+      "Farming cycles",
+      "Local seasonal festivals",
+      "Prayer flag hoisting"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "bt_gaselo",
+    "name": "Gaselo",
+    "country": "Bhutan",
+    "lat": 27.4855,
+    "lng": 89.962,
+    "region": "Wangdue Phodrang District",
+    "settlement_type": "village",
+    "population": 800,
+    "cws": 60,
+    "description": "A tranquil and remote village in Wangdue Phodrang, Gaselo is characterized by its productive high-altitude terraced fields and offers panoramic views of the surrounding majestic mountains.",
+    "traditions": [
+      "Potato farming",
+      "Folk storytelling",
+      "Local handicrafts",
+      "Community harvest festivals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "th_bangnamphueng",
+    "name": "Bang Nam Phueng",
+    "country": "Thailand",
+    "lat": 13.682,
+    "lng": 100.563,
+    "region": "Samut Prakan Province",
+    "settlement_type": "village",
+    "population": 4000,
+    "cws": 75,
+    "description": "A tranquil village within Bangkok's 'Green Lung,' known for its vibrant weekend floating market. It offers local foods, crafts, and a glimpse into a traditional Thai riverside lifestyle preserved despite its proximity to the capital.",
+    "traditions": [
+      "Weekend floating market",
+      "Traditional Thai dessert making",
+      "Cycling through orchards",
+      "Local boat tours"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "th_kokret",
+    "name": "Ko Kret",
+    "country": "Thailand",
+    "lat": 13.91,
+    "lng": 100.494,
+    "region": "Nonthaburi Province",
+    "settlement_type": "village",
+    "population": 7000,
+    "cws": 78,
+    "description": "A unique car-free island in the Chao Phraya River, preserving the culture of the Mon people. It is renowned for its distinctive Mon pottery, ancient temples, and a peaceful, slow-paced atmosphere.",
+    "traditions": [
+      "Mon pottery craftsmanship",
+      "Traditional Mon food preparation",
+      "Temple visits (Wat Paramaiyikawat)",
+      "Local boat trips"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "th_amphawa",
+    "name": "Amphawa",
+    "country": "Thailand",
+    "lat": 13.425,
+    "lng": 99.957,
+    "region": "Samut Songkhram Province",
+    "settlement_type": "village",
+    "population": 12000,
+    "cws": 72,
+    "description": "A charming riverside community famous for its traditional wooden houses and an enchanting evening floating market. Life here revolves around the Mae Klong River, with locals engaged in fruit farming and preparing traditional Thai sweets.",
+    "traditions": [
+      "Evening floating market",
+      "Traditional Thai dessert making",
+      "Homestays in old wooden houses",
+      "Canal boat tours to see fireflies"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "th_donhoilot",
+    "name": "Don Hoi Lot",
+    "country": "Thailand",
+    "lat": 13.411,
+    "lng": 99.98,
+    "region": "Samut Songkhram Province",
+    "settlement_type": "village",
+    "population": 4500,
+    "cws": 68,
+    "description": "This unique coastal village is famous for its distinctive mudflats teeming with razor clams (hoi lot), which are harvested by local fishermen using traditional methods. It offers an authentic glimpse into a livelihood deeply connected to the sea and its rich bounty.",
+    "traditions": [
+      "Razor clam harvesting",
+      "Seafood preparation",
+      "Worshipping at Prince Chumphon Shrine",
+      "Local fishing practices"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "th_banmaimarket",
+    "name": "Ban Mai Market",
+    "country": "Thailand",
+    "lat": 13.682,
+    "lng": 101.071,
+    "region": "Chachoengsao Province",
+    "settlement_type": "village",
+    "population": 6000,
+    "cws": 70,
+    "description": "A century-old market village nestled along the Bang Pakong River, preserving classic wooden shophouses and a nostalgic atmosphere. It's a culinary haven known for its traditional Thai sweets, snacks, and a glimpse into a bygone era of riverside trade.",
+    "traditions": [
+      "Century-old market trade",
+      "Traditional Thai sweet making",
+      "Riverside living",
+      "Visiting Wat Sothon Wararam Worawihan"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "es_sitges",
+    "name": "Sitges",
+    "country": "Spain",
+    "lat": 41.2333,
+    "lng": 1.8167,
+    "region": "Barcelona",
+    "settlement_type": "village",
+    "population": 29000,
+    "cws": 75,
+    "description": "A vibrant coastal town known for its beautiful beaches, artistic heritage, and lively carnival. Its charming old town is filled with narrow streets, boutique shops, and excellent restaurants.",
+    "traditions": [
+      "Carnival of Sitges",
+      "Festa Major",
+      "Corpus Christi flower carpets",
+      "Gay Pride celebrations"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "es_rupit",
+    "name": "Rupit",
+    "country": "Spain",
+    "lat": 42.0167,
+    "lng": 2.4833,
+    "region": "Barcelona",
+    "settlement_type": "village",
+    "population": 280,
+    "cws": 68,
+    "description": "A stunning medieval village perched on a rocky outcrop, famous for its cobblestone streets, stone houses, and a picturesque wooden suspension bridge. It feels like stepping back in time.",
+    "traditions": [
+      "Local patron saint festivals",
+      "Mushroom foraging",
+      "Traditional Catalan cuisine"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "es_mura",
+    "name": "Mura",
+    "country": "Spain",
+    "lat": 41.6531,
+    "lng": 1.9961,
+    "region": "Barcelona",
+    "settlement_type": "village",
+    "population": 230,
+    "cws": 72,
+    "description": "Tucked away in the Sant Llorenç del Munt i l'Obac Natural Park, Mura is a beautifully preserved medieval village with narrow alleys, ancient houses, and a charming stream running through it.",
+    "traditions": [
+      "Sant Antoni Abat festival",
+      "Traditional bread baking",
+      "Local craft markets"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "es_cardona",
+    "name": "Cardona",
+    "country": "Spain",
+    "lat": 41.9125,
+    "lng": 1.6881,
+    "region": "Barcelona",
+    "settlement_type": "village",
+    "population": 4500,
+    "cws": 65,
+    "description": "Home to one of Catalonia's most important medieval fortresses and a unique salt mountain, Cardona offers a deep dive into history and geology. Its historic center is rich with ancient buildings and stories.",
+    "traditions": [
+      "Medieval market",
+      "Festa Major de la Sal (Salt Festival)",
+      "Salt Mountain cultural tours"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "es_cadaques",
+    "name": "Cadaqués",
+    "country": "Spain",
+    "lat": 42.2889,
+    "lng": 3.2783,
+    "region": "Girona",
+    "settlement_type": "village",
+    "population": 2800,
+    "cws": 78,
+    "description": "A quintessential whitewashed fishing village on the Costa Brava, renowned for its bohemian charm and as a former retreat for artists like Salvador Dalí. Its unique beauty is framed by the Cap de Creus natural park.",
+    "traditions": [
+      "Sant Joan celebrations",
+      "Fishing traditions",
+      "Dalí House-Museum visits",
+      "Local art exhibitions"
+    ],
+    "nearby": []
   }
 ]

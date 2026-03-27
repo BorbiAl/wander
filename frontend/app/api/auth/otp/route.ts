@@ -10,6 +10,7 @@ type TransportConfig = {
   host?: string;
   port?: number;
   secure?: boolean;
+  requireTLS?: boolean;
   auth?: { user?: string; pass?: string };
   tls?: { servername?: string };
 };
@@ -117,6 +118,7 @@ function createTransporter() {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT ?? 465),
     secure: process.env.SMTP_SECURE !== 'false',
+    requireTLS: process.env.SMTP_REQUIRE_TLS === 'true',
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -134,14 +136,51 @@ async function sendOtpEmail(to: string, code: string): Promise<void> {
   await transporter.sendMail({
     from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
     to,
-    subject: 'Your WanderGraph login code',
-    text: `Your login code is: ${code}\n\nIt expires in 10 minutes. If you didn't request this, ignore this email.`,
+    subject: `Your WanderGraph sign-in code: ${code}`,
+    text: `WanderGraph\n\nYour sign-in code is ${code}.\n\nThis code expires in 10 minutes.\nIf you didn't request it, you can safely ignore this email.`,
     html: `
-      <div style="font-family:sans-serif;max-width:400px;margin:auto">
-        <h2 style="color:#0B6E2A">WanderGraph</h2>
-        <p>Your login code is:</p>
-        <p style="font-size:2.5rem;font-weight:bold;letter-spacing:0.25em;color:#1A2E1C">${code}</p>
-        <p style="color:#666;font-size:0.85rem">This code expires in 10 minutes. If you didn't request this, you can safely ignore this email.</p>
+      <div style="margin:0;padding:32px 16px;background:#edf2e7;font-family:Arial,sans-serif;color:#1A2E1C">
+        <div style="max-width:560px;margin:0 auto">
+          <div style="margin-bottom:16px;text-align:center">
+            <div style="display:inline-block;padding:6px 12px;border-radius:999px;background:#dce8d4;color:#0B6E2A;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase">
+              WanderGraph Access
+            </div>
+          </div>
+
+          <div style="background:linear-gradient(180deg,#f8fbf4 0%,#f2f6ec 100%);border:1px solid #d6dccd;border-radius:24px;padding:32px 28px;box-shadow:0 18px 50px rgba(26,46,28,0.08)">
+            <p style="margin:0 0 8px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#0B6E2A;font-weight:700">
+              Sign in
+            </p>
+            <h1 style="margin:0 0 12px;font-size:32px;line-height:1.1;color:#1A2E1C">
+              Your path back in is ready
+            </h1>
+            <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#304235">
+              Use this 6-digit code to continue your WanderGraph session.
+            </p>
+
+            <div style="margin:0 0 24px;padding:20px 18px;border-radius:20px;background:#1A2E1C;color:#F5F7F2;text-align:center">
+              <div style="margin:0 0 8px;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.72">
+                Verification code
+              </div>
+              <div style="font-size:40px;line-height:1;font-weight:800;letter-spacing:0.28em;text-indent:0.28em">
+                ${code}
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin:0 0 22px">
+              <div style="flex:1;min-width:180px;padding:14px 16px;border-radius:16px;background:#e7eedf;color:#304235;font-size:14px;line-height:1.5">
+                Expires in <strong>10 minutes</strong>
+              </div>
+              <div style="flex:1;min-width:180px;padding:14px 16px;border-radius:16px;background:#e7eedf;color:#304235;font-size:14px;line-height:1.5">
+                Requested by <strong>${to}</strong>
+              </div>
+            </div>
+
+            <p style="margin:0;font-size:13px;line-height:1.6;color:#5a6a5c">
+              If this wasn't you, you can ignore this email. No changes will be made unless the code is entered in the app.
+            </p>
+          </div>
+        </div>
       </div>
     `,
   });

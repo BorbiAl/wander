@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { access, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
+// Allow up to 60s for this route — it may need two sequential Gemini calls
+// (village generation + experience generation) for unknown countries.
+export const maxDuration = 60;
+
 type HubCoords = { lat: number; lng: number; country?: string };
 
 type SourceVillage = {
@@ -32,6 +36,12 @@ type SourceExperience = {
   host_bio?: string;
   host_rating?: number;
   country?: string;
+  isFree?: boolean;
+  isActive?: boolean;
+  startDate?: string;
+  endDate?: string;
+  spotsTotal?: number;
+  spotsRemaining?: number;
   [key: string]: unknown;
 };
 
@@ -48,7 +58,7 @@ const NOMINATIM_SEARCH_URL = 'https://nominatim.openstreetmap.org/search';
 const GEMINI_MODEL = 'gemini-2.5-flash';
 const SEARCH_RADIUS_KM = 150;
 const MAX_VILLAGES = 5;
-const MAX_EXPERIENCES_PER_VILLAGE = 3;
+const MAX_EXPERIENCES_PER_VILLAGE = 6;
 const EXPERIENCE_TYPES = ['craft', 'hike', 'homestay', 'ceremony', 'cooking', 'volunteer', 'folklore', 'sightseeing'] as const;
 
 function parseLocation(raw: string): { city: string; country: string } {
@@ -295,12 +305,16 @@ function sanitizeGeminiExperiences(
     const pw = pwRaw.map((n) => Number(n));
     while (pw.length < 5) pw.push(0.2);
 
+    const priceEur = (type === 'sightseeing' || type === 'volunteer')
+      ? Math.max(0, Number(r.price_eur ?? 0) || 0)
+      : Math.max(5, Number(r.price_eur ?? 25) || 25);
+    const isFree = Boolean(r.isFree ?? (priceEur === 0 && (type === 'sightseeing' || type === 'volunteer')));
     normalized.push({
       id,
       village_id: villageId,
       title: String(r.title ?? r.name ?? 'Village Experience'),
       type,
-      price_eur: Math.max(5, Number(r.price_eur ?? 25) || 25),
+      price_eur: priceEur,
       duration_h: Math.max(1, Number(r.duration_h ?? 3) || 3),
       description: String(r.description ?? 'A community-led local activity.'),
       personality_weights: [pw[0], pw[1], pw[2], pw[3], pw[4]] as [number, number, number, number, number],
@@ -309,10 +323,100 @@ function sanitizeGeminiExperiences(
       host_bio: String(r.host_bio ?? 'Community host.'),
       host_rating: Number(r.host_rating ?? 4.6),
       country,
+      isFree,
+      isActive: Boolean(r.isActive ?? false),
+      startDate: r.startDate as string | undefined,
+      endDate: r.endDate as string | undefined,
+      spotsTotal: r.spotsTotal !== undefined ? Number(r.spotsTotal) : undefined,
+      spotsRemaining: r.spotsRemaining !== undefined ? Number(r.spotsRemaining) : undefined,
     });
   }
 
   return normalized;
+}
+
+async function generateVillagesWithGemini(
+  city: string,
+  country: string,
+  center: HubCoords,
+): Promise<SourceVillage[]> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return [];
+
+  try {
+    const { GoogleGenAI } = await import('@google/genai');
+    const client = new GoogleGenAI({ apiKey });
+
+    const prompt = [
+      'Return JSON only. No markdown and no prose.',
+      `Generate exactly ${MAX_VILLAGES} real, named villages near ${city}, ${country}.`,
+      'Each village must be a real place with authentic cultural character.',
+      'Return an array of objects with these exact fields:',
+      '  id (string, snake_case: countrycode_villagename e.g. "bt_punakha"),',
+      '  name (string, local village name in English),',
+      '  country (string, exact country name),',
+      '  lat (number), lng (number),',
+      '  region (string, province or district name),',
+      '  settlement_type ("village"),',
+      '  population (integer estimate),',
+      '  cws (integer 20-80, community wellbeing score),',
+      '  description (string, 1-2 sentences about the village character and what makes it special),',
+      '  traditions (array of 2-4 short strings naming local cultural practices),',
+      '  nearby (empty array [])',
+      `Center coordinates: lat=${center.lat}, lng=${center.lng}. Villages should be within 200km.`,
+    ].join('\n');
+
+    const response = await client.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+    });
+
+    const text = (response.text ?? '').trim();
+    if (!text) return [];
+
+    const cleaned = text
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```$/i, '')
+      .trim();
+
+    const parsed = JSON.parse(cleaned);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter((v): v is SourceVillage => {
+      if (!v || typeof v !== 'object') return false;
+      const r = v as Record<string, unknown>;
+      return typeof r.id === 'string'
+        && typeof r.name === 'string'
+        && Number.isFinite(Number(r.lat))
+        && Number.isFinite(Number(r.lng));
+    }).slice(0, MAX_VILLAGES);
+  } catch {
+    return [];
+  }
+}
+
+async function persistGeneratedVillages(generated: SourceVillage[]): Promise<void> {
+  if (generated.length === 0) return;
+
+  const candidates = [
+    path.resolve(process.cwd(), 'data', 'villages.json'),
+    path.resolve(process.cwd(), '..', 'data', 'villages.json'),
+  ];
+
+  for (const filePath of candidates) {
+    try {
+      const current = await readJsonArray(filePath) as SourceVillage[];
+      const byId = new Map(current.map((v) => [v.id, v]));
+      for (const v of generated) {
+        if (!byId.has(v.id)) byId.set(v.id, v);
+      }
+      await writeFile(filePath, `${JSON.stringify(Array.from(byId.values()), null, 2)}\n`, 'utf-8');
+      return;
+    } catch {
+      // try next path
+    }
+  }
 }
 
 async function generateExperiencesWithGemini(
@@ -337,12 +441,17 @@ async function generateExperiencesWithGemini(
 
     const prompt = [
       'Return JSON only. No markdown and no prose.',
-      'Generate realistic, bookable local experiences for these exact villages.',
+      'Generate realistic local experiences for these exact villages.',
       `Country: ${country || 'Unknown'}. Nearby city: ${city}.`,
-      `Create up to ${MAX_EXPERIENCES_PER_VILLAGE} experiences per village.`,
+      `Generate up to ${MAX_EXPERIENCES_PER_VILLAGE} experiences per village.`,
       `Allowed types: ${EXPERIENCE_TYPES.join(', ')}.`,
-      'Each item must include fields: id, village_id, title, type, price_eur, duration_h, description, personality_weights, host_id, host_name, host_bio, host_rating.',
-      'Use village_id exactly from the provided list. personality_weights must have 5 numbers summing close to 1.',
+      'REQUIRED: every village must have at least one experience of EACH of these three categories:',
+      '  1. A bookable activity (type: craft, hike, homestay, ceremony, cooking, or folklore)',
+      '  2. A free sightseeing landmark (type: sightseeing, price_eur: 0, isFree: true) — a real viewpoint, temple, monument, historic site, or public square in that village',
+      '  3. An active volunteering event (type: volunteer, isActive: true, startDate: ISO date within the next 3 months, endDate: ISO date, spotsTotal: 4-20, spotsRemaining: 1 to spotsTotal, price_eur: 0)',
+      'Each item must include: id, village_id, title, type, price_eur, duration_h, description, personality_weights, host_id, host_name, host_bio, host_rating.',
+      'Use village_id exactly from the provided list. personality_weights must be 5 numbers summing to 1.0.',
+      'Make descriptions specific to the actual culture, geography, and traditions of the country and village.',
       JSON.stringify(villageBrief),
     ].join('\n');
 
@@ -423,26 +532,35 @@ export async function GET(req: Request) {
   const { city, country: requestedCountry } = parseLocation(location);
 
   try {
-    const [villagesData, experiencesData] = await Promise.all([
-      loadVillagesFromJson(),
-      loadExperiencesFromJson(),
+    const [[villagesData, experiencesData], center] = await Promise.all([
+      Promise.all([loadVillagesFromJson(), loadExperiencesFromJson()]),
+      geocodeHub(city, requestedCountry).catch(() => null),
     ]);
 
     if (villagesData.length === 0) {
       return NextResponse.json({ error: 'No villages available in JSON data' }, { status: 404 });
     }
 
-    const center = await geocodeHub(city, requestedCountry).catch(() => null);
-
-    const selectedVillages = pickVillages(villagesData, center, requestedCountry);
+    let selectedVillages = pickVillages(villagesData, center, requestedCountry);
     const effectiveCountry = requestedCountry || String(center?.country ?? selectedVillages[0]?.country ?? '');
+
+    // No villages in our dataset for this country — generate them with Gemini
+    if (selectedVillages.length === 0 && allowGenerate && center) {
+      const generatedVillages = await generateVillagesWithGemini(city, effectiveCountry || requestedCountry, center);
+      if (generatedVillages.length > 0) {
+        selectedVillages = generatedVillages;
+        // Persist in background — don't block the response
+        persistGeneratedVillages(generatedVillages).catch(() => {});
+      }
+    }
 
     if (selectedVillages.length === 0) {
       return NextResponse.json(
-        { error: `No villages available for ${effectiveCountry || city} in local JSON data.` },
+        { error: `No villages available for ${effectiveCountry || city}. Try again with allowGenerate=1.` },
         { status: 404 },
       );
     }
+
     let selectedExperiences = pickExperiences(experiencesData, selectedVillages);
     let decision = 'Loaded villages and experiences from local JSON datasets.';
 
@@ -450,10 +568,9 @@ export async function GET(req: Request) {
       const generated = await generateExperiencesWithGemini(selectedVillages, city, effectiveCountry);
       if (generated.length > 0) {
         selectedExperiences = generated;
-        const persistedCount = await persistGeneratedExperiences(generated);
-        decision = persistedCount > 0
-          ? `Loaded villages from local JSON datasets, generated missing experiences with gemini-2.5-flash, and persisted ${persistedCount} experiences to JSON.`
-          : 'Loaded villages from local JSON datasets and generated missing experiences with gemini-2.5-flash.';
+        // Persist in background — don't block the response
+        persistGeneratedExperiences(generated).catch(() => {});
+        decision = `Generated villages and experiences for ${effectiveCountry} with gemini-2.5-flash.`;
       }
     }
 

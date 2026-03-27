@@ -108,13 +108,13 @@ export default function OnboardingPage() {
               ← Back
             </button>
           )}
-          <span className="hidden sm:inline-block text-sm font-semibold tracking-tight text-[#1A2E1C]">Wander Onboarding</span>
+          <span className="inline-block md:hidden text-sm font-semibold tracking-tight text-[#1A2E1C]">Wander Onboarding</span>
           {destination && (
             <span className="rounded-full bg-[#0B6E2A]/10 px-2.5 py-1 text-[10px] font-bold text-[#0B6E2A] uppercase tracking-wider">{destination}</span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <div className="text-xs font-medium text-[#1A2E1C]/65">Step {step + 1} of {totalSteps}</div>
+          <div className="md:hidden text-xs font-medium text-[#1A2E1C]/65">Step {step + 1} of {totalSteps}</div>
         </div>
       </div>
 
@@ -122,17 +122,44 @@ export default function OnboardingPage() {
         <div className="h-full bg-[#0B6E2A] transition-all duration-500 ease-out" style={{ width: `${progressPct}%` }} />
       </div>
 
-      <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 py-6 sm:px-6 md:py-10 flex flex-col justify-center min-h-[500px]">
+      <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 py-6 sm:px-6 md:py-10 flex min-h-[500px]">
         {/* Subtle background gradients compatible with cozy vibe */}
         <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(11,110,42,0.06)_0%,rgba(229,233,223,0)_70%)]" />
         <div className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(245,166,35,0.08)_0%,rgba(229,233,223,0)_72%)]" />
 
-        <div className="relative mx-auto flex w-full max-w-lg flex-col items-center">
-          <div className="mb-6 w-full text-center px-2">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0B6E2A] mb-2">{currentMeta.group}</p>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A2E1C] leading-tight">{currentMeta.title}</h2>
-            <p className="mt-2 text-sm sm:text-base leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
-          </div>
+        <div className="mx-auto w-full max-w-5xl grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)] gap-8 md:gap-6 relative">
+
+          {/* Desktop Left Sidebar */}
+          <aside className="hidden md:block w-[300px] shrink-0 rounded-[28px] border border-white/60 bg-white/55 p-6 shadow-sm backdrop-blur-xl h-fit sticky top-6">
+            <h2 className="text-2xl font-bold tracking-tight text-[#1A2E1C]">{currentMeta.title}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
+
+            <div className="mt-5 rounded-2xl border border-[#D6DCCD]/70 bg-[#E5E9DF]/70 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#1A2E1C]/45">Detail</p>
+              <p className="mt-1 text-sm text-[#1A2E1C]/70">{currentMeta.hint}</p>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between rounded-2xl border border-[#D6DCCD]/70 bg-white/70 px-4 py-3">
+              <span className="text-xs font-medium text-[#1A2E1C]/55">Signals captured</span>
+              <span className="text-xl font-bold tracking-tighter text-[#0B6E2A]">{obs.length}</span>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {STAGE_META.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-2.5 w-2.5 rounded-full ${idx < step ? 'bg-[#0B6E2A]' : idx === step ? 'bg-[#F5A623]' : 'bg-[#D6DCCD]'}`}
+                />
+              ))}
+            </div>
+          </aside>
+
+          <div className="relative flex w-full max-w-lg lg:max-w-none mx-auto flex-col items-center justify-center">
+            <div className="md:hidden mb-6 w-full text-center px-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0B6E2A] mb-2">{currentMeta.group}</p>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1A2E1C] leading-tight">{currentMeta.title}</h2>
+              <p className="mt-2 text-sm sm:text-base leading-relaxed text-[#1A2E1C]/70">{currentMeta.detail}</p>
+            </div>
 
           <section className="w-full flex-1 md:bg-white/30 md:border md:border-white/50 md:backdrop-blur-xl md:shadow-sm md:rounded-[32px] md:p-6 mb-4">
             <AnimatePresence mode="wait">
@@ -195,9 +222,10 @@ export default function OnboardingPage() {
             </AnimatePresence>
           </section>
 
-          <div className="w-full rounded-2xl bg-white/40 p-3 sm:p-4 text-center mt-auto border border-white/50">
+          <div className="md:hidden w-full rounded-2xl bg-white/40 p-3 sm:p-4 text-center mt-4 border border-white/50 mb-2">
             <span className="text-xs sm:text-sm font-medium text-[#1A2E1C]/65">💡 Hint: {currentMeta.hint}</span>
           </div>
+        </div>
         </div>
       </div>
     </div>

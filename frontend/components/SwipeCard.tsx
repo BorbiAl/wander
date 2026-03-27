@@ -32,8 +32,6 @@ export function SwipeCard({
   const [chosen, setChosen] = useState<'left'|'right'|null>(null);
   const leftSrc = leftImageSrc ?? imageAssetUrl(leftDescription);
   const rightSrc = rightImageSrc ?? imageAssetUrl(rightDescription);
-  const leftIsIp11 = leftSrc.endsWith('/assets/IP-11.jpg');
-  const rightIsIp11 = rightSrc.endsWith('/assets/IP-11.jpg');
 
   const handleChoice = (side: 'left'|'right') => {
     setChosen(side);
@@ -41,28 +39,31 @@ export function SwipeCard({
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-md mx-auto">
-      <p className="text-[#1A2E1C]/70 text-sm mb-6">Which scene calls to you?</p>
-      <div className="flex gap-4 w-full justify-center">
+    <div className="mx-auto flex w-full max-w-3xl flex-col items-center">
+      <p className="mb-6 text-sm font-medium text-[#1A2E1C]/70">Which scene calls to you?</p>
+      <div className="flex w-full justify-center gap-5">
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('left')}
-          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/50 overflow-hidden cursor-pointer relative transition-colors`}
+          className={`relative flex h-[420px] w-[260px] cursor-pointer flex-col overflow-hidden rounded-[24px] border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
         >
-          <div className="h-full w-full" style={{ backgroundColor: leftColor }}>
+          <div className="h-[304px] w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: leftColor }}>
             <img
               src={leftSrc}
               alt={leftDescription}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
               style={{
-                objectPosition: leftIsIp11 ? 'top' : (leftImageObjectPosition ?? 'center'),
+                objectPosition: leftImageObjectPosition ?? 'center',
               }}
               loading="lazy"
             />
           </div>
-          <div className="absolute inset-x-0 bottom-0 z-10 min-h-[96px] bg-[#E5E9DF]/95 backdrop-blur-sm border-t border-[#D6DCCD]/70 p-3 flex flex-col items-center justify-center text-center">
-            <span className="font-sans text-sm font-medium text-[#1A2E1C]">{leftLabel}</span>
-            <span className="font-sans text-[11px] text-[#1A2E1C]/65 mt-2 leading-snug">{leftDescription}</span>
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between px-3 pt-3">
+            <span className="rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#1A2E1C]/60">Option A</span>
+          </div>
+          <div className="z-10 flex min-h-[116px] flex-1 flex-col items-center justify-center border-t border-[#D6DCCD]/70 bg-[#E5E9DF]/95 px-4 py-3 text-center backdrop-blur-sm">
+            <p className="w-full text-center font-sans text-sm font-semibold leading-tight text-[#1A2E1C]">{leftLabel}</p>
+            <p className="mt-2 w-full text-center font-sans text-[11px] leading-snug text-[#1A2E1C]/65">{leftDescription}</p>
           </div>
           {chosen === 'left' && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -74,22 +75,25 @@ export function SwipeCard({
         <motion.div 
           whileHover={{ scale: 1.03 }}
           onClick={() => handleChoice('right')}
-          className={`w-[190px] h-[320px] rounded-card border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/50 overflow-hidden cursor-pointer relative transition-colors`}
+          className={`relative flex h-[420px] w-[260px] cursor-pointer flex-col overflow-hidden rounded-[24px] border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
         >
-          <div className="h-full w-full" style={{ backgroundColor: rightColor }}>
+          <div className="h-[304px] w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: rightColor }}>
             <img
               src={rightSrc}
               alt={rightDescription}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
               style={{
-                objectPosition: rightIsIp11 ? 'top' : (rightImageObjectPosition ?? 'center'),
+                objectPosition: rightImageObjectPosition ?? 'center',
               }}
               loading="lazy"
             />
           </div>
-          <div className="absolute inset-x-0 bottom-0 z-10 min-h-[96px] bg-[#E5E9DF]/95 backdrop-blur-sm border-t border-[#D6DCCD]/70 p-3 flex flex-col items-center justify-center text-center">
-            <span className="font-sans text-sm font-medium text-[#1A2E1C]">{rightLabel}</span>
-            <span className="font-sans text-[11px] text-[#1A2E1C]/65 mt-2 leading-snug">{rightDescription}</span>
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-end px-3 pt-3">
+            <span className="rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#1A2E1C]/60">Option B</span>
+          </div>
+          <div className="z-10 flex min-h-[116px] flex-1 flex-col items-center justify-center border-t border-[#D6DCCD]/70 bg-[#E5E9DF]/95 px-4 py-3 text-center backdrop-blur-sm">
+            <p className="w-full text-center font-sans text-sm font-semibold leading-tight text-[#1A2E1C]">{rightLabel}</p>
+            <p className="mt-2 w-full text-center font-sans text-[11px] leading-snug text-[#1A2E1C]/65">{rightDescription}</p>
           </div>
           {chosen === 'right' && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">

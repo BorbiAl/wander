@@ -116,10 +116,13 @@ export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
 
   // Parse filter params
+  const idParam = searchParams.get('id');
   const villageIdParam = searchParams.get('villageId');
   const typeParam = searchParams.get('type');
   const limitParam = searchParams.get('limit');
   const offsetParam = searchParams.get('offset');
+
+  const idFilter = idParam?.trim() ?? null;
 
   const villageIdSet = villageIdParam
     ? new Set(villageIdParam.split(',').map(s => s.trim()).filter(Boolean))
@@ -158,6 +161,9 @@ export async function GET(req: NextRequest) {
 
   // Apply server-side filters
   let filtered = allExperiences;
+  if (idFilter) {
+    filtered = filtered.filter(e => e.id === idFilter);
+  }
   if (villageIdSet) {
     filtered = filtered.filter(e => villageIdSet.has(e.villageId));
   }

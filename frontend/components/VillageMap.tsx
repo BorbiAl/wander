@@ -12,6 +12,20 @@ import type { SeedStatus } from '@/app/lib/store';
 // Recenter map whenever seedStatus changes to 'done' (new destination seeded)
 function AutoCenter({ seedStatus, villages }: { seedStatus: SeedStatus, villages: Village[] }) {
   const map = useMap();
+
+  // Fix for Leaflet grey map issue on mobile sizing
+  useEffect(() => {
+    const handleResize = () => map.invalidateSize();
+    window.addEventListener('resize', handleResize);
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 400);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    }
+  }, [map]);
+
   useEffect(() => {
     if (villages.length === 0) return;
     const lats = villages.map(v => v.lat);
@@ -58,11 +72,11 @@ export default function VillageMap({
   const initLng = lngs.length ? (Math.min(...lngs) + Math.max(...lngs)) / 2 : 0;
 
   return (
-    <div className="w-full h-full relative z-0 overflow-hidden rounded-3xl border border-[#D6DCCD]">
+    <div className="w-full h-full relative z-0 overflow-hidden rounded-3xl border border-[#D6DCCD] shadow-inner" style={{ minHeight: '300px' }}>
       <MapContainer
         center={[initLat, initLng]}
         zoom={7}
-        style={{ width: '100%', height: '100%', background: '#E5E9DF', borderRadius: '1.5rem' }}
+        style={{ width: '100%', height: '100%', background: '#E5E9DF', borderRadius: '1.5rem', minHeight: '300px' }}
         zoomControl={false}
         ref={mapRef}
       >

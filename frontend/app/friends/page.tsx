@@ -11,6 +11,14 @@ import { ProfileQR } from '@/components/ProfileQR';
 import { PersonalityRadar } from '@/components/PersonalityRadar';
 import { EventBeforeAfter } from '@/components/EventBeforeAfter';
 
+type Suggestion = {
+  userId: string;
+  displayName: string;
+  dominant: string;
+  vector: [number, number, number, number, number];
+  compatibility: number;
+};
+
 export default function FriendsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -31,6 +39,8 @@ export default function FriendsPage() {
   const [joinError, setJoinError] = useState('');
   const [joining, setJoining] = useState(false);
   const [copiedGroupId, setCopiedGroupId] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
 
   const addedFromUrl = useRef(false);
 
@@ -70,6 +80,23 @@ export default function FriendsPage() {
   }
 
   useEffect(() => { if (userId) refreshGroups(); }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function fetchSuggestions() {
+    if (!personality) return;
+    setSuggestionsLoading(true);
+    try {
+      const vectorParam = personality.vector.join(',');
+      const res = await fetch(`/api/users/suggest?userId=${encodeURIComponent(userId)}&vector=${encodeURIComponent(vectorParam)}`);
+      if (!res.ok) return;
+      const data: Suggestion[] = await res.json();
+      // Filter out already-added friends
+      setSuggestions(data.filter(s => !friends.some(f => f.userId === s.userId)));
+    } catch { /* keep empty */ } finally { setSuggestionsLoading(false); }
+  }
+
+  useEffect(() => {
+    if (userId && personality) fetchSuggestions();
+  }, [userId, personality]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleCopyProfile() {
     navigator.clipboard.writeText(shareUrl).then(() => {
@@ -163,6 +190,88 @@ export default function FriendsPage() {
             <ProfileQR url={shareUrl} size={130} />
             <p className="text-xs text-[#1A2E1C]/40">Scan to add me</p>
           </div>
+        </section>
+
+        {/* ── Suggested companions ── */}
+        <section>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] mb-1">Suggested companions</h2>
+          <p className="text-[#1A2E1C]/50 text-sm mb-6">Other travelers matched to your personality.</p>
+
+          {suggestionsLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="h-24 bg-[#D6DCCD]/60 rounded-[20px] animate-pulse" />
+              ))}
+            </div>
+          ) : suggestions.length === 0 ? (
+            <p className="text-[#1A2E1C]/40 text-sm">No suggested companions yet — invite friends to join!</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {suggestions.map((s, i) => {
+                const info = PERSONALITY_INFO[s.dominant as keyof typeof PERSONALITY_INFO];
+                const color = info?.color ?? '#ccc';
+                const emoji = info?.emoji ?? '🧭';
+                const pct = Math.round(s.compatibility * 100);
+                const alreadyAdded = friends.some(f => f.userId === s.userId);
+                return (
+                  <motion.div key={s.userId}
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: i * 0.05 }}
+                    className="group relative bg-white/70 backdrop-blur-md border border-white/60 rounded-[20px] p-4 overflow-hidden hover:bg-white/90 hover:shadow-md transition-all"
+                  >
+                    {/* left color accent bar */}
+                    <div className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full" style={{ backgroundColor: color }} />
+
+                    <div className="pl-3 flex items-center gap-3">
+                      {/* avatar circle */}
+                      <div className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-[15px] font-bold" style={{ backgroundColor: color + '28', color }}>
+                        {emoji}
+                      </div>
+
+                      {/* name + type */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-[13px] text-[#1A2E1C] truncate leading-tight">{s.displayName}</div>
+                        <div className="text-[11px] font-medium mt-0.5" style={{ color }}>{s.dominant}</div>
+                      </div>
+
+                      {/* match pill */}
+                      <div className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full" style={{ backgroundColor: color + '22', color }}>
+                        {pct}%
+                      </div>
+                    </div>
+
+                    {/* match bar */}
+                    <div className="pl-3 mt-3">
+                      <div className="h-1 w-full bg-[#D6DCCD] rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{ backgroundColor: color }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.6, delay: i * 0.05 + 0.1, ease: 'easeOut' }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* add button — appears on hover, always visible on touch */}
+                    <div className="pl-3 mt-3 flex justify-end">
+                      <button
+                        disabled={alreadyAdded}
+                        onClick={() => {
+                          addFriend({ userId: s.userId, displayName: s.displayName, vector: s.vector, dominant: s.dominant, addedAt: Date.now() });
+                          setSuggestions(prev => prev.filter(x => x.userId !== s.userId));
+                        }}
+                        className="text-[12px] font-semibold px-4 py-1.5 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                        style={alreadyAdded ? {} : { backgroundColor: color, color: '#fff' }}
+                      >
+                        {alreadyAdded ? 'Added' : '+ Add'}
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         {/* ── Companions ── */}

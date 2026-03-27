@@ -121,17 +121,16 @@ export default function ProfilePage() {
             >
               Manage companions →
             </button>
-            {email && (
-              <button
-                onClick={() => {
-                  logout?.();
-                  router.push('/');
-                }}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C]/70 text-[14px] font-semibold tracking-wide px-6 py-3 rounded-full hover:bg-[#1A2E1C]/5 hover:text-[#1A2E1C] transition-all shadow-sm active:scale-95"
-              >
-                Sign Out
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                logout?.();
+                router.push('/');
+              }}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C]/70 text-[14px] font-semibold tracking-wide px-6 py-3 rounded-full hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all shadow-sm active:scale-95"
+            >
+              Sign Out
+            </button>
           </div>
           {showAuth && (
             <AuthModal

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '@/app/lib/store';
 import { getExperience, getHost, getVillage, percentageMatch, cwsColor } from '@/app/lib/utils';
-import { PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from '@/app/lib/data';
+import { Host, PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from '@/app/lib/data';
 
 export default function ExperiencePage() {
   const { id } = useParams();
@@ -25,26 +25,80 @@ export default function ExperiencePage() {
   const [reflectionQ2, setReflectionQ2] = useState<'yes' | 'maybe' | 'no'>('maybe');
   const [reflectionQ3, setReflectionQ3] = useState('');
   const [seeded, setSeeded] = useState(false);
+  const experienceId = String(id ?? '');
 
-  // If data arrays are empty but we have a destination, re-seed before rendering
+  // Ensure detail page can resolve data even when user arrives from API-backed lists.
   useEffect(() => {
-    if (getExperience(id as string)) { setSeeded(true); return; }
-    if (destination && seedStatus === 'done') {
-      fetch(`/api/seed?location=${encodeURIComponent(destination)}`)
-        .then(r => r.json())
-        .then(data => {
-          patchDataArrays(data);
-          setSeeded(true);
-        })
-        .catch(() => setSeeded(true));
-    } else {
-      setSeeded(true);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    let cancelled = false;
 
-  const exp = getExperience(id as string);
-  const host = exp ? getHost(exp.hostId) : null;
+    async function hydrateExperienceData() {
+      if (!experienceId) {
+        if (!cancelled) setSeeded(true);
+        return;
+      }
+
+      // If already present locally, we can render immediately.
+      const existing = getExperience(experienceId);
+      if (existing) {
+        if (!cancelled) setSeeded(true);
+        return;
+      }
+
+      try {
+        if (destination && seedStatus === 'done') {
+          const seedRes = await fetch(`/api/seed?location=${encodeURIComponent(destination)}`);
+          if (seedRes.ok) {
+            const data = await seedRes.json();
+            patchDataArrays(data);
+          }
+        }
+
+        // Fallback: fetch the exact experience by id and patch arrays.
+        if (!getExperience(experienceId)) {
+          const expRes = await fetch(`/api/experiences?id=${encodeURIComponent(experienceId)}`, { cache: 'no-store' });
+          if (expRes.ok) {
+            const expData = await expRes.json();
+            if (Array.isArray(expData) && expData.length > 0) {
+              patchDataArrays({ experiences: expData });
+            }
+          }
+        }
+
+        // Ensure related village exists for context and booking UI.
+        const maybeExp = getExperience(experienceId);
+        if (maybeExp && !getVillage(maybeExp.villageId)) {
+          const villagesRes = await fetch('/api/villages', { cache: 'no-store' });
+          if (villagesRes.ok) {
+            const villagesData = await villagesRes.json();
+            if (Array.isArray(villagesData) && villagesData.length > 0) {
+              patchDataArrays({ villages: villagesData });
+            }
+          }
+        }
+      } catch {
+        // No-op: page will show not found state if data still cannot be resolved.
+      } finally {
+        if (!cancelled) setSeeded(true);
+      }
+    }
+
+    void hydrateExperienceData();
+    return () => {
+      cancelled = true;
+    };
+  }, [destination, seedStatus, experienceId]);
+
+  const exp = getExperience(experienceId);
+  const host: Host | null = exp
+    ? (getHost(exp.hostId) ?? {
+      id: exp.hostId || `host-${exp.id}`,
+      villageId: exp.villageId,
+      name: 'Local Host',
+      bio: 'Community host for this experience.',
+      rating: 4.7,
+      experienceIds: [exp.id],
+    })
+    : null;
   const village = exp ? getVillage(exp.villageId) : null;
 
   if (!seeded || seedStatus === 'loading') {
@@ -55,7 +109,7 @@ export default function ExperiencePage() {
     );
   }
 
-  if (!exp || !host || !village) {
+  if (!exp || !village) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center gap-4">
         <p className="text-[#1A2E1C]/60 font-medium">Experience not found.</p>

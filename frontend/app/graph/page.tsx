@@ -5,16 +5,13 @@ import { useApp } from '@/app/lib/store';
 import { PERSONALITIES, PERSONALITY_INFO } from '@/app/lib/data';
 import { PersonalityRadar } from '@/components/PersonalityRadar';
 
-const EMPTY_VECTOR: [number, number, number, number, number] = [0, 0, 0, 0, 0];
+const EMPTY_VECTOR: [number, number, number, number, number] = [0.2, 0.2, 0.2, 0.2, 0.2];
 
 export default function GraphPage() {
 	const { personality, observations, bookings } = useApp();
 
-	let vector = personality?.vector ?? EMPTY_VECTOR;
-	if (vector.every(v => v === 0.2)) {
-		vector = EMPTY_VECTOR;
-	}
-	const dominant = vector === EMPTY_VECTOR ? 'None' : (personality?.dominant ?? 'None');
+	const vector = personality?.vector ?? EMPTY_VECTOR;
+	const dominant = personality?.dominant ?? 'Explorer';
 
 	const ranked = useMemo(() => {
 		return PERSONALITIES

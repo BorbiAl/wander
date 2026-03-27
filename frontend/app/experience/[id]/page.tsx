@@ -315,6 +315,7 @@ export default function ExperiencePage() {
       if (village.cws < 45) addBadge('Pioneer');
       if (exp.type === 'volunteer') addBadge('Guardian');
       if (exp.type === 'hike') addBadge('Achiever');
+      if (exp.type === 'sightseeing') addBadge('Explorer');
 
       const socialCount = bookings.filter(b => b.experienceName.includes('Ceremony') || b.experienceName.includes('Cooking')).length;
       if (socialCount >= 1 && (exp.type === 'ceremony' || exp.type === 'cooking')) addBadge('Connector');
@@ -360,10 +361,20 @@ export default function ExperiencePage() {
         <span>📍</span> {village.name}, {village.region}
       </div>
 
-      <div className="flex items-center gap-4 text-[14px] font-semibold tracking-wide text-[#1A2E1C]/70 mb-10 bg-white/60 backdrop-blur-md border border-white/50 rounded-[24px] shadow-sm hover:shadow-md transition-all p-4 inline-flex">
-        <span className="text-[#1A2E1C] font-bold">€{exp.price}</span>
+      <div className="flex flex-wrap items-center gap-4 text-[14px] font-semibold tracking-wide text-[#1A2E1C]/70 mb-10 bg-white/60 backdrop-blur-md border border-white/50 rounded-[24px] shadow-sm hover:shadow-md transition-all p-4 inline-flex">
+        {exp.type === 'sightseeing' ? (
+          <span className="text-[#0B6E2A] font-bold">Free</span>
+        ) : (
+          <span className="text-[#1A2E1C] font-bold">€{exp.price}</span>
+        )}
         <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
         <span>⏱ {exp.duration}</span>
+        {exp.type === 'volunteer' && exp.startDate && (
+          <>
+            <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
+            <span>📅 {exp.startDate}{exp.endDate ? ` – ${exp.endDate}` : ''}</span>
+          </>
+        )}
         {host && (
           <>
             <span className="w-1 h-1 rounded-full bg-[#1A2E1C]/20" />
@@ -437,18 +448,52 @@ export default function ExperiencePage() {
         <p className="text-[10px] text-text-3 uppercase">CWS: Community Wellbeing Score — measures economic + cultural health</p>
       </div>
 
+      {/* Volunteer: date range + spots before CTA */}
+      {exp.type === 'volunteer' && (exp.startDate || exp.spotsRemaining !== undefined) && (
+        <div className="mb-6 flex flex-wrap gap-3 items-center bg-[#F5A623]/10 border border-[#F5A623]/30 rounded-[20px] px-5 py-4">
+          {exp.startDate && (
+            <span className="text-[14px] font-semibold text-[#1A2E1C]">
+              📅 {exp.startDate}{exp.endDate ? ` – ${exp.endDate}` : ''}
+            </span>
+          )}
+          {exp.spotsRemaining !== undefined && (
+            <span className={`text-[13px] font-bold px-3 py-1 rounded-full ${exp.spotsRemaining <= 2 ? 'bg-red-100 text-red-600' : 'bg-white text-[#1A2E1C]/70'}`}>
+              {exp.spotsRemaining} spots remaining
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 md:sticky md:bottom-auto bg-[#080808F0] md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-t border-[rgba(0,0,0,0.05)] md:border-none p-4 md:p-0 z-40 flex justify-between items-center">
-        <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-bold text-[#1A2E1C]">€{exp.price}</span>
-          <span className="text-[#1A2E1C]/60 text-sm">/person</span>
-        </div>
-        <button
-          onClick={openModal}
-          className="bg-[#0B6E2A] text-white shadow-md font-semibold px-8 py-3.5 rounded-full hover:bg-[#0B6E2A]-dim active:scale-[0.97] transition-all"
-        >
-          Book this experience
-        </button>
+        {exp.type === 'sightseeing' ? (
+          <>
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl font-bold text-[#0B6E2A]">Free entry</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(village.name + ', ' + village.region)}`, '_blank', 'noopener,noreferrer')}
+              className="bg-[#0B6E2A] text-white shadow-md font-semibold px-8 py-3.5 rounded-full hover:bg-[#095A22] active:scale-[0.97] transition-all"
+            >
+              Just show up → Directions
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold text-[#1A2E1C]">€{exp.price}</span>
+              <span className="text-[#1A2E1C]/60 text-sm">/person</span>
+            </div>
+            <button
+              type="button"
+              onClick={openModal}
+              className="bg-[#0B6E2A] text-white shadow-md font-semibold px-8 py-3.5 rounded-full hover:bg-[#095A22] active:scale-[0.97] transition-all"
+            >
+              {exp.type === 'volunteer' ? 'Sign Up' : 'Book this experience'}
+            </button>
+          </>
+        )}
       </div>
 
       {/* Booking Modal */}

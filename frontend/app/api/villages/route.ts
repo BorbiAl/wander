@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { VILLAGES } from '@/app/lib/data';
 import { readFile, access } from 'node:fs/promises';
+import { getCached, setCached } from '@/app/lib/fileCache';
 import path from 'node:path';
+
+const FILE_CACHE_TTL_MS = 60_000; // 60 s
 
 // Normalise C++ village shape → frontend Village type
 function normalise(v: Record<string, unknown>) {
@@ -57,6 +60,10 @@ function mergeVillagePreferSeed(
 }
 
 async function loadSeedVillages() {
+  const CACHE_KEY = 'seed:villages';
+  const cached = getCached<ReturnType<typeof normaliseSeedVillage>[]>(CACHE_KEY);
+  if (cached) return cached;
+
   const candidatePaths = [
     path.resolve(process.cwd(), 'data', 'villages.json'),
     path.resolve(process.cwd(), '..', 'data', 'villages.json'),
@@ -69,8 +76,12 @@ async function loadSeedVillages() {
       await access(seedPath);
       const raw = await readFile(seedPath, 'utf-8');
       const data = JSON.parse(raw);
-      if (!Array.isArray(data)) return [];
-      return data.map((v) => normaliseSeedVillage(v as Record<string, unknown>));
+      if (!Array.isArray(data)) continue;
+      const result = data.map((v) => normaliseSeedVillage(v as Record<string, unknown>));
+      if (result.length > 0) {
+        setCached(CACHE_KEY, result, FILE_CACHE_TTL_MS);
+        return result;
+      }
     } catch {
       // Try next candidate path.
     }

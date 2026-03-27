@@ -86,7 +86,10 @@ export default function MarketingGlobe({
     globeRef.current.pointOfView({ lat: 20, lng: 0, altitude: inline ? 1.8 : 1.7 }, 0);
   }, [globeReady, inline]);
 
-  const handlePointClick = (point: DestinationNode) => onSelect(point.name);
+  const handlePointClick = (point: object) => {
+    const node = point as DestinationNode;
+    onSelect(node.name);
+  };
 
   const width = inline ? inlineSize.width : windowSize.width;
   const height = inline ? inlineSize.height : windowSize.height;
@@ -133,21 +136,22 @@ export default function MarketingGlobe({
             // Defer city labels until the sphere is visible — creating 30+ DOM nodes
             // with event listeners before the globe is painted blocks the initial render.
             htmlElementsData={globeReady ? points : []}
-            htmlElement={(d: DestinationNode) => {
+            htmlElement={(d: object) => {
+              const node = d as DestinationNode;
               const el = document.createElement('div');
               el.innerHTML = `<div class="cursor-pointer hover:scale-105 transition-all bg-white rounded-2xl px-4 py-3 border border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col -translate-x-1/2 -translate-y-[120%] select-none pointer-events-auto min-w-max">
                 <span class="text-[10px] font-bold tracking-wider text-black/40 uppercase mb-1">City Hub</span>
-                <span class="text-[#1A2E1C] text-sm font-display font-semibold mb-0.5 leading-none">${d.city}</span>
-                <span class="text-[#1A2E1C]/60 text-xs font-medium">${d.country}</span>
+                <span class="text-[#1A2E1C] text-sm font-display font-semibold mb-0.5 leading-none">${node.city}</span>
+                <span class="text-[#1A2E1C]/60 text-xs font-medium">${node.country}</span>
               </div>`;
               el.style.pointerEvents = 'none';
               el.firstChild?.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
-                handlePointClick(d);
+                handlePointClick(node);
               });
               el.firstChild?.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
-                handlePointClick(d);
+                handlePointClick(node);
               }, { passive: true });
               return el;
             }}

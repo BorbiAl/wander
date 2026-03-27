@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: process.cwd(),
   compress: true,
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
     ignoreBuildErrors: false,

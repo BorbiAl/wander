@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFile, writeFile, access } from 'node:fs/promises';
 import path from 'node:path';
+import { withFileLock } from '@/app/lib/fileLock';
 
 const DATA_PATHS = [
   path.resolve(process.cwd(), 'data', 'users.json'),
   path.resolve(process.cwd(), '..', 'data', 'users.json'),
 ];
+
+/** userId format: "user_" followed by 4–12 lowercase alphanumeric characters. */
+const USER_ID_RE = /^user_[a-z0-9]{4,12}$/;
 
 type StoredUser = {
   email: string;
@@ -67,11 +71,7 @@ async function readUsers(): Promise<StoredUser[]> {
   try {
     const raw = await readFile(p, 'utf-8');
     const users = JSON.parse(raw) as StoredUser[];
-    return users.map(u => ({
-      eventsBefore: [],
-      eventsAfter: [],
-      ...u,
-    }));
+    return users.map(u => ({ ...u, eventsBefore: u.eventsBefore ?? [], eventsAfter: u.eventsAfter ?? [] }));
   } catch {
     return [];
   }
@@ -91,6 +91,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing email or userId' }, { status: 400 });
   }
 
+  if (!USER_ID_RE.test(userId)) {
+    return NextResponse.json({ error: 'Invalid userId format' }, { status: 400 });
+  }
+
   const users = await readUsers();
   const user = users.find((u) => u.email === email && u.userId === userId);
   if (!user) {
@@ -108,7 +112,7 @@ function isValidEmail(email: string): boolean {
 }
 
 // POST /api/auth  body: { action: 'save'|'autosave', email, userId, state? }
-// Login/register is now handled by /api/auth/otp (email OTP flow).
+// Login/register is handled by /api/auth/otp (email OTP flow).
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;
   try {
@@ -133,19 +137,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
   }
 
-  const users = await readUsers();
+  // Reject malformed userIds before they touch any file operation
+  if (!USER_ID_RE.test(String(userId))) {
+    return NextResponse.json({ error: 'Invalid userId format' }, { status: 400 });
+  }
 
   if (action === 'save' || action === 'autosave') {
-    const user = users.find(u => u.email === emailLower && u.userId === String(userId));
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const nextState = state ?? null;
-    user.state = nextState;
-    const extracted = extractEventsFromState(nextState);
-    user.eventsBefore = extracted.eventsBefore;
-    user.eventsAfter = extracted.eventsAfter;
-    user.updatedAt = Date.now();
-    await writeUsers(users);
-    return NextResponse.json({ ok: true });
+    return withFileLock('users', async () => {
+      const users = await readUsers();
+      const user = users.find(u => u.email === emailLower && u.userId === String(userId));
+      if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+      const nextState = state ?? null;
+      user.state = nextState;
+      const extracted = extractEventsFromState(nextState);
+      user.eventsBefore = extracted.eventsBefore;
+      user.eventsAfter = extracted.eventsAfter;
+      user.updatedAt = Date.now();
+      await writeUsers(users);
+      return NextResponse.json({ ok: true });
+    });
   }
 
   return NextResponse.json({ error: 'Unknown action' }, { status: 400 });

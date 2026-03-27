@@ -15,15 +15,11 @@ export function ScrollCard({
   }, []);
 
   const handleNext = () => {
-    let reading: 0|1|2 = 1;
-    if (elapsed < 3) reading = 0;
-    else if (elapsed > 8) reading = 2;
+    const reading: 0|1|2 = elapsed < 4 ? 0 : elapsed < 10 ? 1 : 2;
     onChoice(reading);
   };
 
-  const readingState = elapsed < 3 ? 0 : elapsed <= 8 ? 1 : 2;
-  const readingLabels = ['Just glanced', 'Read it', 'Read it twice'];
-  const progressPct = Math.min((elapsed / 9) * 100, 100);
+  const readingState = elapsed < 4 ? 0 : elapsed < 10 ? 1 : 2;
 
   return (
     <div className="w-full max-w-sm sm:max-w-md mx-auto bg-white/60 backdrop-blur-md border border-white/50 shadow-sm rounded-[24px] p-6 sm:p-8 flex flex-col gap-5">
@@ -39,7 +35,20 @@ export function ScrollCard({
         <p className="font-sans text-sm sm:text-[15px] text-[#1A2E1C]/80 leading-relaxed">{description}</p>
       </div>
 
-      <div className="w-full h-px bg-[#D6DCCD]/60" />
+      <div className="flex items-center justify-between">
+        {(['Glanced', 'Read', 'Read Twice'] as const).map((label, i) => (
+          <span
+            key={label}
+            className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition-all duration-500 ${
+              readingState === i
+                ? 'border-[#0B6E2A] text-[#0B6E2A] shadow-[0_0_8px_rgba(11,110,42,0.4)]'
+                : 'border-[#D6DCCD] text-[#1A2E1C]/30'
+            }`}
+          >
+            {label}
+          </span>
+        ))}
+      </div>
 
       <button
         type="button"

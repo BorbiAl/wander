@@ -99,7 +99,21 @@ export default function ExperiencePage() {
       experienceIds: [exp.id],
     })
     : null;
-  const village = exp ? getVillage(exp.villageId) : null;
+  const village = exp ? (getVillage(exp.villageId) || {
+    id: exp.villageId,
+    name: exp.mainCity || 'Local Village',
+    country: 'Unknown',
+    region: 'Unknown',
+    lat: exp.mainCityLat || 0,
+    lng: exp.mainCityLng || 0,
+    cws: 50,
+    population: 0,
+    description: 'A place of interest.',
+    nearby: [],
+    mainCity: exp.mainCity || '',
+    mainCityLat: exp.mainCityLat || 0,
+    mainCityLng: exp.mainCityLng || 0
+  }) : null;
 
   if (!seeded || seedStatus === 'loading') {
     return (
@@ -109,7 +123,7 @@ export default function ExperiencePage() {
     );
   }
 
-  if (!exp || !village) {
+  if (!exp) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center gap-4">
         <p className="text-[#1A2E1C]/60 font-medium">Experience not found.</p>

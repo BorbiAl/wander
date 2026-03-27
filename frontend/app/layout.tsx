@@ -11,6 +11,10 @@ const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
 export const metadata: Metadata = {
   title: 'Wander',
   description: 'Travel with purpose.',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+  },
 };
 
 export const viewport = {

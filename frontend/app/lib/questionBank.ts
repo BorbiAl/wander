@@ -10,6 +10,8 @@ export type SwipeQuestion = {
   rightDescription: string;
   leftImageSrc?: string;
   rightImageSrc?: string;
+  leftImageObjectPosition?: string;
+  rightImageObjectPosition?: string;
   leftColor: string;
   rightColor: string;
   leftState: string;
@@ -257,6 +259,8 @@ export const SWIPE_QUESTIONS: SwipeQuestion[] = [
     ...question,
     leftImageSrc: getSwipeImagePath(leftImageIndex),
     rightImageSrc: getSwipeImagePath(rightImageIndex),
+    leftImageObjectPosition: question.id === 'IP-06' ? 'center 36%' : undefined,
+    rightImageObjectPosition: question.id === 'IP-12' ? '72% center' : undefined,
   };
 });
 

@@ -15,7 +15,7 @@ function imageAssetUrl(description: string): string {
 }
 
 export function SwipeCard({ 
-  leftLabel, leftDescription, rightLabel, rightDescription, leftImageSrc, rightImageSrc, leftColor, rightColor, onChoice 
+  leftLabel, leftDescription, rightLabel, rightDescription, leftImageSrc, rightImageSrc, leftImageObjectPosition, rightImageObjectPosition, leftColor, rightColor, onChoice 
 }: { 
   leftLabel: string,
   leftDescription: string,
@@ -23,6 +23,8 @@ export function SwipeCard({
   rightDescription: string,
   leftImageSrc?: string,
   rightImageSrc?: string,
+  leftImageObjectPosition?: string,
+  rightImageObjectPosition?: string,
   leftColor: string,
   rightColor: string,
   onChoice: (side: 'left'|'right') => void
@@ -48,6 +50,7 @@ export function SwipeCard({
               src={leftImageSrc ?? imageAssetUrl(leftDescription)}
               alt={leftDescription}
               className="h-full w-full object-cover"
+              style={{ objectPosition: leftImageObjectPosition ?? 'center' }}
               loading="lazy"
             />
           </div>
@@ -72,6 +75,7 @@ export function SwipeCard({
               src={rightImageSrc ?? imageAssetUrl(rightDescription)}
               alt={rightDescription}
               className="h-full w-full object-cover"
+              style={{ objectPosition: rightImageObjectPosition ?? 'center' }}
               loading="lazy"
             />
           </div>

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '@/app/lib/store';
 import { getExperience, getHost, getVillage, percentageMatch, cwsColor } from '@/app/lib/utils';
-import { Host, Village, PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from '@/app/lib/data';
+import { Host, PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from '@/app/lib/data';
 
 export default function ExperiencePage() {
   const { id } = useParams();
@@ -89,6 +89,17 @@ export default function ExperiencePage() {
   }, [destination, seedStatus, experienceId]);
 
   const exp = getExperience(experienceId);
+  const host: Host | null = exp
+    ? (getHost(exp.hostId) ?? {
+      id: exp.hostId || `host-${exp.id}`,
+      villageId: exp.villageId,
+      name: 'Local Host',
+      bio: 'Community host for this experience.',
+      rating: 4.7,
+      experienceIds: [exp.id],
+    })
+    : null;
+  const village = exp ? getVillage(exp.villageId) : null;
 
   if (!seeded || seedStatus === 'loading') {
     return (
@@ -98,7 +109,7 @@ export default function ExperiencePage() {
     );
   }
 
-  if (!exp) {
+  if (!exp || !village) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center gap-4">
         <p className="text-[#1A2E1C]/60 font-medium">Experience not found.</p>
@@ -108,27 +119,6 @@ export default function ExperiencePage() {
       </div>
     );
   }
-
-  const host: Host = getHost(exp.hostId) ?? {
-    id: exp.hostId || `host-${exp.id}`,
-    villageId: exp.villageId,
-    name: 'Local Host',
-    bio: 'Community host for this experience.',
-    rating: 4.7,
-    experienceIds: [exp.id],
-  };
-  const village: Village = getVillage(exp.villageId) ?? {
-    id: exp.villageId,
-    name: exp.mainCity || 'Local Village',
-    country: 'Unknown',
-    region: 'Unknown',
-    lat: exp.mainCityLat || 0,
-    lng: exp.mainCityLng || 0,
-    cws: 50,
-    population: 0,
-    description: 'A place of interest.',
-    nearby: [],
-  };
 
   const matchPct = personality ? percentageMatch(personality.vector, exp.personalityWeights) : 0;
 

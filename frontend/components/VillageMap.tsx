@@ -10,7 +10,15 @@ import type { Village } from '@/app/lib/data';
 import type { SeedStatus } from '@/app/lib/store';
 
 // Recenter map whenever seedStatus changes to 'done' (new destination seeded)
-function AutoCenter({ seedStatus, villages }: { seedStatus: SeedStatus, villages: Village[] }) {
+function AutoCenter({
+  seedStatus,
+  villages,
+  selectedVillageId,
+}: {
+  seedStatus: SeedStatus;
+  villages: Village[];
+  selectedVillageId?: string | null;
+}) {
   const map = useMap();
 
   // Fix for Leaflet grey map issue on mobile sizing
@@ -28,6 +36,15 @@ function AutoCenter({ seedStatus, villages }: { seedStatus: SeedStatus, villages
 
   useEffect(() => {
     if (villages.length === 0) return;
+
+    if (selectedVillageId) {
+      const selectedVillage = villages.find(v => v.id === selectedVillageId);
+      if (selectedVillage) {
+        map.setView([selectedVillage.lat, selectedVillage.lng], Math.max(map.getZoom(), 8));
+        return;
+      }
+    }
+
     const lats = villages.map(v => v.lat);
     const lngs = villages.map(v => v.lng);
     const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
@@ -38,7 +55,7 @@ function AutoCenter({ seedStatus, villages }: { seedStatus: SeedStatus, villages
     // Rough zoom: wider span = lower zoom
     const zoom = span < 0.5 ? 12 : span < 2 ? 10 : span < 5 ? 8 : span < 15 ? 7 : 5;
     map.setView([centerLat, centerLng], zoom);
-  }, [map, seedStatus, villages]);
+  }, [map, seedStatus, villages, selectedVillageId]);
   return null;
 }
 
@@ -47,11 +64,13 @@ export default function VillageMap({
   visited = null,
   seedStatus = 'idle',
   villages: propVillages = null,
+  selectedVillageId = null,
 }: {
   onSelectVillage?: (v: Village) => void;
   visited?: string[] | null;
   seedStatus?: SeedStatus;
   villages?: Village[] | null;
+  selectedVillageId?: string | null;
 }) {
   const mapRef = useRef<LeafletMap | null>(null);
   
@@ -84,17 +103,17 @@ export default function VillageMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <AutoCenter seedStatus={seedStatus} villages={localVillages} />
+        <AutoCenter seedStatus={seedStatus} villages={localVillages} selectedVillageId={selectedVillageId} />
         {villagesToShow.map(village => (
           <CircleMarker
             key={village.id}
             center={[village.lat, village.lng]}
-            radius={8}
+            radius={selectedVillageId === village.id ? 10 : 8}
             pathOptions={{
               color: cwsColor(village.cws),
               fillColor: cwsColor(village.cws),
-              fillOpacity: 0.8,
-              weight: 2,
+              fillOpacity: selectedVillageId === village.id ? 0.95 : 0.8,
+              weight: selectedVillageId === village.id ? 3 : 2,
             }}
             eventHandlers={{
               click: () => onSelectVillage && onSelectVillage(village),

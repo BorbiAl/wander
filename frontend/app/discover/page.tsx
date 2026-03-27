@@ -28,8 +28,8 @@ export default function DiscoverPage() {
   const [freeSightseeing, setFreeSightseeing] = useState<Experience[]>([]);
   const [activeVolunteering, setActiveVolunteering] = useState<Experience[]>([]);
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
-  const [villages, setVillages] = useState<Village[]>([]);
-  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [villages, setVillages] = useState<Village[]>(VILLAGES);
+  const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
   const [activeGroup, setActiveGroupData] = useState<StoredGroup | null>(null);
 
   useEffect(() => {
@@ -41,24 +41,19 @@ export default function DiscoverPage() {
       return;
     }
 
+    // If the store already seeded location-specific data, use those in-memory arrays directly.
+    // The /api/villages route falls back to static Bulgarian data when the C++ backend is down,
+    // which would overwrite the seeded data with the wrong country.
+    if (seedStatus === 'done') {
+      setVillages([...VILLAGES]);
+      setExperiences([...EXPERIENCES]);
+      return;
+    }
+
     let mounted = true;
 
     async function loadLiveData() {
       try {
-        // When a destination is seeded, fetch directly from the seed API so we
-        // get the persisted location-specific data even after a page reload
-        // (the in-memory VILLAGES/EXPERIENCES arrays are empty until patchDataArrays runs).
-        if (destination && seedStatus === 'done') {
-          const res = await fetch(`/api/seed?location=${encodeURIComponent(destination)}`, { cache: 'no-store' });
-          if (!mounted) return;
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data.villages) && data.villages.length > 0) setVillages(data.villages);
-            if (Array.isArray(data.experiences) && data.experiences.length > 0) setExperiences(data.experiences);
-          }
-          return;
-        }
-
         const [vRes, eRes] = await Promise.all([
           fetch('/api/villages', { cache: 'no-store' }),
           fetch('/api/experiences', { cache: 'no-store' }),
@@ -185,8 +180,15 @@ export default function DiscoverPage() {
 
   const handleSurprisePick = () => {
     if (villages.length === 0) return;
-    const randomVillage = villages[Math.floor(Math.random() * villages.length)];
+    const pool = selectedVillageId && villages.length > 1
+      ? villages.filter(v => v.id !== selectedVillageId)
+      : villages;
+    const randomVillage = pool[Math.floor(Math.random() * pool.length)];
     setSelectedVillageId(randomVillage.id);
+  };
+
+  const handleClearFocus = () => {
+    setSelectedVillageId(null);
   };
 
   return (
@@ -199,24 +201,27 @@ export default function DiscoverPage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 md:py-8 lg:px-8 pb-28 md:pb-16">
         <div className="flex flex-col xl:grid xl:grid-cols-12 gap-5 sm:gap-6">
           <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 transition-all hover:bg-white/80">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-              <div className="min-w-0 max-w-[34rem]">
+            <div className="flex flex-col gap-4">
+              <div>
                 <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-1">Discover</p>
                 <h1 className="font-bold tracking-tighter text-3xl sm:text-4xl md:text-5xl text-[#1A2E1C] leading-[1.1]">Start with the globe</h1>
                 <p className="text-[#1A2E1C]/65 text-[14px] sm:text-[15px] mt-2 max-w-[46ch] font-medium leading-relaxed">
                   Pick a village first. The trip list updates instantly to match that place.
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:w-fit xl:min-w-[18rem] xl:self-center">
+              <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                 <button
+                  type="button"
                   onClick={handleSurprisePick}
-                  className="inline-flex min-h-[48px] items-center justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"
+                  className="inline-flex w-full sm:w-auto items-center justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"
                 >
                   Surprise me
                 </button>
                 <button
-                  onClick={() => setSelectedVillageId(null)}
-                  className="inline-flex min-h-[48px] items-center justify-center bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-white transition-all shadow-sm active:scale-95"
+                  type="button"
+                  onClick={handleClearFocus}
+                  disabled={!selectedVillageId}
+                  className="inline-flex w-full sm:w-auto items-center justify-center bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-white transition-all shadow-sm active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Clear focus
                 </button>
@@ -246,6 +251,8 @@ export default function DiscoverPage() {
               <VillageMap
                 onSelectVillage={v => setSelectedVillageId(v.id)}
                 seedStatus={seedStatus}
+                villages={villages}
+                selectedVillageId={selectedVillageId}
               />
             </div>
           </section>
@@ -327,12 +334,12 @@ export default function DiscoverPage() {
                 {activeGroup ? `Scored for ${activeGroup.name} · Sorted by group fit` : 'Sorted by fit, cost, or community impact.'}
               </p>
             </div>
-            <div className="grid grid-cols-3 w-full md:flex md:w-auto bg-[#E5E9DF]/70 p-1.5 rounded-2xl md:rounded-full border border-white/50 shadow-sm gap-1">
+            <div className="flex w-full md:w-auto overflow-x-auto gap-2 bg-[#E5E9DF]/70 p-1.5 sm:p-2 rounded-full border border-white/50 shadow-sm scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
               {(['match', 'price', 'cws'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSortBy(s)}
-                  className={`text-[10px] sm:text-[11px] md:text-[13px] font-bold uppercase tracking-widest py-2 px-1 md:px-5 md:py-2.5 rounded-xl md:rounded-full transition-all text-center whitespace-nowrap ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C]' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
+                  className={`shrink-0 text-[11px] sm:text-[12px] md:text-[13px] font-bold uppercase tracking-widest px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
                 >
                   {s === 'match' ? 'Best match' : s === 'price' ? 'Lowest price' : 'Impact first'}
                 </button>

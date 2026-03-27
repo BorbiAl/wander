@@ -32,7 +32,6 @@ export type Experience = {
   description: string; personalityWeights: [number,number,number,number,number];
   isFree?: boolean; isActive?: boolean; spotsRemaining?: number;
   startDate?: string; endDate?: string;
-  mainCity?: string; mainCityLat?: number; mainCityLng?: number;
 }
 
 export type Host = {
@@ -137,7 +136,7 @@ export function patchDataArrays(data: Record<string, unknown>) {
     VILLAGES.splice(0, VILLAGES.length, ...(data.villages as Village[]));
   }
   if (Array.isArray(data.experiences) && data.experiences.length) {
-    const mappedExps = (data.experiences as Record<string, unknown>[]).map(e => ({
+    const exps = (data.experiences as Record<string, unknown>[]).map(e => ({
       id: e.id,
       villageId: e.village_id ?? e.villageId,
       name: (e.title ?? e.name) as string,
@@ -147,14 +146,8 @@ export function patchDataArrays(data: Record<string, unknown>) {
       hostId: (e.host_id ?? e.hostId ?? '') as string,
       description: (e.description ?? '') as string,
       personalityWeights: (e.personality_weights ?? [0.2, 0.2, 0.2, 0.2, 0.2]) as [number,number,number,number,number],
-      mainCity: (e.main_city ?? e.mainCity ?? '') as string,
-      mainCityLat: (e.main_city_lat ?? e.mainCityLat ?? 0) as number,
-      mainCityLng: (e.main_city_lng ?? e.mainCityLng ?? 0) as number,
     })) as Experience[];
-
-    const existingMap = new Map(EXPERIENCES.map(ex => [ex.id, ex]));
-    mappedExps.forEach(ex => existingMap.set(ex.id, ex));
-    EXPERIENCES.splice(0, EXPERIENCES.length, ...Array.from(existingMap.values()));
+    EXPERIENCES.splice(0, EXPERIENCES.length, ...exps);
   }
   if (Array.isArray(data.hosts) && data.hosts.length) {
     const hosts = (data.hosts as Record<string, unknown>[]).map(h => ({

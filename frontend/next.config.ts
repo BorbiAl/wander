@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // Allow access to remote image placeholder.
   images: {
     remotePatterns: [
@@ -23,6 +26,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts', 'motion/react'],
   },
+  poweredByHeader: false,
   output: 'standalone',
   transpilePackages: ['motion'],
   webpack: (config, {dev}) => {

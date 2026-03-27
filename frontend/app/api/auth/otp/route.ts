@@ -6,7 +6,13 @@ import path from 'node:path';
 // moduleResolution:"bundler". We require() it and declare only what we use.
 type MailTransporter = { sendMail(opts: MailOptions): Promise<unknown> };
 type MailOptions = { from?: string; to: string; subject: string; text: string; html: string };
-type TransportConfig = { host?: string; port?: number; secure?: boolean; auth?: { user?: string; pass?: string } };
+type TransportConfig = {
+  host?: string;
+  port?: number;
+  secure?: boolean;
+  auth?: { user?: string; pass?: string };
+  tls?: { servername?: string };
+};
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const nodemailer = require('nodemailer') as { createTransport(cfg: TransportConfig): MailTransporter };
 import { checkRateLimit } from '@/app/lib/rateLimit';
@@ -114,6 +120,11 @@ function createTransporter() {
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
+    },
+    // Some providers terminate SMTP on a branded hostname but present a
+    // certificate for their backend mail cluster instead.
+    tls: {
+      servername: process.env.SMTP_TLS_SERVERNAME ?? process.env.SMTP_HOST,
     },
   });
 }

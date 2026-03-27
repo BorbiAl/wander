@@ -1,10 +1,19 @@
 <div align="center">
 
+<img src="image.png" alt="HackTUES 12" width="400"/>
+
 # Wander
 
 **Discover authentic village experiences, matched to your personality.**
 
 *Travel with purpose. Leave a lasting impact.*
+
+---
+
+> **HackTUES 12** — *"Code to Care"* — themes: **Travel with Purpose** + **Beyond the City**
+> 50 hours · March 2026 · Team WanderGraph
+>
+> **Boyan** — Python + HMM Engine &nbsp;·&nbsp; **Boris** — C++ Graph Engine + REST Bridge &nbsp;·&nbsp; **Velina** — React + Next.js Frontend
 
 ---
 

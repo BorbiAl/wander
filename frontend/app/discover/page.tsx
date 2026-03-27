@@ -322,12 +322,12 @@ export default function DiscoverPage() {
                 {activeGroup ? `Scored for ${activeGroup.name} · Sorted by group fit` : 'Sorted by fit, cost, or community impact.'}
               </p>
             </div>
-            <div className="flex w-full md:w-auto gap-1 bg-[#E5E9DF]/70 p-1.5 sm:p-2 rounded-full border border-white/50 shadow-sm">
+            <div className="flex w-full md:w-auto overflow-x-auto gap-2 bg-[#E5E9DF]/70 p-1.5 sm:p-2 rounded-full border border-white/50 shadow-sm scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
               {(['match', 'price', 'cws'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSortBy(s)}
-                  className={`flex-1 md:flex-none text-[10px] sm:text-[11px] md:text-[13px] font-bold uppercase tracking-widest px-2 sm:px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all whitespace-nowrap ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
+                  className={`shrink-0 text-[11px] sm:text-[12px] md:text-[13px] font-bold uppercase tracking-widest px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
                 >
                   {s === 'match' ? 'Best match' : s === 'price' ? 'Lowest price' : 'Impact first'}
                 </button>

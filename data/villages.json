@@ -9044,5 +9044,608 @@
       "Local art exhibitions"
     ],
     "nearby": []
+  },
+  {
+    "id": "us_bell_buckle",
+    "name": "Bell Buckle",
+    "country": "United States",
+    "lat": 35.5398,
+    "lng": -86.3778,
+    "region": "Bedford County, Tennessee",
+    "settlement_type": "village",
+    "population": 430,
+    "cws": 75,
+    "description": "Bell Buckle is a quaint historic village known for its well-preserved Victorian architecture and vibrant community spirit. It annually hosts the famous RC-MoonPie Festival, drawing visitors from across the region.",
+    "traditions": [
+      "RC-MoonPie Festival",
+      "antique shopping",
+      "local craft fairs",
+      "Front Porch Concert Series"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_leipers_fork",
+    "name": "Leiper's Fork",
+    "country": "United States",
+    "lat": 35.8953,
+    "lng": -87.1064,
+    "region": "Williamson County, Tennessee",
+    "settlement_type": "village",
+    "population": 650,
+    "cws": 78,
+    "description": "Leiper's Fork is a picturesque rural village famed for its preserved 19th-century charm, thriving arts scene, and equestrian lifestyle. It's a peaceful haven that attracts artists and musicians seeking inspiration.",
+    "traditions": [
+      "local art shows",
+      "equestrian events",
+      "front porch gatherings",
+      "live music performances"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_lynchburg",
+    "name": "Lynchburg",
+    "country": "United States",
+    "lat": 35.2831,
+    "lng": -86.3725,
+    "region": "Moore County, Tennessee",
+    "settlement_type": "village",
+    "population": 646,
+    "cws": 70,
+    "description": "Lynchburg is a small, historic Southern town famous as the home of the Jack Daniel's Distillery, despite being located in a dry county. Its charming town square and friendly atmosphere attract visitors year-round.",
+    "traditions": [
+      "Jack Daniel's Distillery tours",
+      "Southern hospitality",
+      "annual community events on the square",
+      "local craftsmanship"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_rugby",
+    "name": "Rugby",
+    "country": "United States",
+    "lat": 36.4172,
+    "lng": -84.5828,
+    "region": "Morgan County, Tennessee",
+    "settlement_type": "village",
+    "population": 77,
+    "cws": 65,
+    "description": "Historic Rugby is a preserved Victorian village founded as a utopian colony by English author Thomas Hughes in 1880. It offers a unique glimpse into 19th-century life with its authentic buildings and serene natural surroundings.",
+    "traditions": [
+      "Victorian preservation efforts",
+      "guided historic tours",
+      "Cumberland Plateau hiking",
+      "annual fall music & craft festival"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "us_santa_fe",
+    "name": "Santa Fe",
+    "country": "United States",
+    "lat": 35.7001,
+    "lng": -87.2797,
+    "region": "Maury County, Tennessee",
+    "settlement_type": "village",
+    "population": 776,
+    "cws": 68,
+    "description": "Santa Fe is a quiet, unincorporated agricultural community rooted in the rural traditions of Middle Tennessee. It offers a glimpse into authentic country living with its farmlands and local community events.",
+    "traditions": [
+      "community potlucks",
+      "local farming practices",
+      "small-town church gatherings",
+      "seasonal harvest festivals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "at_duernstein",
+    "name": "Dürnstein",
+    "country": "Austria",
+    "lat": 48.3939,
+    "lng": 15.5186,
+    "region": "Krems-Land (Lower Austria)",
+    "settlement_type": "village",
+    "population": 850,
+    "cws": 78,
+    "description": "A picturesque village in the Wachau Valley known for its medieval castle ruins overlooking the Danube River and its renowned apricot orchards and vineyards. Its charming cobblestone streets and historic architecture draw visitors globally.",
+    "traditions": [
+      "Wachau Apricot Festival",
+      "Danube boat parades",
+      "St. Stephen's Day Heuriger",
+      "Local wine harvest festivals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "at_gumpoldskirchen",
+    "name": "Gumpoldskirchen",
+    "country": "Austria",
+    "lat": 48.016,
+    "lng": 16.273,
+    "region": "Mödling (Lower Austria)",
+    "settlement_type": "village",
+    "population": 4000,
+    "cws": 75,
+    "description": "This historic wine-growing village is nestled in the Thermenregion south of Vienna, famous for its unique Zierfandler and Rotgipfler grape varieties. It boasts numerous traditional 'Heuriger' wine taverns and a charming village square.",
+    "traditions": [
+      "Heuriger culture",
+      "Wine tasting events",
+      "St. Jacob's Church Festival",
+      "Local wine cellars open days"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "at_rust",
+    "name": "Rust",
+    "country": "Austria",
+    "lat": 47.801,
+    "lng": 16.666,
+    "region": "Burgenland (Neusiedl am See District)",
+    "settlement_type": "village",
+    "population": 1900,
+    "cws": 79,
+    "description": "Known as the 'City of Storks,' this free city on the western shore of Lake Neusiedl is famous for its elegant Renaissance houses, outstanding noble sweet wines, and white storks nesting on rooftops.",
+    "traditions": [
+      "Stork nesting season celebration",
+      "Rusten wine festivals",
+      "Lake Neusiedl sailing regattas",
+      "Traditional Burgenland cuisine"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "at_moerbischamsee",
+    "name": "Mörbisch am See",
+    "country": "Austria",
+    "lat": 47.747,
+    "lng": 16.685,
+    "region": "Burgenland (Eisenstadt-Umgebung District)",
+    "settlement_type": "village",
+    "population": 2200,
+    "cws": 76,
+    "description": "A vibrant village on Lake Neusiedl, internationally renowned for its annual Seefestspiele Mörbisch, a floating operetta festival. Its charming 'Hofgassen' (courtyard alleys) offer glimpses into traditional Burgenland life and wine culture.",
+    "traditions": [
+      "Seefestspiele Mörbisch (Lake Festival)",
+      "Local wine harvest",
+      "St. Martin's Day festivities",
+      "Traditional Burgenland architecture"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "at_weissenkircheninderwachau",
+    "name": "Weissenkirchen in der Wachau",
+    "country": "Austria",
+    "lat": 48.389,
+    "lng": 15.467,
+    "region": "Krems-Land (Lower Austria)",
+    "settlement_type": "village",
+    "population": 1450,
+    "cws": 77,
+    "description": "A prominent wine village in the heart of the Wachau Valley, distinguished by its fortified church and historic vintner houses. It's especially celebrated for its Grüner Veltliner and Riesling wines from steep terraces.",
+    "traditions": [
+      "Apricot Blossom Festival",
+      "Federspiel wine tasting",
+      "Local harvest thanksgiving",
+      "Traditional Danube fishing practices"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ma_skhirat_plage",
+    "name": "Skhirat Plage",
+    "country": "Morocco",
+    "lat": 33.8961,
+    "lng": -7.0267,
+    "region": "Skhirate-Témara Prefecture",
+    "settlement_type": "village",
+    "population": 8000,
+    "cws": 65,
+    "description": "A vibrant coastal village known for its sandy beaches and fresh seafood. It offers a blend of local fishing culture and a relaxed seaside atmosphere popular with families.",
+    "traditions": [
+      "Seafood preparation",
+      "Beachside picnicking",
+      "Traditional fishing"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ma_sidi_bouknadel",
+    "name": "Sidi Bouknadel",
+    "country": "Morocco",
+    "lat": 34.12,
+    "lng": -6.705,
+    "region": "Salé Prefecture",
+    "settlement_type": "village",
+    "population": 12000,
+    "cws": 72,
+    "description": "Situated near the tranquil Bouknadel Forest and bird reserve, this village is renowned for its natural beauty and artisanal crafts. Locals often engage in traditional pottery and woodwork.",
+    "traditions": [
+      "Pottery making",
+      "Bird watching",
+      "Forest foraging"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ma_rommani",
+    "name": "Rommani",
+    "country": "Morocco",
+    "lat": 33.606,
+    "lng": -6.467,
+    "region": "Khémisset Province",
+    "settlement_type": "village",
+    "population": 15000,
+    "cws": 58,
+    "description": "A bustling agricultural hub in the heart of the Moroccan countryside, famous for its olive groves and cereal fields. Its weekly souk is a vibrant gathering place for farmers and traders.",
+    "traditions": [
+      "Weekly souk (market)",
+      "Olive harvesting",
+      "Cereal farming",
+      "Traditional bread baking"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ma_ain_el_aouda",
+    "name": "Aïn el Aouda",
+    "country": "Morocco",
+    "lat": 33.722,
+    "lng": -6.822,
+    "region": "Skhirate-Témara Prefecture",
+    "settlement_type": "village",
+    "population": 20000,
+    "cws": 68,
+    "description": "Nestled in the Zaër region, this rural village is characterized by its rich agricultural lands and strong community ties. It's known for its horse-breeding traditions and vibrant local festivals.",
+    "traditions": [
+      "Horse breeding",
+      "Folk music and dance",
+      "Agricultural festivals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ma_moulay_bousselham",
+    "name": "Moulay Bousselham",
+    "country": "Morocco",
+    "lat": 34.873,
+    "lng": -6.27,
+    "region": "Kenitra Province",
+    "settlement_type": "village",
+    "population": 7000,
+    "cws": 75,
+    "description": "A picturesque fishing village situated at the mouth of the Merja Zerga lagoon, a renowned bird sanctuary. Its unique ecosystem supports a traditional fishing community and attracts nature lovers.",
+    "traditions": [
+      "Lagoon fishing",
+      "Bird watching tours",
+      "Shellfish gathering",
+      "Traditional boat building"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "tr_yesiloz",
+    "name": "Yesiloz",
+    "country": "Turkey",
+    "lat": 40.105,
+    "lng": 33.385,
+    "region": "Ankara Province, Kalecik",
+    "settlement_type": "village",
+    "population": 450,
+    "cws": 68,
+    "description": "Known for its fertile lands, Yeşilöz is a traditional agricultural village especially recognized for its vineyards and the production of Kalecik Karası wine grapes. Its stone houses and slow pace of life offer a glimpse into rural Anatolian traditions.",
+    "traditions": [
+      "Vineyard cultivation",
+      "Kalecik Karası wine production",
+      "Traditional Anatolian cuisine",
+      "Local harvest festivals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "tr_urus",
+    "name": "Urus",
+    "country": "Turkey",
+    "lat": 39.96,
+    "lng": 32.14,
+    "region": "Ankara Province, Ayas",
+    "settlement_type": "village",
+    "population": 600,
+    "cws": 72,
+    "description": "Uruş is a village rich in history and traditional architecture, featuring old wooden and adobe houses. It benefits from the nearby Ayaş thermal springs, influencing local health and wellness practices.",
+    "traditions": [
+      "Traditional house building",
+      "Thermal spring remedies",
+      "Local carpet weaving",
+      "Seasonal village fairs"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "tr_cirpanli",
+    "name": "Cirpanli",
+    "country": "Turkey",
+    "lat": 40.045,
+    "lng": 31.965,
+    "region": "Ankara Province, Gudul",
+    "settlement_type": "village",
+    "population": 300,
+    "cws": 55,
+    "description": "Nestled in a more mountainous and forested part of Ankara province, Çırpanlı is a quiet village where traditional forestry and animal husbandry define daily life. Its pristine natural surroundings are a key part of its appeal.",
+    "traditions": [
+      "Forest product gathering",
+      "Sheep herding",
+      "Local honey production",
+      "Storytelling by the fireplace"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "tr_akcakavak",
+    "name": "Akcakavak",
+    "country": "Turkey",
+    "lat": 40.175,
+    "lng": 31.92,
+    "region": "Ankara Province, Beypazari",
+    "settlement_type": "village",
+    "population": 550,
+    "cws": 60,
+    "description": "Akçakavak is a typical Anatolian village surrounded by fertile fields, closely tied to the agricultural heritage and culinary traditions of the Beypazarı region. It's known for its fresh produce and serene rural atmosphere.",
+    "traditions": [
+      "Vegetable farming",
+      "Traditional Beypazarı food preparation",
+      "Local crafts",
+      "Community gatherings"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "tr_karalar",
+    "name": "Karalar",
+    "country": "Turkey",
+    "lat": 40.24,
+    "lng": 33.01,
+    "region": "Ankara Province, Cubuk",
+    "settlement_type": "village",
+    "population": 700,
+    "cws": 75,
+    "description": "Karalar is a vibrant agricultural village in the Çubuk Valley, famous for its cucumbers and a key contributor to the region's renowned pickle industry. The village life revolves around farming cycles and communal food preparation.",
+    "traditions": [
+      "Cucumber farming",
+      "Pickle making (turşu)",
+      "Traditional Turkish breakfast culture",
+      "Local folk dances during harvest"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ua_demydiv",
+    "name": "Demydiv",
+    "country": "Ukraine",
+    "lat": 50.8119,
+    "lng": 30.2972,
+    "region": "Vyshhorod Raion, Kyiv Oblast",
+    "settlement_type": "village",
+    "population": 1200,
+    "cws": 68,
+    "description": "A picturesque village nestled by the Irpin River and the Kyiv Sea, Demydiv is known for its serene natural landscapes and a strong sense of community, with residents often engaging in fishing and traditional crafts.",
+    "traditions": [
+      "River fishing",
+      "Embroidery",
+      "Ukrainian folk singing",
+      "Beekeeping"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ua_stari_petrivtsi",
+    "name": "Stari Petrivtsi",
+    "country": "Ukraine",
+    "lat": 50.6272,
+    "lng": 30.4072,
+    "region": "Vyshhorod Raion, Kyiv Oblast",
+    "settlement_type": "village",
+    "population": 3200,
+    "cws": 72,
+    "description": "Overlooking the Kyiv Reservoir, Stari Petrivtsi is a village with a rich history, known for its strategic location and the nearby Mezhyhirya residence, which draws visitors interested in its recent past and scenic views.",
+    "traditions": [
+      "Water sports (on reservoir)",
+      "Traditional Easter egg painting (Pysanky)",
+      "Historical reenactments",
+      "Local gardening"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ua_horenka",
+    "name": "Horenka",
+    "country": "Ukraine",
+    "lat": 50.5408,
+    "lng": 30.3014,
+    "region": "Bucha Raion, Kyiv Oblast",
+    "settlement_type": "village",
+    "population": 5500,
+    "cws": 65,
+    "description": "Situated on the northwestern outskirts of Kyiv, Horenka offers a blend of suburban convenience and rural tranquility, characterized by its green spaces and a community that values both modern amenities and traditional Ukrainian hospitality.",
+    "traditions": [
+      "Mushroom foraging",
+      "Summer solstice celebrations (Ivan Kupala)",
+      "Home brewing",
+      "Local folklore storytelling"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ua_velyka_dymerka",
+    "name": "Velyka Dymerka",
+    "country": "Ukraine",
+    "lat": 50.5975,
+    "lng": 30.9389,
+    "region": "Brovary Raion, Kyiv Oblast",
+    "settlement_type": "village",
+    "population": 9500,
+    "cws": 58,
+    "description": "Velyka Dymerka is a dynamic village to the northeast of Kyiv, known for its fertile agricultural lands and a vibrant community that prides itself on preserving traditional farming practices and local culinary heritage.",
+    "traditions": [
+      "Agricultural fairs",
+      "Wheat weaving",
+      "Traditional bread baking",
+      "Folk dance ensembles"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "ua_kozyn",
+    "name": "Kozyn",
+    "country": "Ukraine",
+    "lat": 50.1989,
+    "lng": 30.6872,
+    "region": "Obukhiv Raion, Kyiv Oblast",
+    "settlement_type": "village",
+    "population": 3100,
+    "cws": 75,
+    "description": "A scenic village situated on the Kozynka River south of Kyiv, Kozyn is famous for its picturesque landscapes, popular recreational areas, and a community that enjoys water activities and traditional rural leisure.",
+    "traditions": [
+      "River boating",
+      "Herbal medicine gathering",
+      "Ceramic craftsmanship",
+      "Traditional Sviata Vecherya (Christmas Eve) preparations"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "sn_popenguine",
+    "name": "Popenguine-Serere",
+    "country": "Senegal",
+    "lat": 14.542,
+    "lng": -17.202,
+    "region": "Thiès Region",
+    "settlement_type": "village",
+    "population": 7500,
+    "cws": 68,
+    "description": "A significant Catholic pilgrimage site with a basilica, Popenguine is also known for its protected nature reserve boasting diverse birdlife and a pristine coastline. The village offers a blend of spiritual tranquility and natural beauty, reflecting its strong cultural heritage.",
+    "traditions": [
+      "Annual Marian pilgrimage",
+      "Traditional Serer wrestling",
+      "Pirogue fishing rituals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "sn_toubab_dialaw",
+    "name": "Toubab Dialaw",
+    "country": "Senegal",
+    "lat": 14.536,
+    "lng": -17.166,
+    "region": "Thiès Region",
+    "settlement_type": "village",
+    "population": 4800,
+    "cws": 75,
+    "description": "An artistic fishing village renowned for its vibrant cultural scene, unique architectural styles, and a community dedicated to arts, music, and dance. Many structures are built from natural materials, giving the village a distinct, organic aesthetic.",
+    "traditions": [
+      "Artistic workshops (sculpture, painting)",
+      "Traditional drumming and dance performances",
+      "Daily fish market rituals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "sn_yenne",
+    "name": "Yenne",
+    "country": "Senegal",
+    "lat": 14.57,
+    "lng": -17.24,
+    "region": "Dakar Region",
+    "settlement_type": "village",
+    "population": 6200,
+    "cws": 61,
+    "description": "A bustling fishing village known for its energetic daily fish market, where colorful pirogues return with fresh catches, and its long stretch of sandy beach popular with locals. It offers an authentic glimpse into Senegalese coastal life and vibrant communal activity.",
+    "traditions": [
+      "Pirogue fishing and net mending",
+      "Traditional fish drying techniques",
+      "Local wrestling matches on the beach",
+      "Communal cooking and sharing meals"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "sn_fadiouth",
+    "name": "Fadiouth",
+    "country": "Senegal",
+    "lat": 14.167,
+    "lng": -16.828,
+    "region": "Thiès Region",
+    "settlement_type": "village",
+    "population": 9000,
+    "cws": 72,
+    "description": "A unique shell island village connected by a wooden bridge, famous for its entirely shell-covered ground and the peaceful coexistence of Christian and Muslim communities, sharing a unique shell cemetery. This remarkable village stands as a testament to interfaith harmony and environmental adaptation.",
+    "traditions": [
+      "Shell art and crafts production",
+      "Interfaith dialogue festivals",
+      "Traditional Sereer rites",
+      "Oyster harvesting"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "sn_gandigal",
+    "name": "Gandigal",
+    "country": "Senegal",
+    "lat": 14.46,
+    "lng": -17.1,
+    "region": "Thiès Region",
+    "settlement_type": "village",
+    "population": 3500,
+    "cws": 65,
+    "description": "A tranquil coastal village offering a serene escape, known for its beautiful, less crowded beaches and its focus on sustainable tourism and traditional fishing. It provides a peaceful retreat with a strong connection to local customs and the natural environment.",
+    "traditions": [
+      "Traditional fishing techniques with pirogues",
+      "Communal beachfront activities",
+      "Local handicraft production",
+      "Evenings of oral storytelling"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "sn_la_somone",
+    "name": "La Somone",
+    "country": "Senegal",
+    "lat": 14.52,
+    "lng": -17.1,
+    "region": "Thiès Region",
+    "settlement_type": "village",
+    "population": 10000,
+    "cws": 68,
+    "description": "La Somone is famous for its picturesque lagoon and protected nature reserve, attracting both birds and tourists. The village thrives on fishing and eco-tourism, maintaining a relaxed coastal atmosphere.",
+    "traditions": [
+      "Lagoon fishing",
+      "Birdwatching and conservation efforts",
+      "Artisan crafts (shellwork)",
+      "Local drumming circles"
+    ],
+    "nearby": []
+  },
+  {
+    "id": "sn_ngaparou",
+    "name": "Ngaparou",
+    "country": "Senegal",
+    "lat": 14.5,
+    "lng": -17.07,
+    "region": "Thiès Region",
+    "settlement_type": "village",
+    "population": 12000,
+    "cws": 67,
+    "description": "Ngaparou is a vibrant coastal village characterized by its bustling fish market and growing tourism infrastructure. Despite development, it retains a strong connection to its fishing roots and community traditions.",
+    "traditions": [
+      "Daily fish landing and market",
+      "Wolof drumming and dance",
+      "Traditional wrestling (Laamb)",
+      "Seafood preparation techniques"
+    ],
+    "nearby": []
   }
 ]

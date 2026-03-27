@@ -47,11 +47,11 @@ export function SwipeCard({
           onClick={() => handleChoice('left')}
           className={`relative flex h-[420px] w-[260px] cursor-pointer flex-col overflow-hidden rounded-[24px] border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
         >
-          <div className="h-[304px] w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: leftColor }}>
+          <div className="flex h-[304px] w-full items-center justify-center bg-gradient-to-b from-white/45 to-white/20 p-3" style={{ backgroundColor: leftColor }}>
             <img
               src={leftSrc}
               alt={leftDescription}
-              className="h-full w-full object-contain"
+              className="h-[278px] w-[230px] rounded-[18px] border border-[#D6DCCD]/70 object-contain bg-white/40"
               style={{
                 objectPosition: leftImageObjectPosition ?? 'center',
               }}
@@ -77,11 +77,11 @@ export function SwipeCard({
           onClick={() => handleChoice('right')}
           className={`relative flex h-[420px] w-[260px] cursor-pointer flex-col overflow-hidden rounded-[24px] border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/55 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-colors`}
         >
-          <div className="h-[304px] w-full bg-gradient-to-b from-white/45 to-white/20" style={{ backgroundColor: rightColor }}>
+          <div className="flex h-[304px] w-full items-center justify-center bg-gradient-to-b from-white/45 to-white/20 p-3" style={{ backgroundColor: rightColor }}>
             <img
               src={rightSrc}
               alt={rightDescription}
-              className="h-full w-full object-contain"
+              className="h-[278px] w-[230px] rounded-[18px] border border-[#D6DCCD]/70 object-contain bg-white/40"
               style={{
                 objectPosition: rightImageObjectPosition ?? 'center',
               }}

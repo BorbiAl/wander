@@ -259,7 +259,7 @@ export const SWIPE_QUESTIONS: SwipeQuestion[] = [
     ...question,
     leftImageSrc: getSwipeImagePath(leftImageIndex),
     rightImageSrc: getSwipeImagePath(rightImageIndex),
-    leftImageObjectPosition: question.id === 'IP-06' ? 'center 64%' : undefined,
+    leftImageObjectPosition: question.id === 'IP-06' ? 'center 36%' : undefined,
     rightImageObjectPosition: question.id === 'IP-12' ? '72% center' : undefined,
   };
 });

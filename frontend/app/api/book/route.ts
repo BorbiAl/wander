@@ -126,7 +126,7 @@ export async function POST(req: Request) {
       };
       const cws = Number(village.cws) || 50;
       const cwsDelta = Math.max(1, Math.round(Number(amount) * 0.3));
-      const points = Math.floor(10 + (100 - cws) * 0.5);
+      const points = 10 + Math.max(0, Math.floor((100 - cws) / 5));
 
       return NextResponse.json({
         bookingId: 'bkg_' + Math.random().toString(36).slice(2, 8),

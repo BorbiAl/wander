@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`}>
       <head>
-        <link rel="preload" as="image" href="https://unpkg.com/three-globe/example/img/earth-day.jpg" />
+        <link rel="preload" as="image" href="/assets/earth-day-hd.jpg" />
       </head>
       <body suppressHydrationWarning className="bg-[#E5E9DF] text-[#1A2E1C] font-sans antialiased min-h-screen flex flex-col selection:bg-[#0B6E2A]/20">
         <AppProvider>

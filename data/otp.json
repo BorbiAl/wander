@@ -1,6 +1,10 @@
 {
-  "boyan.b.georgiev@gmail.com": {
-    "code": "864365",
-    "expiresAt": 1774565844816
+  "test@test.com": {
+    "code": "561546",
+    "expiresAt": 1774567376645
+  },
+  "office@bvsqr.eu": {
+    "code": "354113",
+    "expiresAt": 1774567970428
   }
 }

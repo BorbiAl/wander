@@ -113,7 +113,7 @@ export default function MarketingGlobe({
             ref={globeRef}
             width={width}
             height={height}
-            globeImageUrl="/assets/earth-day-hd.jpg"
+            globeImageUrl="/assets/earth-day.jpg"
             backgroundColor="rgba(0,0,0,0)"
             atmosphereColor="#0B6E2A"
             atmosphereAltitude={0.15}

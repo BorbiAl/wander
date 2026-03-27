@@ -77,6 +77,19 @@ type CountryHubStats = {
   sampleLng: number;
 };
 
+const DEST_CACHE_KEY = 'wander_dest_nodes_v1';
+const DEST_CACHE_TTL = 5 * 60 * 1000;
+
+function readDestCache(): DestinationNode[] | null {
+  try {
+    const raw = localStorage.getItem(DEST_CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw) as { data: DestinationNode[]; ts: number };
+    if (Date.now() - ts < DEST_CACHE_TTL && Array.isArray(data) && data.length > 0) return data;
+    return null;
+  } catch { return null; }
+}
+
 function buildCityHubNodes(villageStats?: Map<string, CountryHubStats>): DestinationNode[] {
   if (villageStats && villageStats.size > 0) {
     return Array.from(villageStats.entries())
@@ -132,19 +145,18 @@ export default function LandingPage() {
 
   useEffect(() => {
     setMounted(true);
+    router.prefetch('/onboarding');
+
+    // Serve cached nodes instantly so the globe renders on first paint.
+    const cached = readDestCache();
+    if (cached) setDestinations(cached);
 
     async function loadDestinations() {
       try {
         const res = await fetch('/api/villages');
-        if (!res.ok) {
-          setDestinations([]);
-          return;
-        }
+        if (!res.ok) return;
         const villages: ApiVillage[] = await res.json();
-        if (!Array.isArray(villages) || villages.length === 0) {
-          setDestinations([]);
-          return;
-        }
+        if (!Array.isArray(villages) || villages.length === 0) return;
 
         const byCountry = new Map<string, CountryHubStats>();
         for (const v of villages) {
@@ -163,15 +175,17 @@ export default function LandingPage() {
         }
 
         const nodes = buildCityHubNodes(byCountry);
-        if (nodes.length > 0) setDestinations(nodes);
-        else setDestinations([]);
-      } catch {
-        setDestinations([]);
-      }
+        if (nodes.length > 0) {
+          setDestinations(nodes);
+          try {
+            localStorage.setItem(DEST_CACHE_KEY, JSON.stringify({ data: nodes, ts: Date.now() }));
+          } catch {}
+        }
+      } catch {}
     }
 
     loadDestinations();
-  }, []);
+  }, [router]);
 
   // Fetch active group info for the banner
   useEffect(() => {
@@ -190,12 +204,12 @@ export default function LandingPage() {
       ? destinations.filter((s) => s.name.toLowerCase().includes(input.toLowerCase()))
       : destinations;
 
-  const handleSubmit = async (loc: string) => {
+  const handleSubmit = (loc: string) => {
     const trimmed = loc.trim();
     if (!trimmed) return;
     setInput(trimmed);
     setShowSuggestions(false);
-    await seedLocation(trimmed);
+    void seedLocation(trimmed); // fire-and-forget — onboarding page handles seedStatus
     router.push('/onboarding');
   };
 
@@ -205,13 +219,14 @@ export default function LandingPage() {
     if (!trimmed) return;
     setInput(trimmed);
     setShowSuggestions(false);
-    // Update destination on the group backend + seed locally
+    // Update destination on group backend first (needed before group page loads),
+    // then navigate — seed runs in parallel.
     await fetch(`/api/groups/${activeGroupId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ destination: trimmed }),
     });
-    await seedLocation(trimmed);
+    void seedLocation(trimmed);
     router.push(`/group/${activeGroupId}`);
   };
 

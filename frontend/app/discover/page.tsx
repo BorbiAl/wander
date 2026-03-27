@@ -28,8 +28,8 @@ export default function DiscoverPage() {
   const [freeSightseeing, setFreeSightseeing] = useState<Experience[]>([]);
   const [activeVolunteering, setActiveVolunteering] = useState<Experience[]>([]);
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
-  const [villages, setVillages] = useState<Village[]>(VILLAGES);
-  const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
+  const [villages, setVillages] = useState<Village[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
   const [activeGroup, setActiveGroupData] = useState<StoredGroup | null>(null);
 
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function DiscoverPage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 md:py-8 lg:px-8 pb-28 md:pb-16">
         <div className="flex flex-col xl:grid xl:grid-cols-12 gap-5 sm:gap-6">
           <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 transition-all hover:bg-white/80">
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
+            <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div className="min-w-0 max-w-[34rem]">
                 <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-1">Discover</p>
                 <h1 className="font-bold tracking-tighter text-3xl sm:text-4xl md:text-5xl text-[#1A2E1C] leading-[1.1]">Start with the globe</h1>
@@ -202,7 +202,7 @@ export default function DiscoverPage() {
                   Pick a village first. The trip list updates instantly to match that place.
                 </p>
               </div>
-              <div className="grid w-full grid-cols-2 gap-2 sm:gap-3 xl:w-auto xl:min-w-[18rem] xl:self-center">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:w-fit xl:min-w-[18rem] xl:self-center">
                 <button
                   onClick={handleSurprisePick}
                   className="inline-flex min-h-[48px] items-center justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"

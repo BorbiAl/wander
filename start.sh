@@ -12,6 +12,6 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 ) &
 (
   cd "$ROOT/frontend"
-  npm run build && npm run start
+  npm run dev
 ) &
 wait

@@ -194,24 +194,24 @@ export default function DiscoverPage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 md:py-8 lg:px-8 pb-28 md:pb-16">
         <div className="flex flex-col xl:grid xl:grid-cols-12 gap-5 sm:gap-6">
           <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 transition-all hover:bg-white/80">
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
-              <div className="min-w-0 max-w-[34rem]">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
                 <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-1">Discover</p>
                 <h1 className="font-bold tracking-tighter text-3xl sm:text-4xl md:text-5xl text-[#1A2E1C] leading-[1.1]">Start with the globe</h1>
                 <p className="text-[#1A2E1C]/65 text-[14px] sm:text-[15px] mt-2 max-w-[46ch] font-medium leading-relaxed">
                   Pick a village first. The trip list updates instantly to match that place.
                 </p>
               </div>
-              <div className="grid w-full grid-cols-2 gap-2 sm:gap-3 xl:w-auto xl:min-w-[18rem] xl:self-center">
+              <div className="flex flex-row gap-2 sm:gap-3 w-full md:w-auto mt-2 md:mt-0">
                 <button
                   onClick={handleSurprisePick}
-                  className="inline-flex min-h-[48px] items-center justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"
+                  className="flex-1 md:flex-none justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"
                 >
                   Surprise me
                 </button>
                 <button
                   onClick={() => setSelectedVillageId(null)}
-                  className="inline-flex min-h-[48px] items-center justify-center bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-white transition-all shadow-sm active:scale-95"
+                  className="flex-1 md:flex-none justify-center bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-white transition-all shadow-sm active:scale-95"
                 >
                   Clear focus
                 </button>
@@ -322,12 +322,12 @@ export default function DiscoverPage() {
                 {activeGroup ? `Scored for ${activeGroup.name} · Sorted by group fit` : 'Sorted by fit, cost, or community impact.'}
               </p>
             </div>
-            <div className="grid grid-cols-3 w-full md:flex md:w-auto bg-[#E5E9DF]/70 p-1.5 rounded-2xl md:rounded-full border border-white/50 shadow-sm gap-1">
+            <div className="flex w-full md:w-auto gap-1 bg-[#E5E9DF]/70 p-1.5 sm:p-2 rounded-full border border-white/50 shadow-sm">
               {(['match', 'price', 'cws'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSortBy(s)}
-                  className={`text-[10px] sm:text-[11px] md:text-[13px] font-bold uppercase tracking-widest py-2 px-1 md:px-5 md:py-2.5 rounded-xl md:rounded-full transition-all text-center whitespace-nowrap ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C]' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
+                  className={`flex-1 md:flex-none text-[10px] sm:text-[11px] md:text-[13px] font-bold uppercase tracking-widest px-2 sm:px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all whitespace-nowrap ${sortBy === s ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[#1A2E1C] scale-105' : 'text-[#1A2E1C]/50 hover:text-[#1A2E1C]/80'}`}
                 >
                   {s === 'match' ? 'Best match' : s === 'price' ? 'Lowest price' : 'Impact first'}
                 </button>

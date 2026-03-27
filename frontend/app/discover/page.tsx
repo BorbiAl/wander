@@ -180,8 +180,15 @@ export default function DiscoverPage() {
 
   const handleSurprisePick = () => {
     if (villages.length === 0) return;
-    const randomVillage = villages[Math.floor(Math.random() * villages.length)];
+    const pool = selectedVillageId && villages.length > 1
+      ? villages.filter(v => v.id !== selectedVillageId)
+      : villages;
+    const randomVillage = pool[Math.floor(Math.random() * pool.length)];
     setSelectedVillageId(randomVillage.id);
+  };
+
+  const handleClearFocus = () => {
+    setSelectedVillageId(null);
   };
 
   return (
@@ -194,7 +201,7 @@ export default function DiscoverPage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 md:py-8 lg:px-8 pb-28 md:pb-16">
         <div className="flex flex-col xl:grid xl:grid-cols-12 gap-5 sm:gap-6">
           <section className="xl:col-span-7 bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 transition-all hover:bg-white/80">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-4">
               <div>
                 <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] font-bold text-[#0B6E2A] mb-1">Discover</p>
                 <h1 className="font-bold tracking-tighter text-3xl sm:text-4xl md:text-5xl text-[#1A2E1C] leading-[1.1]">Start with the globe</h1>
@@ -202,16 +209,19 @@ export default function DiscoverPage() {
                   Pick a village first. The trip list updates instantly to match that place.
                 </p>
               </div>
-              <div className="flex flex-row gap-2 sm:gap-3 w-full md:w-auto mt-2 md:mt-0">
+              <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                 <button
+                  type="button"
                   onClick={handleSurprisePick}
-                  className="flex-1 md:flex-none justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"
+                  className="inline-flex w-full sm:w-auto items-center justify-center bg-[#0B6E2A] text-white text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-[#095A22] transition-all shadow-md active:scale-95 shadow-[#0B6E2A]/20"
                 >
                   Surprise me
                 </button>
                 <button
-                  onClick={() => setSelectedVillageId(null)}
-                  className="flex-1 md:flex-none justify-center bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-white transition-all shadow-sm active:scale-95"
+                  type="button"
+                  onClick={handleClearFocus}
+                  disabled={!selectedVillageId}
+                  className="inline-flex w-full sm:w-auto items-center justify-center bg-white/60 backdrop-blur-md border border-[#D6DCCD] text-[#1A2E1C] text-[13px] font-semibold tracking-wide rounded-full px-5 py-3 hover:bg-white transition-all shadow-sm active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Clear focus
                 </button>
@@ -241,6 +251,8 @@ export default function DiscoverPage() {
               <VillageMap
                 onSelectVillage={v => setSelectedVillageId(v.id)}
                 seedStatus={seedStatus}
+                villages={villages}
+                selectedVillageId={selectedVillageId}
               />
             </div>
           </section>

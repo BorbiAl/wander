@@ -12,8 +12,6 @@ export type SwipeQuestion = {
   rightImageSrc?: string;
   leftImageObjectPosition?: string;
   rightImageObjectPosition?: string;
-  leftImageZoom?: number;
-  rightImageZoom?: number;
   leftColor: string;
   rightColor: string;
   leftState: string;
@@ -261,8 +259,7 @@ export const SWIPE_QUESTIONS: SwipeQuestion[] = [
     ...question,
     leftImageSrc: getSwipeImagePath(leftImageIndex),
     rightImageSrc: getSwipeImagePath(rightImageIndex),
-    leftImageObjectPosition: question.id === 'IP-06' ? 'center 28%' : undefined,
-    leftImageZoom: question.id === 'IP-06' ? 1.12 : undefined,
+    leftImageObjectPosition: question.id === 'IP-06' ? 'center 30%' : undefined,
     rightImageObjectPosition: question.id === 'IP-12' ? '72% center' : undefined,
   };
 });

@@ -15,7 +15,7 @@ function imageAssetUrl(description: string): string {
 }
 
 export function SwipeCard({ 
-  leftLabel, leftDescription, rightLabel, rightDescription, leftImageSrc, rightImageSrc, leftImageObjectPosition, rightImageObjectPosition, leftImageZoom, rightImageZoom, leftColor, rightColor, onChoice 
+  leftLabel, leftDescription, rightLabel, rightDescription, leftImageSrc, rightImageSrc, leftImageObjectPosition, rightImageObjectPosition, leftColor, rightColor, onChoice 
 }: { 
   leftLabel: string,
   leftDescription: string,
@@ -25,13 +25,15 @@ export function SwipeCard({
   rightImageSrc?: string,
   leftImageObjectPosition?: string,
   rightImageObjectPosition?: string,
-  leftImageZoom?: number,
-  rightImageZoom?: number,
   leftColor: string,
   rightColor: string,
   onChoice: (side: 'left'|'right') => void
 }) {
   const [chosen, setChosen] = useState<'left'|'right'|null>(null);
+  const leftSrc = leftImageSrc ?? imageAssetUrl(leftDescription);
+  const rightSrc = rightImageSrc ?? imageAssetUrl(rightDescription);
+  const leftIsIp11 = leftSrc.endsWith('/assets/IP-11.jpg');
+  const rightIsIp11 = rightSrc.endsWith('/assets/IP-11.jpg');
 
   const handleChoice = (side: 'left'|'right') => {
     setChosen(side);
@@ -47,20 +49,18 @@ export function SwipeCard({
           onClick={() => handleChoice('left')}
           className={`w-[190px] h-[320px] rounded-card border ${chosen === 'left' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/50 overflow-hidden cursor-pointer relative transition-colors`}
         >
-          <div className="h-[210px] w-full" style={{ backgroundColor: leftColor }}>
+          <div className="h-full w-full" style={{ backgroundColor: leftColor }}>
             <img
-              src={leftImageSrc ?? imageAssetUrl(leftDescription)}
+              src={leftSrc}
               alt={leftDescription}
               className="h-full w-full object-cover"
               style={{
-                objectPosition: leftImageObjectPosition ?? 'center',
-                transform: `scale(${leftImageZoom ?? 1})`,
-                transformOrigin: 'center',
+                objectPosition: leftIsIp11 ? 'top' : (leftImageObjectPosition ?? 'center'),
               }}
               loading="lazy"
             />
           </div>
-          <div className="h-[110px] p-3 flex flex-col items-center justify-center text-center">
+          <div className="absolute inset-x-0 bottom-0 z-10 min-h-[96px] bg-[#E5E9DF]/95 backdrop-blur-sm border-t border-[#D6DCCD]/70 p-3 flex flex-col items-center justify-center text-center">
             <span className="font-sans text-sm font-medium text-[#1A2E1C]">{leftLabel}</span>
             <span className="font-sans text-[11px] text-[#1A2E1C]/65 mt-2 leading-snug">{leftDescription}</span>
           </div>
@@ -76,20 +76,18 @@ export function SwipeCard({
           onClick={() => handleChoice('right')}
           className={`w-[190px] h-[320px] rounded-card border ${chosen === 'right' ? 'border-[#0B6E2A]' : 'border-[#D6DCCD] hover:border-[#0B6E2A]'} bg-[#E5E9DF]/50 overflow-hidden cursor-pointer relative transition-colors`}
         >
-          <div className="h-[210px] w-full" style={{ backgroundColor: rightColor }}>
+          <div className="h-full w-full" style={{ backgroundColor: rightColor }}>
             <img
-              src={rightImageSrc ?? imageAssetUrl(rightDescription)}
+              src={rightSrc}
               alt={rightDescription}
               className="h-full w-full object-cover"
               style={{
-                objectPosition: rightImageObjectPosition ?? 'center',
-                transform: `scale(${rightImageZoom ?? 1})`,
-                transformOrigin: 'center',
+                objectPosition: rightIsIp11 ? 'top' : (rightImageObjectPosition ?? 'center'),
               }}
               loading="lazy"
             />
           </div>
-          <div className="h-[110px] p-3 flex flex-col items-center justify-center text-center">
+          <div className="absolute inset-x-0 bottom-0 z-10 min-h-[96px] bg-[#E5E9DF]/95 backdrop-blur-sm border-t border-[#D6DCCD]/70 p-3 flex flex-col items-center justify-center text-center">
             <span className="font-sans text-sm font-medium text-[#1A2E1C]">{rightLabel}</span>
             <span className="font-sans text-[11px] text-[#1A2E1C]/65 mt-2 leading-snug">{rightDescription}</span>
           </div>

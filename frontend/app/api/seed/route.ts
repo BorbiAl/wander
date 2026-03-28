@@ -448,7 +448,7 @@ async function generateExperiencesWithGemini(
       'REQUIRED: every village must have at least one experience of EACH of these three categories:',
       '  1. A bookable activity (type: craft, hike, homestay, ceremony, cooking, or folklore)',
       '  2. A free sightseeing landmark (type: sightseeing, price_eur: 0, isFree: true) — a real viewpoint, temple, monument, historic site, or public square in that village',
-      '  3. An active volunteering event (type: volunteer, isActive: true, startDate: ISO date within the next 3 months, endDate: ISO date, spotsTotal: 4-20, spotsRemaining: 1 to spotsTotal, price_eur: 0)',
+      `  3. An active volunteering event (type: volunteer, isActive: true, startDate: ISO date between ${new Date().toISOString().slice(0,10)} and ${new Date(Date.now()+90*24*60*60*1000).toISOString().slice(0,10)}, endDate: ISO date 1-5 days after startDate, spotsTotal: 4-20, spotsRemaining: 1 to spotsTotal, price_eur: 0)`,
       'Each item must include: id, village_id, title, type, price_eur, duration_h, description, personality_weights, host_id, host_name, host_bio, host_rating.',
       'Use village_id exactly from the provided list. personality_weights must be 5 numbers summing to 1.0.',
       'Make descriptions specific to the actual culture, geography, and traditions of the country and village.',
@@ -507,6 +507,29 @@ function buildHosts(experiences: SourceExperience[], villages: SourceVillage[]):
   }
 
   return Array.from(hostMap.values());
+}
+
+/** If a volunteer experience has a startDate in the past, shift it to a future date. */
+function repairVolunteerDates(experiences: SourceExperience[]): SourceExperience[] {
+  const now = Date.now();
+  return experiences.map((e) => {
+    if (e.type !== 'volunteer' || !e.startDate) return e;
+    const start = new Date(e.startDate).getTime();
+    if (start >= now) return e; // already in the future
+
+    // Spread events across 2–10 weeks from today
+    const offsetDays = 14 + Math.floor(Math.random() * 56);
+    const newStart = new Date(now + offsetDays * 24 * 60 * 60 * 1000);
+    const durationDays = e.endDate
+      ? Math.max(1, Math.round((new Date(e.endDate).getTime() - start) / (24 * 60 * 60 * 1000)))
+      : 3;
+    const newEnd = new Date(newStart.getTime() + durationDays * 24 * 60 * 60 * 1000);
+    return {
+      ...e,
+      startDate: newStart.toISOString().slice(0, 10),
+      endDate: newEnd.toISOString().slice(0, 10),
+    };
+  });
 }
 
 function collectTraditions(villages: SourceVillage[]): string[] {
@@ -578,6 +601,7 @@ export async function GET(req: Request) {
       decision = 'Loaded villages from local JSON datasets, but no matching experiences were found in JSON for the selected region.';
     }
 
+    selectedExperiences = repairVolunteerDates(selectedExperiences);
     const hosts = buildHosts(selectedExperiences, selectedVillages);
 
     return NextResponse.json({

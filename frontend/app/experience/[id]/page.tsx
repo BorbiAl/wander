@@ -10,7 +10,7 @@ import { Host, PERSONALITIES, PERSONALITY_INFO, VILLAGES, patchDataArrays } from
 export default function ExperiencePage() {
   const { id } = useParams();
   const router = useRouter();
-  const { personality, addBooking, addPoints, addBadge, bookings, seedStatus, destination } = useApp();
+  const { personality, addBooking, addPoints, addBadge, bookings, seedStatus, destination, userId } = useApp();
   const [showModal, setShowModal] = useState(false);
   const [bookingState, setBookingState] = useState<'date'|'confirm'|'loading'|'success'>('date');
   const [bookingResult, setBookingResult] = useState<any>(null);
@@ -287,8 +287,9 @@ export default function ExperiencePage() {
       const res = await fetch('/api/book', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ experienceId: exp.id, amount: exp.price })
+        body: JSON.stringify({ experienceId: exp.id, amount: Math.max(1, exp.price), userId })
       });
+      if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
 
       setBookingResult(data);
@@ -309,7 +310,7 @@ export default function ExperiencePage() {
         eventsBefore: [],
         eventsAfter: [],
       });
-      addPoints(data.points);
+      addPoints(Number(data.points) || 0);
 
       // Check badges
       if (village.cws < 45) addBadge('Pioneer');
@@ -465,7 +466,7 @@ export default function ExperiencePage() {
       )}
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 md:sticky md:bottom-auto bg-[#080808F0] md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-t border-[rgba(0,0,0,0.05)] md:border-none p-4 md:p-0 z-40 flex justify-between items-center">
+      <div className="fixed bottom-0 left-0 right-0 md:sticky md:bottom-auto bg-[#080808F0] md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-t border-[rgba(0,0,0,0.05)] md:border-none px-4 pt-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:p-0 z-40 flex justify-between items-center">
         {exp.type === 'sightseeing' ? (
           <>
             <div className="flex items-baseline gap-1">

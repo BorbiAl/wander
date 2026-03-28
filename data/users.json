@@ -1,7 +1,9 @@
 [
   {
     "eventsBefore": [],
-    "eventsAfter": [],
+    "eventsAfter": [
+      "2026-04-01"
+    ],
     "email": "boyan.b.georgiev@gmail.com",
     "passwordHash": "bc1861260f139b23fd144b3ebffee77a569b14fbaafb716fd8538c86a9f01381",
     "userId": "user_wdemww",
@@ -96,100 +98,138 @@
         18,
         22,
         23,
-        22
+        22,
+        0,
+        3,
+        4,
+        7,
+        8,
+        11,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        22,
+        21,
+        22,
+        0,
+        3,
+        4,
+        7,
+        8,
+        11,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        22,
+        23,
+        22,
+        0,
+        3,
+        4,
+        7,
+        8,
+        11,
+        13,
+        15,
+        20,
+        18,
+        18,
+        18,
+        22,
+        22,
+        22,
+        1,
+        2,
+        4,
+        7,
+        8,
+        10,
+        14,
+        15,
+        18,
+        18,
+        19,
+        18,
+        23,
+        22,
+        23,
+        1,
+        2,
+        4,
+        9,
+        11,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        22,
+        21,
+        22,
+        0,
+        2,
+        6,
+        8,
+        11,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        22,
+        21,
+        22,
+        0,
+        3,
+        4,
+        7,
+        8,
+        11,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        22,
+        21,
+        22,
+        0,
+        3,
+        4,
+        7,
+        8,
+        11,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        21,
+        22,
+        23
       ],
       "personality": {
         "vector": [
-          0.2785714285714285,
-          0.07499999999999998,
-          0.18690476190476188,
-          0.3392857142857143,
-          0.12023809523809524
+          0.26663888485815856,
+          0.08508094210259014,
+          0.19465405753464407,
+          0.32179836574040493,
+          0.13182774976420225
         ],
         "dominantIndex": 3,
         "dominant": "Achiever"
       },
       "matches": [
-        {
-          "id": "bt_talo_homestay_1",
-          "villageId": "bt_talo",
-          "name": "Rural Farm Homestay & Local Life",
-          "type": "homestay",
-          "price": 60,
-          "duration": "24h",
-          "hostId": "h_talo_5",
-          "description": "Stay with a local farming family in Talo, experiencing authentic rural Bhutanese life firsthand. Share meals prepared with fresh local produce, learn about their daily routines, and immerse yourself in the peaceful rhythms of village agriculture, including potato and rice cultivation.",
-          "personalityWeights": [
-            0.2,
-            0.1,
-            0.2,
-            0.4,
-            0.1
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.8691666666666666
-        },
-        {
-          "id": "bt_shapa_folklore_1",
-          "villageId": "bt_shapa",
-          "name": "Seasonal Festival Storytelling Evening",
-          "type": "folklore",
-          "price": 45,
-          "duration": "2h",
-          "hostId": "h_shapa_5",
-          "description": "Gather around a warm hearth in Shapa and listen to captivating folk stories and legends related to Bhutan's farming cycles and local seasonal festivals. This intimate storytelling session provides a deeper understanding of the village's traditions, beliefs, and agricultural rhythms.",
-          "personalityWeights": [
-            0.3,
-            0.05,
-            0.25,
-            0.3,
-            0.1
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.8674999999999999
-        },
-        {
-          "id": "bt_gaselo_folklore_1",
-          "villageId": "bt_gaselo",
-          "name": "Evening Folk Storytelling by the Hearth",
-          "type": "folklore",
-          "price": 35,
-          "duration": "2h",
-          "hostId": "h_gaselo_4",
-          "description": "Experience the enchanting tradition of folk storytelling in Gaselo. Gather around a traditional hearth with local villagers and listen to ancient tales, myths, and legends that have shaped the community's identity and passed down through generations. A cozy and culturally rich evening.",
-          "personalityWeights": [
-            0.3,
-            0.05,
-            0.25,
-            0.3,
-            0.1
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.8674999999999999
-        },
-        {
-          "id": "bt_pangrizampa_homestay_1",
-          "villageId": "bt_pangrizampa",
-          "name": "Homestay with a Traditional Healer Family",
-          "type": "homestay",
-          "price": 75,
-          "duration": "24h",
-          "hostId": "h_pangrizampa_4",
-          "description": "Experience authentic Bhutanese family life by staying with a family renowned for their traditional healing practices. Learn about their daily routines, share home-cooked meals, and gain insights into their use of medicinal herbs and ancient remedies, passed down through generations in Pangri Zampa.",
-          "personalityWeights": [
-            0.25,
-            0.1,
-            0.2,
-            0.35,
-            0.1
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.8585416666666665
-        },
         {
           "id": "exp_mura_003",
           "villageId": "es_mura",
@@ -211,7 +251,7 @@
           "spotsRemaining": 3,
           "startDate": "2024-11-05T09:00:00Z",
           "endDate": "2024-11-07T15:00:00Z",
-          "score": 0.8575
+          "score": 0.8383462100050787
         },
         {
           "id": "exp_rupit_003",
@@ -234,27 +274,7 @@
           "spotsRemaining": 5,
           "startDate": "2024-09-20T08:30:00Z",
           "endDate": "2024-09-22T14:30:00Z",
-          "score": 0.8575
-        },
-        {
-          "id": "bt_lobesa_homestay_1",
-          "villageId": "bt_lobesa",
-          "name": "Homestay in a Rice Farming Family",
-          "type": "homestay",
-          "price": 65,
-          "duration": "24h",
-          "hostId": "h_lobesa_5",
-          "description": "Spend a night with a warm and welcoming rice farming family in Lobesa. Participate in their daily chores, share meals, and gain an intimate understanding of their lives, deeply connected to the cycles of rice cultivation and traditional Bhutanese hospitality.",
-          "personalityWeights": [
-            0.15,
-            0.1,
-            0.2,
-            0.4,
-            0.15
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.8414583333333334
+          "score": 0.8383462100050787
         },
         {
           "id": "exp_cadaques_003",
@@ -277,7 +297,7 @@
           "spotsRemaining": 10,
           "startDate": "2024-09-15T09:00:00Z",
           "endDate": "2024-09-17T13:00:00Z",
-          "score": 0.8379166666666668
+          "score": 0.8191709148044694
         },
         {
           "id": "exp_sitges_003",
@@ -300,7 +320,7 @@
           "spotsRemaining": 8,
           "startDate": "2024-10-10T09:00:00Z",
           "endDate": "2024-10-12T13:00:00Z",
-          "score": 0.8379166666666668
+          "score": 0.8191709148044694
         },
         {
           "id": "exp_cardona_003",
@@ -323,27 +343,7 @@
           "spotsRemaining": 6,
           "startDate": "2024-10-25T09:00:00Z",
           "endDate": "2024-10-27T14:00:00Z",
-          "score": 0.8335416666666666
-        },
-        {
-          "id": "bt_shapa_homestay_1",
-          "villageId": "bt_shapa",
-          "name": "Weaver's Family Homestay",
-          "type": "homestay",
-          "price": 70,
-          "duration": "24h",
-          "hostId": "h_shapa_4",
-          "description": "Spend a night with a family of traditional weavers in Shapa. Experience their daily life, learn about the weaving process firsthand, and enjoy home-cooked meals. This homestay offers a unique opportunity to appreciate the skill and dedication behind Bhutan's renowned textiles.",
-          "personalityWeights": [
-            0.2,
-            0.1,
-            0.2,
-            0.35,
-            0.15
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.8308333333333333
+          "score": 0.8175681738826817
         },
         {
           "id": "bt_shapa_sightseeing_1",
@@ -363,67 +363,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.8158333333333333
-        },
-        {
-          "id": "bt_talo_ceremony_1",
-          "villageId": "bt_talo",
-          "name": "Participate in Morning Buddhist Chanting",
-          "type": "ceremony",
-          "price": 35,
-          "duration": "1.5h",
-          "hostId": "h_talo_4",
-          "description": "Experience the peaceful serenity of Talo Goemba by participating in the monks' morning Buddhist chanting session. Observe the sacred rituals and immerse yourself in the meditative atmosphere, gaining a deeper appreciation for Bhutanese spiritual practices. A truly humbling and inspiring experience.",
-          "personalityWeights": [
-            0.25,
-            0.05,
-            0.45,
-            0.2,
-            0.05
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.8097916666666667
-        },
-        {
-          "id": "bt_pangrizampa_folklore_1",
-          "villageId": "bt_pangrizampa",
-          "name": "Traditional Bhutanese Astrological Reading",
-          "type": "folklore",
-          "price": 85,
-          "duration": "2h",
-          "hostId": "h_pangrizampa_1",
-          "description": "Delve into the ancient wisdom of Bhutanese astrology at Pangri Zampa, where monks have practiced this art for centuries. Receive a personalized reading based on Buddhist cosmology, gaining insights into your life's path, future prospects, and spiritual well-being. This unique experience connects you with the deep spiritual traditions rooted in this sacred valley.",
-          "personalityWeights": [
-            0.4,
-            0.05,
-            0.35,
-            0.1,
-            0.1
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.7929166666666666
-        },
-        {
-          "id": "bt_lobesa_ceremony_1",
-          "villageId": "bt_lobesa",
-          "name": "Traditional Fertility Blessing at Chimi Lhakhang",
-          "type": "ceremony",
-          "price": 50,
-          "duration": "2.5h",
-          "hostId": "h_lobesa_1",
-          "description": "Journey through scenic rice fields to Chimi Lhakhang, the 'Temple of Fertility', famous for its unique phallic symbols and blessings. Participate in a traditional blessing ritual conducted by a monk, seeking fertility for couples or general well-being for all, a profound cultural experience deeply rooted in Bhutanese folklore.",
-          "personalityWeights": [
-            0.2,
-            0.1,
-            0.35,
-            0.25,
-            0.1
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.7891666666666666
+          "score": 0.8048403059928899
         },
         {
           "id": "bt_gaselo_sightseeing_1",
@@ -443,50 +383,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7891666666666666
-        },
-        {
-          "id": "bt_pangrizampa_cooking_1",
-          "villageId": "bt_pangrizampa",
-          "name": "Bhutanese Butter Tea & Momos Workshop",
-          "type": "cooking",
-          "price": 55,
-          "duration": "3h",
-          "hostId": "h_pangrizampa_5",
-          "description": "Learn the art of preparing traditional Bhutanese butter tea (Suja) and delicious momos (dumplings) from a local expert in Pangri Zampa. This hands-on workshop provides a taste of Bhutanese culinary customs and a chance to enjoy your own creations.",
-          "personalityWeights": [
-            0.2,
-            0.15,
-            0.15,
-            0.3,
-            0.2
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.7729166666666667
-        },
-        {
-          "id": "bt_pangrizampa_volunteer_1",
-          "villageId": "bt_pangrizampa",
-          "name": "Monastery Garden & Grounds Upkeep",
-          "type": "volunteer",
-          "price": 0,
-          "duration": "5h",
-          "hostId": "h_pangrizampa_3",
-          "description": "Contribute to the upkeep of the sacred gardens and grounds of Pangri Zampa Lhakhang. Participate in gardening, light cleaning, and maintenance tasks, helping to preserve the pristine environment for monks and visitors alike. This is a unique opportunity to engage respectfully with the monastic community.",
-          "personalityWeights": [
-            0.15,
-            0.25,
-            0.15,
-            0.35,
-            0.1
-          ],
-          "isFree": true,
-          "isActive": true,
-          "spotsRemaining": 7,
-          "startDate": "2024-07-10T09:00:00Z",
-          "endDate": "2024-07-15T17:00:00Z",
-          "score": 0.7677083333333332
+          "score": 0.7825900520568817
         },
         {
           "id": "bt_pangrizampa_sightseeing_1",
@@ -506,7 +403,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7625
+          "score": 0.7603397981208735
         },
         {
           "id": "bt_talo_sightseeing_1",
@@ -526,7 +423,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7625
+          "score": 0.7603397981208735
         },
         {
           "id": "th_exp_021",
@@ -549,7 +446,7 @@
           "spotsRemaining": 5,
           "startDate": "2024-09-10",
           "endDate": "2024-09-10",
-          "score": 0.7625
+          "score": 0.7603397981208735
         },
         {
           "id": "th_exp_015",
@@ -572,7 +469,7 @@
           "spotsRemaining": 8,
           "startDate": "2024-08-22",
           "endDate": "2024-08-22",
-          "score": 0.7625
+          "score": 0.7603397981208735
         },
         {
           "id": "th_exp_009",
@@ -595,7 +492,7 @@
           "spotsRemaining": 7,
           "startDate": "2024-09-01",
           "endDate": "2024-09-01",
-          "score": 0.7625
+          "score": 0.7603397981208735
         },
         {
           "id": "th_exp_027",
@@ -618,7 +515,7 @@
           "spotsRemaining": 14,
           "startDate": "2024-08-05",
           "endDate": "2024-08-05",
-          "score": 0.7625
+          "score": 0.7603397981208735
         },
         {
           "id": "th_exp_003",
@@ -641,7 +538,30 @@
           "spotsRemaining": 10,
           "startDate": "2024-08-15",
           "endDate": "2024-08-15",
-          "score": 0.7625
+          "score": 0.7603397981208735
+        },
+        {
+          "id": "bt_pangrizampa_volunteer_1",
+          "villageId": "bt_pangrizampa",
+          "name": "Monastery Garden & Grounds Upkeep",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "5h",
+          "hostId": "h_pangrizampa_3",
+          "description": "Contribute to the upkeep of the sacred gardens and grounds of Pangri Zampa Lhakhang. Participate in gardening, light cleaning, and maintenance tasks, helping to preserve the pristine environment for monks and visitors alike. This is a unique opportunity to engage respectfully with the monastic community.",
+          "personalityWeights": [
+            0.15,
+            0.25,
+            0.15,
+            0.35,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 7,
+          "startDate": "2024-07-10T09:00:00Z",
+          "endDate": "2024-07-15T17:00:00Z",
+          "score": 0.7569673295454545
         },
         {
           "id": "bt_shapa_volunteer_1",
@@ -664,30 +584,7 @@
           "spotsRemaining": 4,
           "startDate": "2024-08-01T09:00:00Z",
           "endDate": "2024-08-05T17:00:00Z",
-          "score": 0.7606249999999999
-        },
-        {
-          "id": "bt_talo_volunteer_1",
-          "villageId": "bt_talo",
-          "name": "Terraced Rice Field Maintenance",
-          "type": "volunteer",
-          "price": 0,
-          "duration": "6h",
-          "hostId": "h_talo_3",
-          "description": "Join the resilient farmers of Talo in maintaining their iconic terraced rice fields. Depending on the season, you could be involved in planting seedlings, weeding, or assisting with the harvest. It's a hands-on way to understand local agriculture and contribute to the village's food security.",
-          "personalityWeights": [
-            0.1,
-            0.3,
-            0.1,
-            0.4,
-            0.1
-          ],
-          "isFree": true,
-          "isActive": true,
-          "spotsRemaining": 9,
-          "startDate": "2024-06-20T08:30:00Z",
-          "endDate": "2024-06-25T16:00:00Z",
-          "score": 0.7587499999999999
+          "score": 0.7538923708100559
         },
         {
           "id": "bt_lobesa_volunteer_1",
@@ -710,27 +607,30 @@
           "spotsRemaining": 6,
           "startDate": "2024-07-05T08:00:00Z",
           "endDate": "2024-07-10T16:00:00Z",
-          "score": 0.7587499999999999
+          "score": 0.7474449434992383
         },
         {
-          "id": "bt_gaselo_cooking_1",
-          "villageId": "bt_gaselo",
-          "name": "Traditional Potato Dishes Cooking Class",
-          "type": "cooking",
-          "price": 65,
-          "duration": "3.5h",
-          "hostId": "h_gaselo_5",
-          "description": "Discover the versatility of the potato in Bhutanese cuisine with a cooking class focused on traditional Gaselo potato dishes. Learn to prepare hearty and flavorful meals using locally grown potatoes, a staple of the village, and savor the unique tastes of authentic Bhutanese cooking.",
+          "id": "bt_talo_volunteer_1",
+          "villageId": "bt_talo",
+          "name": "Terraced Rice Field Maintenance",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "6h",
+          "hostId": "h_talo_3",
+          "description": "Join the resilient farmers of Talo in maintaining their iconic terraced rice fields. Depending on the season, you could be involved in planting seedlings, weeding, or assisting with the harvest. It's a hands-on way to understand local agriculture and contribute to the village's food security.",
           "personalityWeights": [
-            0.2,
             0.1,
-            0.15,
-            0.25,
-            0.3
+            0.3,
+            0.1,
+            0.4,
+            0.1
           ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.7424999999999999
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 9,
+          "startDate": "2024-06-20T08:30:00Z",
+          "endDate": "2024-06-25T16:00:00Z",
+          "score": 0.7474449434992383
         },
         {
           "id": "exp_rupit_002",
@@ -750,127 +650,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.735625
-        },
-        {
-          "id": "bt_lobesa_cooking_1",
-          "villageId": "bt_lobesa",
-          "name": "Bhutanese Farm-to-Table Cooking Class",
-          "type": "cooking",
-          "price": 75,
-          "duration": "4h",
-          "hostId": "h_lobesa_4",
-          "description": "Learn to prepare authentic Bhutanese dishes using fresh, seasonal ingredients often sourced directly from the fields of Lobesa. This immersive cooking class focuses on traditional techniques and flavors, culminating in a delicious meal you've helped create, showcasing the region's culinary heritage.",
-          "personalityWeights": [
-            0.2,
-            0.15,
-            0.15,
-            0.25,
-            0.25
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.7345833333333334
-        },
-        {
-          "id": "bt_lobesa_sightseeing_1",
-          "villageId": "bt_lobesa",
-          "name": "Chimi Lhakhang Temple Walk",
-          "type": "sightseeing",
-          "price": 0,
-          "duration": "1.5h",
-          "hostId": "h_lobesa_2",
-          "description": "Enjoy a pleasant walk through the vibrant rice paddies of Lobesa, leading to the renowned Chimi Lhakhang. This scenic approach allows you to soak in the rural beauty before reaching the temple, dedicated to the 'Divine Madman' Drukpa Kunley, and famous for its distinct artistic expressions.",
-          "personalityWeights": [
-            0.2,
-            0.2,
-            0.3,
-            0.2,
-            0.1
-          ],
-          "isFree": true,
-          "isActive": false,
-          "score": 0.7233333333333334
-        },
-        {
-          "id": "th_exp_024",
-          "villageId": "th_donhoilot",
-          "name": "Don Hoi Lot Fresh Seafood Market Visit",
-          "type": "sightseeing",
-          "price": 0,
-          "duration": "1.5h",
-          "hostId": "N/A",
-          "description": "Immerse yourself in the bustling atmosphere of Don Hoi Lot's local seafood market, where daily catches, especially razor clams, are sold fresh. Observe local commerce and taste regional delicacies straight from the sea.",
-          "personalityWeights": [
-            0.2,
-            0.2,
-            0.3,
-            0.2,
-            0.1
-          ],
-          "isFree": true,
-          "isActive": false,
-          "score": 0.7233333333333334
-        },
-        {
-          "id": "th_exp_006",
-          "villageId": "th_bangnamphueng",
-          "name": "Immerse in Bang Nam Phueng Weekend Floating Market",
-          "type": "sightseeing",
-          "price": 0,
-          "duration": "3h",
-          "hostId": "N/A",
-          "description": "Wander through the bustling Bang Nam Phueng Weekend Floating Market, sampling local street food, browsing handmade crafts, and experiencing the lively atmosphere of a traditional Thai market accessible by boat or bicycle.",
-          "personalityWeights": [
-            0.2,
-            0.2,
-            0.3,
-            0.2,
-            0.1
-          ],
-          "isFree": true,
-          "isActive": false,
-          "score": 0.7233333333333334
-        },
-        {
-          "id": "th_exp_030",
-          "villageId": "th_banmaimarket",
-          "name": "Admire Ban Mai Market's Historic Shophouses",
-          "type": "sightseeing",
-          "price": 0,
-          "duration": "2h",
-          "hostId": "N/A",
-          "description": "Wander through the charming lanes of Ban Mai Market, admiring the beautifully preserved century-old wooden shophouses that line the river, offering a glimpse into Thailand's trading heritage and architectural past.",
-          "personalityWeights": [
-            0.2,
-            0.2,
-            0.3,
-            0.2,
-            0.1
-          ],
-          "isFree": true,
-          "isActive": false,
-          "score": 0.7233333333333334
-        },
-        {
-          "id": "th_exp_014",
-          "villageId": "th_amphawa",
-          "name": "Stroll Through Amphawa Evening Floating Market",
-          "type": "sightseeing",
-          "price": 0,
-          "duration": "3h",
-          "hostId": "N/A",
-          "description": "Experience the enchanting Amphawa Evening Floating Market. Wander along the canal, savor fresh seafood grilled on boats, browse local crafts, and soak in the vibrant, nostalgic atmosphere as the sun sets over the Mae Klong River.",
-          "personalityWeights": [
-            0.2,
-            0.2,
-            0.3,
-            0.2,
-            0.1
-          ],
-          "isFree": true,
-          "isActive": false,
-          "score": 0.7233333333333334
+          "score": 0.7317726399822244
         },
         {
           "id": "exp_cardona_002",
@@ -890,7 +670,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7220833333333333
+          "score": 0.7244115509141695
         },
         {
           "id": "exp_mura_002",
@@ -910,7 +690,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7220833333333333
+          "score": 0.7244115509141695
         },
         {
           "id": "exp_sitges_002",
@@ -930,7 +710,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7220833333333333
+          "score": 0.7244115509141695
         },
         {
           "id": "exp_cadaques_002",
@@ -950,7 +730,251 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7220833333333333
+          "score": 0.7244115509141695
+        },
+        {
+          "id": "edge-colombia_guarinocito-to-colombia_puerto-bogota",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito to Puerto Bogota community route",
+          "type": "sightseeing",
+          "price": 16,
+          "duration": "4h",
+          "hostId": "host-edge-colombia_guarinocito",
+          "description": "Cross-village route between Guarinocito and Puerto Bogota focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7234426136363636
+        },
+        {
+          "id": "edge-colombia_la-sierra-to-colombia_padilla",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra to Padilla community route",
+          "type": "sightseeing",
+          "price": 11,
+          "duration": "6h",
+          "hostId": "host-edge-colombia_la-sierra",
+          "description": "Cross-village route between La Sierra and Padilla focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7234426136363636
+        },
+        {
+          "id": "edge-colombia_padilla-to-colombia_puerto-bogota",
+          "villageId": "colombia_padilla",
+          "name": "Padilla to Puerto Bogota community route",
+          "type": "sightseeing",
+          "price": 17,
+          "duration": "5h",
+          "hostId": "host-edge-colombia_padilla",
+          "description": "Cross-village route between Padilla and Puerto Bogota focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7234426136363636
+        },
+        {
+          "id": "th_exp_024",
+          "villageId": "th_donhoilot",
+          "name": "Don Hoi Lot Fresh Seafood Market Visit",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "N/A",
+          "description": "Immerse yourself in the bustling atmosphere of Don Hoi Lot's local seafood market, where daily catches, especially razor clams, are sold fresh. Observe local commerce and taste regional delicacies straight from the sea.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7219892077196546
+        },
+        {
+          "id": "th_exp_006",
+          "villageId": "th_bangnamphueng",
+          "name": "Immerse in Bang Nam Phueng Weekend Floating Market",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "3h",
+          "hostId": "N/A",
+          "description": "Wander through the bustling Bang Nam Phueng Weekend Floating Market, sampling local street food, browsing handmade crafts, and experiencing the lively atmosphere of a traditional Thai market accessible by boat or bicycle.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7219892077196546
+        },
+        {
+          "id": "bt_lobesa_sightseeing_1",
+          "villageId": "bt_lobesa",
+          "name": "Chimi Lhakhang Temple Walk",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "h_lobesa_2",
+          "description": "Enjoy a pleasant walk through the vibrant rice paddies of Lobesa, leading to the renowned Chimi Lhakhang. This scenic approach allows you to soak in the rural beauty before reaching the temple, dedicated to the 'Divine Madman' Drukpa Kunley, and famous for its distinct artistic expressions.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7219892077196546
+        },
+        {
+          "id": "th_exp_030",
+          "villageId": "th_banmaimarket",
+          "name": "Admire Ban Mai Market's Historic Shophouses",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "N/A",
+          "description": "Wander through the charming lanes of Ban Mai Market, admiring the beautifully preserved century-old wooden shophouses that line the river, offering a glimpse into Thailand's trading heritage and architectural past.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7219892077196546
+        },
+        {
+          "id": "th_exp_014",
+          "villageId": "th_amphawa",
+          "name": "Stroll Through Amphawa Evening Floating Market",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "3h",
+          "hostId": "N/A",
+          "description": "Experience the enchanting Amphawa Evening Floating Market. Wander along the canal, savor fresh seafood grilled on boats, browse local crafts, and soak in the vibrant, nostalgic atmosphere as the sun sets over the Mae Klong River.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7219892077196546
+        },
+        {
+          "id": "exp-colombia_guarinocito-culture",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: farm-to-table cooking studio",
+          "type": "craft",
+          "price": 27,
+          "duration": "3h",
+          "hostId": "host-colombia_guarinocito-a",
+          "description": "Hands-on farm-to-table cooking session led by local practitioners in Guarinocito, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7207446387760286
+        },
+        {
+          "id": "exp-colombia_la-sierra-culture",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: farm-to-table cooking studio",
+          "type": "craft",
+          "price": 27,
+          "duration": "2h",
+          "hostId": "host-colombia_la-sierra-a",
+          "description": "Hands-on farm-to-table cooking session led by local practitioners in La Sierra, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7207446387760286
+        },
+        {
+          "id": "exp-colombia_boqueron-culture",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: village storytelling studio",
+          "type": "craft",
+          "price": 18,
+          "duration": "3h",
+          "hostId": "host-colombia_boqueron-a",
+          "description": "Hands-on village storytelling session led by local practitioners in Boqueron, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7207446387760286
+        },
+        {
+          "id": "exp-colombia_puerto-bogota-culture",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: farm-to-table cooking studio",
+          "type": "craft",
+          "price": 19,
+          "duration": "4h",
+          "hostId": "host-colombia_puerto-bogota-a",
+          "description": "Hands-on farm-to-table cooking session led by local practitioners in Puerto Bogota, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7207446387760286
+        },
+        {
+          "id": "exp-colombia_padilla-culture",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: village storytelling studio",
+          "type": "craft",
+          "price": 26,
+          "duration": "2h",
+          "hostId": "host-colombia_padilla-a",
+          "description": "Hands-on village storytelling session led by local practitioners in Padilla, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.7207446387760286
         },
         {
           "id": "th_exp_018",
@@ -970,7 +994,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7179166666666665
+          "score": 0.7190447720924327
         },
         {
           "id": "th_exp_002",
@@ -990,7 +1014,97 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7179166666666665
+          "score": 0.7190447720924327
+        },
+        {
+          "id": "exp-colombia_guarinocito-landscape",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: traditional weaving and ridge walk",
+          "type": "hike",
+          "price": 25,
+          "duration": "4h",
+          "hostId": "host-colombia_guarinocito-b",
+          "description": "Guided landscape walk around Guarinocito combining traditional weaving, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.717539156932453
+        },
+        {
+          "id": "exp-colombia_la-sierra-landscape",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: traditional weaving and ridge walk",
+          "type": "hike",
+          "price": 21,
+          "duration": "4h",
+          "hostId": "host-colombia_la-sierra-b",
+          "description": "Guided landscape walk around La Sierra combining traditional weaving, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.717539156932453
+        },
+        {
+          "id": "exp-colombia_boqueron-landscape",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: farm-to-table cooking and ridge walk",
+          "type": "hike",
+          "price": 20,
+          "duration": "3h",
+          "hostId": "host-colombia_boqueron-b",
+          "description": "Guided landscape walk around Boqueron combining farm-to-table cooking, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.717539156932453
+        },
+        {
+          "id": "exp-colombia_puerto-bogota-landscape",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: traditional weaving and ridge walk",
+          "type": "hike",
+          "price": 17,
+          "duration": "4h",
+          "hostId": "host-colombia_puerto-bogota-b",
+          "description": "Guided landscape walk around Puerto Bogota combining traditional weaving, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.717539156932453
+        },
+        {
+          "id": "exp-colombia_padilla-landscape",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: farm-to-table cooking and ridge walk",
+          "type": "hike",
+          "price": 14,
+          "duration": "3h",
+          "hostId": "host-colombia_padilla-b",
+          "description": "Guided landscape walk around Padilla combining farm-to-table cooking, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.717539156932453
         },
         {
           "id": "bt_gaselo_volunteer_1",
@@ -1013,27 +1127,7 @@
           "spotsRemaining": 10,
           "startDate": "2024-07-20T08:00:00Z",
           "endDate": "2024-07-25T16:00:00Z",
-          "score": 0.7124999999999999
-        },
-        {
-          "id": "bt_shapa_craft_1",
-          "villageId": "bt_shapa",
-          "name": "Traditional Bhutanese Weaving Workshop",
-          "type": "craft",
-          "price": 95,
-          "duration": "4.5h",
-          "hostId": "h_shapa_1",
-          "description": "Immerse yourself in the exquisite art of Bhutanese weaving in Shapa, a village renowned for its textile traditions. Learn the intricate techniques of the backstrap loom from a master weaver, using natural dyes and traditional patterns. You'll create a small woven piece to take home, connecting with a living cultural heritage.",
-          "personalityWeights": [
-            0.2,
-            0.1,
-            0.15,
-            0.2,
-            0.35
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.7041666666666667
+          "score": 0.7060193943626206
         },
         {
           "id": "th_exp_012",
@@ -1053,27 +1147,47 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.7020833333333333
+          "score": 0.7026833894108684
         },
         {
-          "id": "bt_talo_folklore_1",
-          "villageId": "bt_talo",
-          "name": "Traditional Bhutanese Archery Experience",
-          "type": "folklore",
-          "price": 65,
-          "duration": "2.5h",
-          "hostId": "h_talo_1",
-          "description": "Experience Bhutan's national sport, traditional archery, in the picturesque village of Talo. Receive a basic lesson, try your hand at the traditional bamboo bow and arrows, and observe local villagers practicing their skills. Learn about the cultural significance and celebratory rituals associated with this ancient sport.",
+          "id": "gen-colombia_boqueron-sightseeing-sight",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: heritage landmarks walk",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "host-colombia_boqueron-sight",
+          "description": "Self-guided or hosted walk through Boqueron's key heritage sites, public squares, and viewpoints. Free. Leaflet available from the village council house.",
           "personalityWeights": [
-            0.15,
-            0.35,
-            0.1,
+            0.22,
+            0.16,
             0.3,
-            0.1
+            0.14,
+            0.18
           ],
-          "isFree": false,
+          "isFree": true,
           "isActive": false,
-          "score": 0.7018749999999999
+          "score": 0.6980767108938547
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-sightseeing-sight",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: heritage landmarks walk",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "host-colombia_puerto-bogota-sight",
+          "description": "Self-guided or hosted walk through Puerto Bogota's key heritage sites, public squares, and viewpoints. Free. Leaflet available from the village council house.",
+          "personalityWeights": [
+            0.22,
+            0.16,
+            0.3,
+            0.14,
+            0.18
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.6980767108938547
         },
         {
           "id": "th_exp_026",
@@ -1093,7 +1207,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.6912499999999999
+          "score": 0.6967945181564245
         },
         {
           "id": "th_exp_020",
@@ -1113,7 +1227,7 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.6912499999999999
+          "score": 0.6967945181564245
         },
         {
           "id": "th_exp_008",
@@ -1133,164 +1247,1837 @@
           ],
           "isFree": true,
           "isActive": false,
-          "score": 0.6912499999999999
+          "score": 0.6967945181564245
         },
         {
-          "id": "bt_gaselo_craft_1",
-          "villageId": "bt_gaselo",
-          "name": "Gaselo Handicraft Creation Workshop",
-          "type": "craft",
-          "price": 70,
-          "duration": "3.5h",
-          "hostId": "h_gaselo_1",
-          "description": "Unleash your creativity in a hands-on handicraft workshop in Gaselo. Learn from local artisans to craft traditional items such as elegant bamboo baskets or small wooden bowls, utilizing techniques passed down through generations. This experience allows you to appreciate the skill and artistry inherent in Bhutanese village crafts.",
+          "id": "gen-colombia_guarinocito-volunteer-vol",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_guarinocito-vol",
+          "description": "Five-day hands-on volunteer programme in Guarinocito. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
           "personalityWeights": [
-            0.15,
             0.1,
-            0.15,
-            0.2,
-            0.4
+            0.22,
+            0.16,
+            0.14,
+            0.38
           ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.6764583333333334
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 6,
+          "startDate": "2026-05-10",
+          "endDate": "2026-05-14",
+          "score": 0.6008543137379381
         },
         {
-          "id": "bt_lobesa_hike_1",
-          "villageId": "bt_lobesa",
-          "name": "Paddy Field and Village Ramble",
-          "type": "hike",
-          "price": 35,
-          "duration": "2.5h",
-          "hostId": "h_lobesa_6",
-          "description": "Enjoy a leisurely ramble through the iconic terraced rice paddies and charming village pathways of Lobesa. This easy walk offers picturesque views, opportunities to observe local farming practices, and a glimpse into the serene rural life surrounding Chimi Lhakhang.",
+          "id": "gen-colombia_la-sierra-volunteer-vol",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_la-sierra-vol",
+          "description": "Five-day hands-on volunteer programme in La Sierra. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
           "personalityWeights": [
-            0.15,
-            0.3,
-            0.3,
-            0.15,
-            0.1
-          ],
-          "isFree": false,
-          "isActive": false,
-          "score": 0.6414583333333332
-        },
-        {
-          "id": "bt_pangrizampa_hike_1",
-          "villageId": "bt_pangrizampa",
-          "name": "Forest Trail to Local Hermitage",
-          "type": "hike",
-          "price": 40,
-          "duration": "4h",
-          "hostId": "h_pangrizampa_6",
-          "description": "Embark on a gentle hike through the lush forests surrounding Pangri Zampa, leading to a secluded local hermitage. This peaceful trail offers stunning views of the valley and an opportunity for quiet reflection amidst nature, away from the main monastery.",
-          "personalityWeights": [
-            0.2,
-            0.3,
-            0.3,
             0.1,
-            0.1
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 6,
+          "startDate": "2026-06-01",
+          "endDate": "2026-06-05",
+          "score": 0.6008543137379381
+        },
+        {
+          "id": "gen-colombia_boqueron-volunteer-vol",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_boqueron-vol",
+          "description": "Five-day hands-on volunteer programme in Boqueron. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 11,
+          "startDate": "2026-07-05",
+          "endDate": "2026-07-10",
+          "score": 0.6008543137379381
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-volunteer-vol",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_puerto-bogota-vol",
+          "description": "Five-day hands-on volunteer programme in Puerto Bogota. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 9,
+          "startDate": "2026-04-15",
+          "endDate": "2026-04-19",
+          "score": 0.6008543137379381
+        },
+        {
+          "id": "gen-colombia_padilla-volunteer-vol",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_padilla-vol",
+          "description": "Five-day hands-on volunteer programme in Padilla. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 13,
+          "startDate": "2026-05-10",
+          "endDate": "2026-05-14",
+          "score": 0.6008543137379381
+        },
+        {
+          "id": "gen-colombia_guarinocito-ceremony-cer",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_guarinocito-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Guarinocito that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
           ],
           "isFree": false,
           "isActive": false,
-          "score": 0.6308333333333332
+          "score": 0.57988625253936
         },
         {
-          "id": "bt_gaselo_hike_1",
-          "villageId": "bt_gaselo",
-          "name": "Gaselo Potato Farms & Forest Edge Walk",
-          "type": "hike",
+          "id": "gen-colombia_la-sierra-ceremony-cer",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_la-sierra-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in La Sierra that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.57988625253936
+        },
+        {
+          "id": "gen-colombia_boqueron-ceremony-cer",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_boqueron-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Boqueron that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.57988625253936
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-ceremony-cer",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_puerto-bogota-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Puerto Bogota that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.57988625253936
+        },
+        {
+          "id": "gen-colombia_padilla-ceremony-cer",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_padilla-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Padilla that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.57988625253936
+        },
+        {
+          "id": "gen-colombia_guarinocito-cooking-cook",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: open-fire kitchen",
+          "type": "cooking",
           "price": 30,
           "duration": "3h",
-          "hostId": "h_gaselo_6",
-          "description": "Take a refreshing walk along the edges of Gaselo's extensive potato farms, then venture into the surrounding peaceful forests. This gentle hike offers a wonderful blend of agricultural scenery and natural beauty, providing insights into both the village's economy and its pristine environment.",
+          "hostId": "host-colombia_guarinocito-cook",
+          "description": "Cook a traditional meal in Guarinocito using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
           "personalityWeights": [
-            0.15,
-            0.35,
-            0.3,
-            0.1,
-            0.1
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
           ],
           "isFree": false,
           "isActive": false,
-          "score": 0.5952083333333333
+          "score": 0.5772028631284916
         },
         {
-          "id": "bt_talo_hike_1",
-          "villageId": "bt_talo",
-          "name": "Hike to Talo Village Viewpoint",
-          "type": "hike",
+          "id": "gen-colombia_la-sierra-cooking-cook",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: open-fire kitchen",
+          "type": "cooking",
           "price": 30,
           "duration": "3h",
-          "hostId": "h_talo_6",
-          "description": "Embark on a scenic hike through the pristine landscapes around Talo, leading to a stunning viewpoint that offers unparalleled vistas of the entire village and its surrounding valleys. The trail winds through pine forests and offers glimpses of rural life.",
+          "hostId": "host-colombia_la-sierra-cook",
+          "description": "Cook a traditional meal in La Sierra using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
           "personalityWeights": [
-            0.15,
-            0.4,
-            0.25,
-            0.1,
-            0.1
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
           ],
           "isFree": false,
           "isActive": false,
-          "score": 0.5756249999999999
+          "score": 0.5772028631284916
         },
         {
-          "id": "bt_shapa_hike_1",
-          "villageId": "bt_shapa",
-          "name": "Shapa Valley Terraced Farm Hike",
-          "type": "hike",
-          "price": 40,
-          "duration": "4h",
-          "hostId": "h_shapa_6",
-          "description": "Embark on a picturesque hike through the terraced farmlands of Shapa Valley. This trail offers stunning views of the agricultural landscape, opportunities to observe local farming practices, and a peaceful immersion in the natural beauty and rural charm of the region.",
+          "id": "gen-colombia_boqueron-cooking-cook",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_boqueron-cook",
+          "description": "Cook a traditional meal in Boqueron using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
           "personalityWeights": [
-            0.15,
-            0.4,
-            0.25,
-            0.1,
-            0.1
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
           ],
           "isFree": false,
           "isActive": false,
-          "score": 0.5756249999999999
+          "score": 0.5772028631284916
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-cooking-cook",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_puerto-bogota-cook",
+          "description": "Cook a traditional meal in Puerto Bogota using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
+          "personalityWeights": [
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.5772028631284916
+        },
+        {
+          "id": "gen-colombia_padilla-cooking-cook",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_padilla-cook",
+          "description": "Cook a traditional meal in Padilla using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
+          "personalityWeights": [
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.5772028631284916
         }
       ],
-      "bookings": [],
+      "bookings": [
+        {
+          "id": "bkg_5d8ka5",
+          "experienceId": "gen-colombia_guarinocito-cooking-cook",
+          "villageName": "Guarinocito",
+          "experienceName": "Guarinocito: open-fire kitchen",
+          "hostName": "Guarinocito Kitchen Host",
+          "amount": 30,
+          "split": {
+            "host": 21,
+            "community": 4.5,
+            "culture": 3,
+            "platform": 1.5
+          },
+          "timestamp": 1774657520643,
+          "cwsDelta": 9,
+          "scheduledAt": "2026-04-01",
+          "eventsBefore": [],
+          "eventsAfter": [
+            "2026-04-01"
+          ]
+        }
+      ],
       "userId": "user_wdemww",
-      "points": 0,
-      "badges": [],
-      "totalImpact": 0,
-      "villagesVisited": [],
-      "destination": "Thimphu, Bhutan",
+      "points": 52,
+      "badges": [
+        "Pioneer"
+      ],
+      "totalImpact": 30,
+      "villagesVisited": [
+        "Guarinocito"
+      ],
+      "destination": "Bogota, Colombia",
       "friends": [],
-      "activeGroupId": "grp_mn7qxd5c3v8",
+      "activeGroupId": null,
       "email": "boyan.b.georgiev@gmail.com",
       "volunteerIntent": true
     },
     "createdAt": 1774559734224,
-    "updatedAt": 1774647553128
+    "updatedAt": 1774657523880
   },
   {
     "email": "bobial@abv.bg",
     "userId": "user_pdc35c",
     "state": {
-      "observations": [],
-      "personality": null,
-      "matches": [],
+      "observations": [
+        1,
+        2,
+        5,
+        6,
+        9,
+        11,
+        14,
+        17,
+        18,
+        20,
+        19,
+        19,
+        22,
+        21,
+        23,
+        0,
+        3,
+        4,
+        6,
+        9,
+        10,
+        14,
+        17,
+        18,
+        19,
+        19,
+        19,
+        23,
+        22,
+        22,
+        1,
+        2,
+        4,
+        7,
+        8,
+        10,
+        14,
+        17,
+        19,
+        18,
+        19,
+        18,
+        22,
+        23,
+        23,
+        1,
+        2,
+        5,
+        7,
+        8,
+        11,
+        14,
+        17,
+        18,
+        19,
+        19,
+        19,
+        21,
+        23,
+        23,
+        0,
+        3,
+        4,
+        6,
+        9,
+        10,
+        13,
+        16,
+        19,
+        18,
+        18,
+        18,
+        22,
+        23,
+        22,
+        1,
+        2,
+        5,
+        6,
+        8,
+        11,
+        14,
+        17,
+        20,
+        19,
+        19,
+        19,
+        23,
+        22,
+        22,
+        1,
+        2,
+        5,
+        6,
+        8,
+        11,
+        14,
+        15,
+        20,
+        19,
+        19,
+        19,
+        23,
+        21,
+        21
+      ],
+      "personality": {
+        "vector": [
+          0.19372912801484232,
+          0.1892207792207792,
+          0.22580705009276436,
+          0.199721706864564,
+          0.1915213358070501
+        ],
+        "dominantIndex": 2,
+        "dominant": "Restorer"
+      },
+      "matches": [
+        {
+          "id": "bt_pangrizampa_sightseeing_1",
+          "villageId": "bt_pangrizampa",
+          "name": "Pangri Zampa Lhakhang Monastery Grounds",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "h_pangrizampa_2",
+          "description": "Explore the serene and historically significant grounds of Pangri Zampa Lhakhang, one of Bhutan's oldest and most important monastic institutions. Admire its traditional architecture, ancient cypress trees, and tranquil atmosphere, a living testament to Bhutan's spiritual heritage. Walk freely around the exterior, observing the daily life of young monks.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7248051948051948
+        },
+        {
+          "id": "bt_talo_sightseeing_1",
+          "villageId": "bt_talo",
+          "name": "Talo Goemba & Panoramic Valley Views",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "h_talo_2",
+          "description": "Visit the majestic Talo Goemba (monastery), perched high above the Punakha Valley. Explore its beautiful grounds and admire the stunning panoramic views of the surrounding terraced fields and traditional farmhouses, iconic to the Talo region. This sacred site offers both spiritual tranquility and breathtaking vistas.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7248051948051948
+        },
+        {
+          "id": "th_exp_021",
+          "villageId": "th_donhoilot",
+          "name": "Don Hoi Lot Mangrove Nursery & Coastal Clean-up",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "3h",
+          "hostId": "th_host_014",
+          "description": "Contribute to coastal conservation efforts by working in a mangrove sapling nursery and participating in a clean-up of the Don Hoi Lot mudflats, protecting the delicate marine ecosystem crucial for local livelihoods.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 5,
+          "startDate": "2024-09-10",
+          "endDate": "2024-09-10",
+          "score": 0.7248051948051948
+        },
+        {
+          "id": "th_exp_015",
+          "villageId": "th_amphawa",
+          "name": "Amphawa Canal Bank Cleanup & Eco Workshop",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "4h",
+          "hostId": "th_host_010",
+          "description": "Help preserve the iconic Amphawa canals by participating in a bank cleanup. Learn about sustainable waste management from local initiatives and contribute to keeping this historic area beautiful and its waterways pristine for firefly habitats.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 8,
+          "startDate": "2024-08-22",
+          "endDate": "2024-08-22",
+          "score": 0.7248051948051948
+        },
+        {
+          "id": "th_exp_009",
+          "villageId": "th_kokret",
+          "name": "Ko Kret Canal Cleanup & Community Support",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "3.5h",
+          "hostId": "th_host_006",
+          "description": "Help maintain the natural beauty of Ko Kret by participating in a canal cleanup initiative. Engage with the local Mon community and contribute to the island's environmental preservation, ensuring its pristine waterways for future generations.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 7,
+          "startDate": "2024-09-01",
+          "endDate": "2024-09-01",
+          "score": 0.7248051948051948
+        },
+        {
+          "id": "th_exp_027",
+          "villageId": "th_banmaimarket",
+          "name": "Ban Mai Riverside Garden & Eco-Friendly Initiative",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "3h",
+          "hostId": "th_host_018",
+          "description": "Help cultivate a community riverside garden in Ban Mai, focusing on organic practices and local plant species. Assist with waste sorting and recycling efforts to promote environmental awareness in the historic market area.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 14,
+          "startDate": "2024-08-05",
+          "endDate": "2024-08-05",
+          "score": 0.7248051948051948
+        },
+        {
+          "id": "th_exp_003",
+          "villageId": "th_bangnamphueng",
+          "name": "Mangrove Reforestation in Bangkok's Green Lung",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "4h",
+          "hostId": "th_host_002",
+          "description": "Join local conservationists in planting mangrove saplings to help preserve the crucial ecosystem of Bang Krachao, known as Bangkok's 'Green Lung'. Contribute to biodiversity and flood protection for the community.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 10,
+          "startDate": "2024-08-15",
+          "endDate": "2024-08-15",
+          "score": 0.7248051948051948
+        },
+        {
+          "id": "th_exp_026",
+          "villageId": "th_banmaimarket",
+          "name": "Reverence at Wat Sothon Wararam Worawihan",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "N/A",
+          "description": "Visit the magnificent Wat Sothon Wararam Worawihan, one of Thailand's most revered temples, home to the sacred Luang Pho Sothon Buddha image. Witness devout worshippers and impressive architecture on the Bang Pakong River.",
+          "personalityWeights": [
+            0.1,
+            0.2,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7232272727272726
+        },
+        {
+          "id": "th_exp_020",
+          "villageId": "th_donhoilot",
+          "name": "Pay Respects at Prince Chumphon Shrine",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1h",
+          "hostId": "N/A",
+          "description": "Visit the revered Prince Chumphon Shrine, a significant spiritual site for local fishermen and sailors, offering scenic views of the Mae Klong River estuary and the mudflats. It's a place of quiet reverence and beautiful surroundings.",
+          "personalityWeights": [
+            0.1,
+            0.2,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7232272727272726
+        },
+        {
+          "id": "th_exp_008",
+          "villageId": "th_kokret",
+          "name": "Explore Wat Paramaiyikawat: Ko Kret's Iconic Temple",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "N/A",
+          "description": "Visit the revered Wat Paramaiyikawat, known for its leaning white chedi, intricate Mon architecture, and serene riverside setting. Discover the spiritual heart of Ko Kret and its historical significance to the Mon people.",
+          "personalityWeights": [
+            0.1,
+            0.2,
+            0.4,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7232272727272726
+        },
+        {
+          "id": "bt_gaselo_sightseeing_1",
+          "villageId": "bt_gaselo",
+          "name": "Gaselo Village Temple & Potato Field Panorama",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "h_gaselo_2",
+          "description": "Visit the serene village temple of Gaselo, a focal point for local spiritual life. From its vantage point, enjoy a spectacular panorama of the expansive, verdant potato fields that stretch across the valley, showcasing the agricultural heart of this unique Bhutanese village.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.35,
+            0.25,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7202402597402597
+        },
+        {
+          "id": "th_exp_018",
+          "villageId": "th_amphawa",
+          "name": "Serenity at King Rama II Memorial Park",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1h",
+          "hostId": "N/A",
+          "description": "Explore the peaceful grounds of King Rama II Memorial Park, featuring traditional Thai houses, a museum dedicated to the king's life, and beautifully landscaped gardens, offering a glimpse into Thai royal history and culture.",
+          "personalityWeights": [
+            0.1,
+            0.2,
+            0.35,
+            0.25,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7186623376623376
+        },
+        {
+          "id": "th_exp_002",
+          "villageId": "th_bangnamphueng",
+          "name": "Cycling through Sri Nakhon Khuean Khan Park and Botanical Garden",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "N/A",
+          "description": "Explore the lush 'Green Lung' of Bangkok, a sprawling urban park with bike paths, a tranquil lake, and diverse flora and fauna. Perfect for a relaxing cycle or stroll away from the city's hustle.",
+          "personalityWeights": [
+            0.1,
+            0.2,
+            0.35,
+            0.25,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7186623376623376
+        },
+        {
+          "id": "edge-colombia_guarinocito-to-colombia_puerto-bogota",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito to Puerto Bogota community route",
+          "type": "sightseeing",
+          "price": 16,
+          "duration": "4h",
+          "hostId": "host-edge-colombia_guarinocito",
+          "description": "Cross-village route between Guarinocito and Puerto Bogota focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7162896103896104
+        },
+        {
+          "id": "edge-colombia_la-sierra-to-colombia_padilla",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra to Padilla community route",
+          "type": "sightseeing",
+          "price": 11,
+          "duration": "6h",
+          "hostId": "host-edge-colombia_la-sierra",
+          "description": "Cross-village route between La Sierra and Padilla focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7162896103896104
+        },
+        {
+          "id": "edge-colombia_padilla-to-colombia_puerto-bogota",
+          "villageId": "colombia_padilla",
+          "name": "Padilla to Puerto Bogota community route",
+          "type": "sightseeing",
+          "price": 17,
+          "duration": "5h",
+          "hostId": "host-edge-colombia_padilla",
+          "description": "Cross-village route between Padilla and Puerto Bogota focused on regional food, stories, and everyday rural practices.",
+          "personalityWeights": [
+            0.22,
+            0.14,
+            0.34,
+            0.16,
+            0.14
+          ],
+          "score": 0.7162896103896104
+        },
+        {
+          "id": "bt_shapa_sightseeing_1",
+          "villageId": "bt_shapa",
+          "name": "Shapa Village Lhakhang & Community Square",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "h_shapa_2",
+          "description": "Discover the tranquil heart of Shapa village by visiting its local Lhakhang (temple) and observing daily life in the community square. This central gathering point often sees villagers engaged in traditional activities, offering an authentic glimpse into rural Bhutanese culture and architecture.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.3,
+            0.3,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7156753246753247
+        },
+        {
+          "id": "exp_cardona_002",
+          "villageId": "es_cardona",
+          "name": "Panoramic Views from Cardona Castle's Outer Walls",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1h",
+          "hostId": "host_cardona_002",
+          "description": "Ascend to the outer walls of the magnificent Cardona Castle, one of Catalonia's most important and best-preserved medieval fortresses. Enjoy breathtaking panoramic views of the charming village below, the surrounding countryside, and the unique Salt Mountain from this historically rich vantage point.",
+          "personalityWeights": [
+            0.1,
+            0.1,
+            0.3,
+            0.25,
+            0.25
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7134675324675324
+        },
+        {
+          "id": "exp_mura_002",
+          "villageId": "es_mura",
+          "name": "Discover Romanesque Sant Martí de Mura Church",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1h",
+          "hostId": "host_mura_002",
+          "description": "Explore the incredibly well-preserved Romanesque church of Sant Martí, dating back to the 11th century. Admire its historical architecture, serene interior, and ancient frescoes, a testament to Mura's rich medieval past, nestled beautifully within the picturesque village center.",
+          "personalityWeights": [
+            0.1,
+            0.1,
+            0.3,
+            0.25,
+            0.25
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7134675324675324
+        },
+        {
+          "id": "exp_sitges_002",
+          "villageId": "es_sitges",
+          "name": "Viewpoint at Església de Sant Bartomeu i Santa Tecla",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1h",
+          "hostId": "host_sitges_002",
+          "description": "Marvel at the iconic 'La Punta' church, perched majestically overlooking the Mediterranean Sea. Enjoy breathtaking panoramic views of Sitges' golden beaches, charming old town, and expansive coastline from this historic and picturesque spot, especially beautiful at sunset. It's a true symbol of Sitges.",
+          "personalityWeights": [
+            0.1,
+            0.1,
+            0.3,
+            0.25,
+            0.25
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7134675324675324
+        },
+        {
+          "id": "exp_cadaques_002",
+          "villageId": "es_cadaques",
+          "name": "Views from Església de Santa Maria de Cadaqués",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1h",
+          "hostId": "host_cadaques_002",
+          "description": "Climb to the Església de Santa Maria, a beautiful 17th-century church dominating the Cadaqués skyline. From its elevated position, enjoy breathtaking panoramic views of the iconic white-washed village, the tranquil bay, and the rugged, pristine Cap de Creus coastline, a quintessential Cadaqués vista.",
+          "personalityWeights": [
+            0.1,
+            0.1,
+            0.3,
+            0.25,
+            0.25
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7134675324675324
+        },
+        {
+          "id": "th_exp_024",
+          "villageId": "th_donhoilot",
+          "name": "Don Hoi Lot Fresh Seafood Market Visit",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "N/A",
+          "description": "Immerse yourself in the bustling atmosphere of Don Hoi Lot's local seafood market, where daily catches, especially razor clams, are sold fresh. Observe local commerce and taste regional delicacies straight from the sea.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.712
+        },
+        {
+          "id": "th_exp_006",
+          "villageId": "th_bangnamphueng",
+          "name": "Immerse in Bang Nam Phueng Weekend Floating Market",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "3h",
+          "hostId": "N/A",
+          "description": "Wander through the bustling Bang Nam Phueng Weekend Floating Market, sampling local street food, browsing handmade crafts, and experiencing the lively atmosphere of a traditional Thai market accessible by boat or bicycle.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.712
+        },
+        {
+          "id": "bt_lobesa_sightseeing_1",
+          "villageId": "bt_lobesa",
+          "name": "Chimi Lhakhang Temple Walk",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1.5h",
+          "hostId": "h_lobesa_2",
+          "description": "Enjoy a pleasant walk through the vibrant rice paddies of Lobesa, leading to the renowned Chimi Lhakhang. This scenic approach allows you to soak in the rural beauty before reaching the temple, dedicated to the 'Divine Madman' Drukpa Kunley, and famous for its distinct artistic expressions.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.712
+        },
+        {
+          "id": "th_exp_030",
+          "villageId": "th_banmaimarket",
+          "name": "Admire Ban Mai Market's Historic Shophouses",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "N/A",
+          "description": "Wander through the charming lanes of Ban Mai Market, admiring the beautifully preserved century-old wooden shophouses that line the river, offering a glimpse into Thailand's trading heritage and architectural past.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.712
+        },
+        {
+          "id": "th_exp_014",
+          "villageId": "th_amphawa",
+          "name": "Stroll Through Amphawa Evening Floating Market",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "3h",
+          "hostId": "N/A",
+          "description": "Experience the enchanting Amphawa Evening Floating Market. Wander along the canal, savor fresh seafood grilled on boats, browse local crafts, and soak in the vibrant, nostalgic atmosphere as the sun sets over the Mae Klong River.",
+          "personalityWeights": [
+            0.2,
+            0.2,
+            0.3,
+            0.2,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.712
+        },
+        {
+          "id": "exp-colombia_guarinocito-landscape",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: traditional weaving and ridge walk",
+          "type": "hike",
+          "price": 25,
+          "duration": "4h",
+          "hostId": "host-colombia_guarinocito-b",
+          "description": "Guided landscape walk around Guarinocito combining traditional weaving, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7113220779220778
+        },
+        {
+          "id": "exp-colombia_la-sierra-landscape",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: traditional weaving and ridge walk",
+          "type": "hike",
+          "price": 21,
+          "duration": "4h",
+          "hostId": "host-colombia_la-sierra-b",
+          "description": "Guided landscape walk around La Sierra combining traditional weaving, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7113220779220778
+        },
+        {
+          "id": "exp-colombia_boqueron-landscape",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: farm-to-table cooking and ridge walk",
+          "type": "hike",
+          "price": 20,
+          "duration": "3h",
+          "hostId": "host-colombia_boqueron-b",
+          "description": "Guided landscape walk around Boqueron combining farm-to-table cooking, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7113220779220778
+        },
+        {
+          "id": "exp-colombia_puerto-bogota-landscape",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: traditional weaving and ridge walk",
+          "type": "hike",
+          "price": 17,
+          "duration": "4h",
+          "hostId": "host-colombia_puerto-bogota-b",
+          "description": "Guided landscape walk around Puerto Bogota combining traditional weaving, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7113220779220778
+        },
+        {
+          "id": "exp-colombia_padilla-landscape",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: farm-to-table cooking and ridge walk",
+          "type": "hike",
+          "price": 14,
+          "duration": "3h",
+          "hostId": "host-colombia_padilla-b",
+          "description": "Guided landscape walk around Padilla combining farm-to-table cooking, local ecology, and practical stories from farmers and artisans.",
+          "personalityWeights": [
+            0.24,
+            0.18,
+            0.3,
+            0.16,
+            0.12
+          ],
+          "score": 0.7113220779220778
+        },
+        {
+          "id": "gen-colombia_boqueron-sightseeing-sight",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: heritage landmarks walk",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "host-colombia_boqueron-sight",
+          "description": "Self-guided or hosted walk through Boqueron's key heritage sites, public squares, and viewpoints. Free. Leaflet available from the village council house.",
+          "personalityWeights": [
+            0.22,
+            0.16,
+            0.3,
+            0.14,
+            0.18
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7107545454545454
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-sightseeing-sight",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: heritage landmarks walk",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "2h",
+          "hostId": "host-colombia_puerto-bogota-sight",
+          "description": "Self-guided or hosted walk through Puerto Bogota's key heritage sites, public squares, and viewpoints. Free. Leaflet available from the village council house.",
+          "personalityWeights": [
+            0.22,
+            0.16,
+            0.3,
+            0.14,
+            0.18
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7107545454545454
+        },
+        {
+          "id": "th_exp_012",
+          "villageId": "th_kokret",
+          "name": "Ko Kret Cultural Cycle Tour",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "4h",
+          "hostId": "N/A",
+          "description": "Cycle around the car-free island of Ko Kret, discovering hidden temples, local craft shops, pottery villages, and enjoying the peaceful atmosphere away from the city bustle. Bike rental available locally.",
+          "personalityWeights": [
+            0.3,
+            0.2,
+            0.3,
+            0.1,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.7099025974025973
+        },
+        {
+          "id": "bt_shapa_volunteer_1",
+          "villageId": "bt_shapa",
+          "name": "Community Prayer Flag Renewal & Hoisting",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "4h",
+          "hostId": "h_shapa_3",
+          "description": "Join the Shapa community in the sacred tradition of replacing old prayer flags and hoisting new ones. This meritorious act is believed to bring peace, prosperity, and good fortune. Participate in preparing the flags, stringing them, and raising them with locals, connecting deeply with Bhutanese spirituality and community spirit.",
+          "personalityWeights": [
+            0.15,
+            0.2,
+            0.25,
+            0.3,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 4,
+          "startDate": "2024-08-01T09:00:00Z",
+          "endDate": "2024-08-05T17:00:00Z",
+          "score": 0.7084837662337662
+        },
+        {
+          "id": "exp_cardona_003",
+          "villageId": "es_cardona",
+          "name": "Castle Garden & Grounds Conservation in Cardona",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "5h",
+          "hostId": "host_cardona_003",
+          "description": "Help preserve the beauty and historical integrity of Cardona Castle's extensive gardens and outer grounds. Tasks may include weeding, planting, or general upkeep, contributing directly to the majestic appearance of this national monument and its surroundings.",
+          "personalityWeights": [
+            0.15,
+            0.15,
+            0.2,
+            0.4,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 6,
+          "startDate": "2024-10-25T09:00:00Z",
+          "endDate": "2024-10-27T14:00:00Z",
+          "score": 0.7057564935064935
+        },
+        {
+          "id": "gen-colombia_guarinocito-cooking-cook",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_guarinocito-cook",
+          "description": "Cook a traditional meal in Guarinocito using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
+          "personalityWeights": [
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7026883116883117
+        },
+        {
+          "id": "gen-colombia_la-sierra-cooking-cook",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_la-sierra-cook",
+          "description": "Cook a traditional meal in La Sierra using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
+          "personalityWeights": [
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7026883116883117
+        },
+        {
+          "id": "gen-colombia_boqueron-cooking-cook",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_boqueron-cook",
+          "description": "Cook a traditional meal in Boqueron using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
+          "personalityWeights": [
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7026883116883117
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-cooking-cook",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_puerto-bogota-cook",
+          "description": "Cook a traditional meal in Puerto Bogota using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
+          "personalityWeights": [
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7026883116883117
+        },
+        {
+          "id": "gen-colombia_padilla-cooking-cook",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: open-fire kitchen",
+          "type": "cooking",
+          "price": 30,
+          "duration": "3h",
+          "hostId": "host-colombia_padilla-cook",
+          "description": "Cook a traditional meal in Padilla using seasonal ingredients, local techniques, and the host's wood fire or clay oven. Three courses, full preparation.",
+          "personalityWeights": [
+            0.08,
+            0.36,
+            0.26,
+            0.12,
+            0.18
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7026883116883117
+        },
+        {
+          "id": "gen-colombia_guarinocito-ceremony-cer",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_guarinocito-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Guarinocito that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7025909090909093
+        },
+        {
+          "id": "gen-colombia_la-sierra-ceremony-cer",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_la-sierra-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in La Sierra that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7025909090909093
+        },
+        {
+          "id": "gen-colombia_boqueron-ceremony-cer",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_boqueron-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Boqueron that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7025909090909093
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-ceremony-cer",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_puerto-bogota-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Puerto Bogota that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7025909090909093
+        },
+        {
+          "id": "gen-colombia_padilla-ceremony-cer",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: village seasonal ritual",
+          "type": "ceremony",
+          "price": 20,
+          "duration": "2h",
+          "hostId": "host-colombia_padilla-cer",
+          "description": "Observe or take part in village seasonal ritual, a living ceremony practised in Padilla that marks the turn of the agricultural or spiritual calendar.",
+          "personalityWeights": [
+            0.1,
+            0.32,
+            0.26,
+            0.1,
+            0.22
+          ],
+          "isFree": false,
+          "isActive": false,
+          "score": 0.7025909090909093
+        },
+        {
+          "id": "exp_rupit_002",
+          "villageId": "es_rupit",
+          "name": "Rupit's Iconic Pont Penjat (Hanging Bridge)",
+          "type": "sightseeing",
+          "price": 0,
+          "duration": "1h",
+          "hostId": "host_rupit_002",
+          "description": "Experience the unique thrill and charm of crossing Rupit's famous wooden hanging bridge, connecting the historic village to the other side of the stream. Enjoy picturesque views of the crystal-clear water below and the ancient stone houses clinging to the cliffs, a truly iconic Rupit landmark.",
+          "personalityWeights": [
+            0.25,
+            0.15,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "isFree": true,
+          "isActive": false,
+          "score": 0.700788961038961
+        },
+        {
+          "id": "exp_mura_003",
+          "villageId": "es_mura",
+          "name": "Natural Park Trail Maintenance in Sant Llorenç",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "6h",
+          "hostId": "host_mura_003",
+          "description": "Join local park rangers in the beautiful Parc Natural de Sant Llorenç del Munt i l'Obac, helping to clear and maintain hiking trails around Mura. Contribute to preserving the biodiversity and accessibility of this stunning natural reserve, a vital part of the region's ecological health.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.15,
+            0.4,
+            0.15
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 3,
+          "startDate": "2024-11-05T09:00:00Z",
+          "endDate": "2024-11-07T15:00:00Z",
+          "score": 0.7005454545454545
+        },
+        {
+          "id": "exp_rupit_003",
+          "villageId": "es_rupit",
+          "name": "Historic Path Restoration in Rupit",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "5h",
+          "hostId": "host_rupit_003",
+          "description": "Help maintain the ancient footpaths and stone trails around Rupit that connect the village to its stunning natural surroundings. Assist in clearing vegetation and repairing stone steps, preserving access to the beautiful landscapes and supporting local heritage for future generations.",
+          "personalityWeights": [
+            0.2,
+            0.1,
+            0.15,
+            0.4,
+            0.15
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 5,
+          "startDate": "2024-09-20T08:30:00Z",
+          "endDate": "2024-09-22T14:30:00Z",
+          "score": 0.7005454545454545
+        },
+        {
+          "id": "bt_pangrizampa_volunteer_1",
+          "villageId": "bt_pangrizampa",
+          "name": "Monastery Garden & Grounds Upkeep",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "5h",
+          "hostId": "h_pangrizampa_3",
+          "description": "Contribute to the upkeep of the sacred gardens and grounds of Pangri Zampa Lhakhang. Participate in gardening, light cleaning, and maintenance tasks, helping to preserve the pristine environment for monks and visitors alike. This is a unique opportunity to engage respectfully with the monastic community.",
+          "personalityWeights": [
+            0.15,
+            0.25,
+            0.15,
+            0.35,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 7,
+          "startDate": "2024-07-10T09:00:00Z",
+          "endDate": "2024-07-15T17:00:00Z",
+          "score": 0.6975162337662336
+        },
+        {
+          "id": "exp-colombia_guarinocito-culture",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: farm-to-table cooking studio",
+          "type": "craft",
+          "price": 27,
+          "duration": "3h",
+          "hostId": "host-colombia_guarinocito-a",
+          "description": "Hands-on farm-to-table cooking session led by local practitioners in Guarinocito, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.6944584415584416
+        },
+        {
+          "id": "exp-colombia_la-sierra-culture",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: farm-to-table cooking studio",
+          "type": "craft",
+          "price": 27,
+          "duration": "2h",
+          "hostId": "host-colombia_la-sierra-a",
+          "description": "Hands-on farm-to-table cooking session led by local practitioners in La Sierra, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.6944584415584416
+        },
+        {
+          "id": "exp-colombia_boqueron-culture",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: village storytelling studio",
+          "type": "craft",
+          "price": 18,
+          "duration": "3h",
+          "hostId": "host-colombia_boqueron-a",
+          "description": "Hands-on village storytelling session led by local practitioners in Boqueron, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.6944584415584416
+        },
+        {
+          "id": "exp-colombia_puerto-bogota-culture",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: farm-to-table cooking studio",
+          "type": "craft",
+          "price": 19,
+          "duration": "4h",
+          "hostId": "host-colombia_puerto-bogota-a",
+          "description": "Hands-on farm-to-table cooking session led by local practitioners in Puerto Bogota, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.6944584415584416
+        },
+        {
+          "id": "exp-colombia_padilla-culture",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: village storytelling studio",
+          "type": "craft",
+          "price": 26,
+          "duration": "2h",
+          "hostId": "host-colombia_padilla-a",
+          "description": "Hands-on village storytelling session led by local practitioners in Padilla, with context on seasonal village life and shared techniques.",
+          "personalityWeights": [
+            0.18,
+            0.26,
+            0.14,
+            0.28,
+            0.14
+          ],
+          "score": 0.6944584415584416
+        },
+        {
+          "id": "exp_cadaques_003",
+          "villageId": "es_cadaques",
+          "name": "Coastal Path & Coves Clean-up in Cap de Creus",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "4h",
+          "hostId": "host_cadaques_003",
+          "description": "Contribute to preserving the pristine natural beauty of the Cap de Creus Natural Park coastline around Cadaqués. Join dedicated volunteers to collect litter from hidden coves and scenic paths, protecting this unique Mediterranean ecosystem and its diverse marine and terrestrial life.",
+          "personalityWeights": [
+            0.2,
+            0.15,
+            0.1,
+            0.4,
+            0.15
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 10,
+          "startDate": "2024-09-15T09:00:00Z",
+          "endDate": "2024-09-17T13:00:00Z",
+          "score": 0.6941428571428571
+        },
+        {
+          "id": "exp_sitges_003",
+          "villageId": "es_sitges",
+          "name": "Coastal Conservation: Sitges Beach Clean-up",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "4h",
+          "hostId": "host_sitges_003",
+          "description": "Join local environmentalists to preserve the pristine beauty of Sitges' cherished beaches. Contribute to collecting litter, protecting marine life, and educating visitors on marine conservation, ensuring a healthy ecosystem for this beloved coastal town and its vibrant community.",
+          "personalityWeights": [
+            0.2,
+            0.15,
+            0.1,
+            0.4,
+            0.15
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 8,
+          "startDate": "2024-10-10T09:00:00Z",
+          "endDate": "2024-10-12T13:00:00Z",
+          "score": 0.6941428571428571
+        },
+        {
+          "id": "gen-colombia_guarinocito-volunteer-vol",
+          "villageId": "colombia_guarinocito",
+          "name": "Guarinocito: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_guarinocito-vol",
+          "description": "Five-day hands-on volunteer programme in Guarinocito. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 6,
+          "startDate": "2026-05-10",
+          "endDate": "2026-05-14",
+          "score": 0.6925441558441559
+        },
+        {
+          "id": "gen-colombia_la-sierra-volunteer-vol",
+          "villageId": "colombia_la-sierra",
+          "name": "La Sierra: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_la-sierra-vol",
+          "description": "Five-day hands-on volunteer programme in La Sierra. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 6,
+          "startDate": "2026-06-01",
+          "endDate": "2026-06-05",
+          "score": 0.6925441558441559
+        },
+        {
+          "id": "gen-colombia_boqueron-volunteer-vol",
+          "villageId": "colombia_boqueron",
+          "name": "Boqueron: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_boqueron-vol",
+          "description": "Five-day hands-on volunteer programme in Boqueron. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 11,
+          "startDate": "2026-07-05",
+          "endDate": "2026-07-10",
+          "score": 0.6925441558441559
+        },
+        {
+          "id": "gen-colombia_puerto-bogota-volunteer-vol",
+          "villageId": "colombia_puerto-bogota",
+          "name": "Puerto Bogota: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_puerto-bogota-vol",
+          "description": "Five-day hands-on volunteer programme in Puerto Bogota. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 9,
+          "startDate": "2026-04-15",
+          "endDate": "2026-04-19",
+          "score": 0.6925441558441559
+        },
+        {
+          "id": "gen-colombia_padilla-volunteer-vol",
+          "villageId": "colombia_padilla",
+          "name": "Padilla: community volunteer week",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "40h",
+          "hostId": "host-colombia_padilla-vol",
+          "description": "Five-day hands-on volunteer programme in Padilla. Work alongside residents on traditional restoration. Meals provided; outdoor sleeping or basic shelter.",
+          "personalityWeights": [
+            0.1,
+            0.22,
+            0.16,
+            0.14,
+            0.38
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 13,
+          "startDate": "2026-05-10",
+          "endDate": "2026-05-14",
+          "score": 0.6925441558441559
+        },
+        {
+          "id": "bt_lobesa_volunteer_1",
+          "villageId": "bt_lobesa",
+          "name": "Rice Paddy Farming Assistance",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "5h",
+          "hostId": "h_lobesa_3",
+          "description": "Immerse yourself in Lobesa's primary tradition of rice cultivation. Work alongside local farmers in their lush paddies, assisting with tasks like planting, weeding, or preparing the fields. This hands-on experience offers a deep connection to the land and the agrarian lifestyle of Bhutan.",
+          "personalityWeights": [
+            0.1,
+            0.3,
+            0.1,
+            0.4,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 6,
+          "startDate": "2024-07-05T08:00:00Z",
+          "endDate": "2024-07-10T16:00:00Z",
+          "score": 0.6921623376623376
+        },
+        {
+          "id": "bt_talo_volunteer_1",
+          "villageId": "bt_talo",
+          "name": "Terraced Rice Field Maintenance",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "6h",
+          "hostId": "h_talo_3",
+          "description": "Join the resilient farmers of Talo in maintaining their iconic terraced rice fields. Depending on the season, you could be involved in planting seedlings, weeding, or assisting with the harvest. It's a hands-on way to understand local agriculture and contribute to the village's food security.",
+          "personalityWeights": [
+            0.1,
+            0.3,
+            0.1,
+            0.4,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 9,
+          "startDate": "2024-06-20T08:30:00Z",
+          "endDate": "2024-06-25T16:00:00Z",
+          "score": 0.6921623376623376
+        },
+        {
+          "id": "bt_gaselo_volunteer_1",
+          "villageId": "bt_gaselo",
+          "name": "Potato Harvest & Field Preparation",
+          "type": "volunteer",
+          "price": 0,
+          "duration": "6h",
+          "hostId": "h_gaselo_3",
+          "description": "Engage directly with Gaselo's defining tradition: potato farming. Join local farmers in the fields, assisting with the demanding yet rewarding tasks of harvesting, planting new crops, or preparing the soil. This active role provides invaluable insight into the village's agricultural practices and community spirit.",
+          "personalityWeights": [
+            0.1,
+            0.35,
+            0.1,
+            0.35,
+            0.1
+          ],
+          "isFree": true,
+          "isActive": true,
+          "spotsRemaining": 10,
+          "startDate": "2024-07-20T08:00:00Z",
+          "endDate": "2024-07-25T16:00:00Z",
+          "score": 0.6903246753246752
+        }
+      ],
       "bookings": [],
       "userId": "user_pdc35c",
       "points": 0,
       "badges": [],
       "totalImpact": 0,
       "villagesVisited": [],
-      "destination": "Ottawa, Canada",
+      "destination": "Bogota, Colombia",
       "friends": [],
       "activeGroupId": null,
-      "email": "bobial@abv.bg"
+      "email": "bobial@abv.bg",
+      "volunteerIntent": true
     },
     "createdAt": 1774612261051,
-    "updatedAt": 1774613061929,
+    "updatedAt": 1774657095380,
     "eventsBefore": [],
     "eventsAfter": []
   },
@@ -26478,6 +28265,15 @@
     },
     "createdAt": 1774613486808,
     "updatedAt": 1774613532025,
+    "eventsBefore": [],
+    "eventsAfter": []
+  },
+  {
+    "email": "boris.vlad.alek@gmail.com",
+    "userId": "user_cc6hly",
+    "state": null,
+    "createdAt": 1774652982752,
+    "updatedAt": 1774652982752,
     "eventsBefore": [],
     "eventsAfter": []
   }
